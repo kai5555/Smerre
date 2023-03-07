@@ -1,0 +1,18 @@
+.plant_body{
+    width: 400px;
+    height: 150px;
+    background: #fff;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.plant_name{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}

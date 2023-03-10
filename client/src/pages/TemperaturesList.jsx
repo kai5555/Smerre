@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import ReactTable from 'react-table'
+import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react"
 import api from '../api'
+
 
 import styled from 'styled-components'
 
@@ -74,46 +75,6 @@ class TemperaturesList extends Component {
         const { temperatures, isLoading } = this.state
         console.log('TCL: TemperatureList -> render -> temperatures', temperatures)
 
-        const columns = [
-            {
-                Header: 'ID',
-                accessor: '_id',
-                filterable: true,
-            },
-            {
-                Header: 'Payload',
-                accessor: 'payload',
-                filterable: true,
-            },
-            // {
-            //     Header: 'Time',
-            //     accessor: 'time',
-            //     Cell: props => <span>{props.value.join(' / ')}</span>,
-            // },
-            {
-                Header: '',
-                accessor: '',
-                Cell: function(props) {
-                    return (
-                        <span>
-                            <DeleteTemperature id={props.original._id} />
-                        </span>
-                    )
-                },
-            },
-            {
-                Header: '',
-                accessor: '',
-                Cell: function(props) {
-                    return (
-                        <span>
-                            <UpdateTemperature id={props.original._id} />
-                        </span>
-                    )
-                },
-            },
-        ]
-
         let showTable = true
         if (!temperatures.length) {
             showTable = false
@@ -122,14 +83,25 @@ class TemperaturesList extends Component {
         return (
             <Wrapper>
                 {showTable && (
-                    <ReactTable
-                        data={temperatures}
-                        columns={columns}
-                        loading={isLoading}
-                        defaultPageSize={10}
-                        showPageSizeOptions={true}
-                        minRows={0}
-                    />
+                    <Table>
+                    <Thead>
+                      <Tr>
+                        <Th>ID</Th>
+                        <Th>Payload</Th>
+                        <Th></Th>
+                        <Th></Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {temperatures.map(temperature => (
+                        <Tr key={temperature._id}>
+                          <Td>{temperature._id}</Td>
+                          <Td>{temperature.payload}</Td>
+                          <Td><DeleteTemperature id={temperature._id} /></Td>
+                          <Td><UpdateTemperature id={temperature._id} /></Td> 
+                        </Tr>))}
+                    </Tbody> 
+                  </Table> 
                 )}
             </Wrapper>
         )

@@ -24,13 +24,22 @@ class ComponentControl extends React.Component {
 
         this.socket.on('toggle', (led, value) => {
             this.setState({ leds: { ...this.state.leds, [led]: value } });
+
         });
     }
 
     toggleLed(led) {
+        const button = document.getElementById(`${led}`);
         const currentStatus = this.state.leds[led];
         this.socket.emit('toggle', led);
         this.setState({ leds: { ...this.state.leds, [led]: !currentStatus } });
+
+        if(currentStatus) {
+            button.style.backgroundColor = 'MediumSeaGreen';
+        }
+        else {
+            button.style.backgroundColor ="LightGrey";
+        }
     }
 
     handleClick = async () => {
@@ -173,7 +182,7 @@ class ComponentControl extends React.Component {
                             </div>
 
                             <div className="col-md-1 py-4">
-                                <button  type="button" className="btn btn-primary" onClick={() => this.toggleLed('led1')}>{this.state.leds['led1'] ? 'Aan' : 'Uit'}</button>
+                                <button style={{backgroundColor: (this.state.leds['led1'] ? 'MediumSeaGreen' : 'LightGrey')}} id={'led1'} type="button" className="btn" onClick={() => this.toggleLed('led1')}>power</button>
                             </div>
                         < /div>
                     </div>

@@ -99,7 +99,7 @@ getTemperatures = async (req, res) => {
             if (!temperatures.length) {
                 return res
                     .status(404)
-                    .json({ success: false, error: `Temperatures not found` })
+                    .json({ success: false, error: `Temperatures list empty` })
             }
             return res.status(200).json({ success: true, data: temperatures })
         })

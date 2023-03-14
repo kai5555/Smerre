@@ -50,10 +50,11 @@ class TemperatureInsert extends Component {
     }
 
     handleIncludeTemperature = async () => {
-        const { p } = this.state
-        const payload = { p }
+        const { payload } = this.state
+        const value = { payload }
 
-        await api.insertTemperature(payload).then(res => {
+        console.log(value)
+        await api.insertTemperature(value).then(res => {
             window.alert(`Temperature inserted successfully`)
             this.setState({
                 payload: '',
@@ -71,7 +72,7 @@ class TemperatureInsert extends Component {
                 <InputText
                     type="text"
                     value={p}
-                    onChange={this.handleChangeInputTemperature}
+                    onChange={this.handleChangeInputPayload}
                 />
 
                 <Button onClick={this.handleIncludeTemperature}>Add Temperature</Button>

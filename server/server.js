@@ -7,6 +7,7 @@ const PORT = 5000;
 const db = require('./db')
 
 const temperatureRouter = require('./routes/temperature-router')
+const humidityRouter = require('./routes/humidity-router')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
@@ -20,7 +21,7 @@ app.get('/', (req, res) => {
 //db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 // Setup routes
-app.use('/api', temperatureRouter)
+app.use('/api', temperatureRouter, humidityRouter)
 
 // Start the server
 app.listen(PORT, () => {

@@ -12,12 +12,11 @@ function App() {
         <Router>
             <NavBar />
             <Routes>
-                <Route path="/temperatures/list" exact component={TemperaturesList} />
-                <Route path="/temperatures/create" exact component={TemperatureInsert} />
-                <Route path="/temperatures/update/:id" exact component={TemperatureUpdate} />
+                <Route path="/temperatures/list" element={<TemperaturesList />} />
+                <Route path="/temperatures/create" element={<TemperatureInsert />} />
+                <Route path="/temperatures/update/:id" element={<TemperatureUpdate />} />
             </Routes>
         </Router>
-        <TemperaturesList></TemperaturesList>
         </>
     )
 }

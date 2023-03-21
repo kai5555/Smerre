@@ -10,12 +10,16 @@ export const updateTemperatureById = (id, payload) => api.put(`/temperatures/${i
 export const deleteTemperatureById = id => api.delete(`/temperatures/${id}`)
 export const getTemperatureById = id => api.get(`/temperatures/${id}`)
 
+export const getAllHumidity = () => api.get(`/humidity`)
+
 const apis = {
     insertTemperature,
     getAllTemperatures,
     updateTemperatureById,
     deleteTemperatureById,
     getTemperatureById,
+
+    getAllHumidity,
 }
 
 export default apis

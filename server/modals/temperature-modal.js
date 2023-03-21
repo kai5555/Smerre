@@ -10,4 +10,4 @@ const Temperature = new Schema(
     },
 )
 
-module.exports = mongoose.model('temperature', Temperature)
+module.exports = mongoose.model('temperature', Temperature, "Temperature")

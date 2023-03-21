@@ -41,13 +41,19 @@ class TemperatureUpdate extends Component {
 
         this.state = {
             id: this.props.match.params.id,
-            payload: '',
+            value: '',
+            timestamp: '',
         }
     }
 
-    handleChangeInputPayload = async event => {
-        const payload = event.target.value
-        this.setState({ payload })
+    handleChangeInputValue = async event => {
+        const value = event.target.value
+        this.setState({ value })
+    }
+
+    handleChangeInputTimestamp= async event => {
+        const timestamp = event.target.value
+        this.setState({ timestamp })
     }
 
     handleUpdateTemperature = async () => {
@@ -67,21 +73,28 @@ class TemperatureUpdate extends Component {
         const temperature = await api.getTemperatureById(id)
 
         this.setState({
-            payload: temperature.data.data.name,
+            value: temperature.data.data.value,
+            timestamp: temperature.data.data.timestamp
         })
     }
 
     render() {
-        const { payload } = this.state
+        const { value, timestamp } = this.state
         return (
             <Wrapper>
                 <Title>Create Temperature</Title>
 
-                <Label>Payload: </Label>
+                <Label>Value: </Label>
                 <InputText
                     type="text"
-                    value={payload}
-                    onChange={this.handleChangeInputPayload}
+                    value={value}
+                    onChange={this.handleChangeInputValue}
+                />
+                <Label>Timestamp: </Label>
+                <InputText
+                    type="text"
+                    value={timestamp}
+                    onChange={this.handleChangeInputTimestamp}
                 />
 
                 <Button onClick={this.handleUpdateTemperature}>Update Temperature</Button>

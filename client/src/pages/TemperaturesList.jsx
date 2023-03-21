@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
-import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react"
+import React, { Component, PureComponent } from 'react'
 import api from '../api'
-
-
 import styled from 'styled-components'
+import ApexCharts from 'apexcharts';
+import ReactApexChart from 'react-apexcharts';
+import moment from 'moment';
 
 const Wrapper = styled.div`
     padding: 0 40px 40px 40px;
@@ -50,62 +50,137 @@ class DeleteTemperature extends Component {
     }
 }
 
-class TemperaturesList extends Component {
+class TemperaturesList extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
             temperatures: [],
+            humidity: [],
             columns: [],
-            isLoading: false,
         }
     }
 
     componentDidMount = async () => {
-        this.setState({ isLoading: true })
 
         await api.getAllTemperatures().then(temperatures => {
             this.setState({
                 temperatures: temperatures.data.data,
-                isLoading: false,
             })
         })
+        await api.getAllHumidity().then(humidity => {
+            this.setState({
+                humidity: humidity.data.data,
+            })
+        })
+
+        // await getWeatherData();
+        // function getWeatherData() {
+        //     if (navigator.geolocation) {
+        //       navigator.geolocation.getCurrentPosition(position => {
+        //         const lat = position.coords.latitude;
+        //         const lon = position.coords.longitude;
+          
+        //         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        //         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=cloudcover,precipitation_probability&daily=sunrise,sunset&timezone=${timezone}`;
+          
+        //         fetch(url)
+        //           .then(response => response.json())
+        //           .then(data => {
+        //             console.log(data);
+        //           });
+        //       });
+        //     } else {
+        //       console.log("Geolocation is not supported by this browser.");
+        //     }
+        // }
+        
     }
 
-    render() {
-        const { temperatures, isLoading } = this.state
+	render() {
+        const { temperatures, humidity } = this.state
         console.log('TCL: TemperatureList -> render -> temperatures', temperatures)
+        console.log('TCL: TemperatureList -> render -> temperatures', humidity)
 
-        let showTable = true
         if (!temperatures.length) {
-            showTable = false
+            console.log("No temperature found");
         }
+        if (!humidity.length) {
+            console.log("No humidity found");
+        }
+        
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 8);
+        
+        const filteredTemperatures = temperatures.filter(temperature => {
+            const timestamp = new Date(temperature.timestamp);
+            return timestamp >= oneWeekAgo && typeof temperature.value === 'number';
+        });
+        const filteredHumidity = humidity.filter(h => {
+            const timestamp = new Date(h.timestamp);
+            return timestamp >= oneWeekAgo && typeof h.value === 'number';
+        });
+          
+        
+        const dataPointsTemperatures = filteredTemperatures.map(temperature => {
+          return {
+            x: moment(new Date(temperature.timestamp)).format('DD/MM HH:mm'),
+            y: temperature.value
+          };
+        });
+        const dataPointsHumidity = filteredHumidity.map(h => {
+            return {
+              x: moment(new Date(h.timestamp)).format('DD/MM HH:mm'),
+              y: h.value
+            };
+          });
 
-        return (
-            <Wrapper>
-                {showTable && (
-                    <Table>
-                    <Thead>
-                      <Tr>
-                        <Th>ID</Th>
-                        <Th>Payload</Th>
-                        <Th></Th>
-                        <Th></Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {temperatures.map(temperature => (
-                        <Tr key={temperature._id}>
-                          <Td>{temperature._id}</Td>
-                          <Td>{temperature.payload}</Td>
-                          <Td><DeleteTemperature id={temperature._id} /></Td>
-                          <Td><UpdateTemperature id={temperature._id} /></Td> 
-                        </Tr>))}
-                    </Tbody> 
-                  </Table> 
-                )}
-            </Wrapper>
+        const graph = {
+      
+            series: [{
+                name: "Temp",
+                data: dataPointsTemperatures
+            },{
+                name: "Water",
+                data: dataPointsHumidity
+            }],
+            options: {
+              chart: {
+                height: 350,
+                type: 'line',
+                zoom: {
+                  enabled: false
+                }
+              },
+              dataLabels: {
+                enabled: false
+              },
+              stroke: {
+                curve: 'smooth'
+              },
+              title: {
+                text: 'Temperatures',
+                align: 'left'
+              },
+              grid: {
+                row: {
+                  colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                  opacity: 0.5
+                },
+              },
+              xaxis: {
+                type: 'datatime',
+              }
+            }, 
+          };
+          
+         return (
+            
+            <div id="chart">
+                <ReactApexChart options={graph.options} series={graph.series} type="line" height={350} />
+            </div>
         )
-    }
+	}
 }
+          
 
 export default TemperaturesList

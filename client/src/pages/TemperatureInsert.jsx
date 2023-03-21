@@ -40,39 +40,51 @@ class TemperatureInsert extends Component {
         super(props)
 
         this.state = {
-            payload: '',
+            value: '',
+            timestamp: '',
         }
     }
 
-    handleChangeInputPayload = async event => {
-        const payload = event.target.value
-        this.setState({ payload })
+    handleChangeInputValue = async event => {
+        const value = event.target.value
+        this.setState({ value })
+    }
+
+    handleChangeInputTimestamp = async event => {
+        const timestamp = event.target.value
+        this.setState({ timestamp })
     }
 
     handleIncludeTemperature = async () => {
-        const { payload } = this.state
-        const value = { payload }
+        const { value, timestamp } = this.state
+        const temp = { value, timestamp }
 
-        console.log(value)
-        await api.insertTemperature(value).then(res => {
+        await api.insertTemperature(temp).then(res => {
             window.alert(`Temperature inserted successfully`)
             this.setState({
-                payload: '',
+                value: '',
+                timestamp: '',
             })
         })
     }
 
     render() {
-        const { p } = this.state
+        const { value, timestamp } = this.state
         return (
             <Wrapper>
                 <Title>Create Temperature</Title>
 
-                <Label>Payload: </Label>
+                <Label>Value: </Label>
                 <InputText
                     type="text"
-                    value={p}
-                    onChange={this.handleChangeInputPayload}
+                    value={value}
+                    onChange={this.handleChangeInputValue}
+                />
+                <Label>Timestamp: </Label>
+                <InputText
+                    type="text"
+                    value={timestamp}
+                    onChange={this.handleChangeInputTimestamp}
                 />
 
                 <Button onClick={this.handleIncludeTemperature}>Add Temperature</Button>

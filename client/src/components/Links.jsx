@@ -33,6 +33,12 @@ class Links extends Component {
                                 Create temperature
                             </Link>
                         </Item>
+
+                        <Item>
+                            <Link to="/component/control" className="nav-link">
+                                component control
+                            </Link>
+                        </Item>
                     </List>
                 </Collapse>
             </React.Fragment>

@@ -45,6 +45,7 @@ const leds = {
   'led3': false
 };
 
+console.log("test 123")
 io.on('connection', (socket) => {
   console.log('a user connected');
 

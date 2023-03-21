@@ -2,7 +2,12 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const PORT = 5000;
+
+const HTTPPort = 5001;
+
+const http = require('http');
+const server = http.createServer(app);
+const {initSocket} = require('./controllers/socketController')
 
 const db = require('./db')
 
@@ -24,6 +29,13 @@ app.get('/', (req, res) => {
 app.use('/api', temperatureRouter, humidityRouter)
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
+// app.listen(PORT, () => {
+//   console.log(`Server started on port ${PORT}`);
+// });
+
+
+initSocket(server);
+
+server.listen(HTTPPort, () => {
+  console.log(`Server gestart op poort ${HTTPPort}`);
 });

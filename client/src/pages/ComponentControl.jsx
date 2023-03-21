@@ -16,9 +16,9 @@ class ComponentControl extends React.Component {
             }
         };
         
-        this.socket = io('http://laptop_van_wout:5001');
+        this.socket = io('http://laptop_van_wout:5000');
         if(!this.socket.connected)
-            this.socket = io('http://10.129.55.147:5001');
+            this.socket = io('http://10.129.55.147:5000');
 
         this.socket.on('initial', (leds) => {
             this.setState({ leds });

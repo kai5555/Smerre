@@ -25,20 +25,28 @@ class Links extends Component {
                     <List>
                         <Item>
                             <Link to="/temperatures/list" className="nav-link">
-                                List temperatures
-                            </Link>
-                        </Item>
-                        <Item>
-                            <Link to="/temperatures/create" className="nav-link">
-                                Create temperature
+                                View data
                             </Link>
                         </Item>
 
                         <Item>
                             <Link to="/component/control" className="nav-link">
-                                component control
+                                Component control
                             </Link>
                         </Item>
+
+                        <Item>
+                            <Link to="/login" className="nav-link">
+                                Login
+                            </Link>
+                        </Item>
+                        
+                        <Item>
+                            <Link to="/register" className="nav-link">
+                                Register
+                            </Link>
+                        </Item>
+
                     </List>
                 </Collapse>
             </React.Fragment>

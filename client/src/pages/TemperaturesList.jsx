@@ -1,186 +1,215 @@
-import React, { Component, PureComponent } from 'react'
-import api from '../api'
-import styled from 'styled-components'
-import ApexCharts from 'apexcharts';
+import React, { useLayoutEffect, useState } from 'react';
+import api from '../api';
 import ReactApexChart from 'react-apexcharts';
 import moment from 'moment';
+import { useNavigate} from 'react-router-dom';
 
-const Wrapper = styled.div`
-    padding: 0 40px 40px 40px;
-`
+const TemperaturesList = () => {
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [temperatures, setTemperatures] = useState([]);
+  const [humidity, setHumidity] = useState([]);
 
-const Update = styled.div`
-    color: #ef9b0f;
-    cursor: pointer;
-`
-
-const Delete = styled.div`
-    color: #ff0000;
-    cursor: pointer;
-`
-
-class UpdateTemperature extends Component {
-    updateUser = event => {
-        event.preventDefault()
-
-        window.location.href = `/temperatures/update/${this.props.id}`
+  useLayoutEffect(() => {
+    async function checkUserAuth() {
+        try {
+            const res = await api.isUserAuth({token: localStorage.getItem("token")});
+            if(res.data.isLoggedIn) {
+                console.log("Logged in");
+                setup();
+            }
+            else{
+                console.log("Not logged in");
+                navigate('/login');
+            }
+        } catch (err) {
+            setErrorMessage(err)
+        }
     }
+    checkUserAuth();
+  }, [navigate])
 
-    render() {
-        return <Update onClick={this.updateUser}>Update</Update>
-    }
+  const setup = async () => {
+    const temperaturesResponse = await api.getAllTemperatures();
+    const humidityResponse = await api.getAllHumidity();
+    setTemperatures(temperaturesResponse.data.data);
+    setHumidity(humidityResponse.data.data);
 }
 
-class DeleteTemperature extends Component {
-    deleteUser = event => {
-        event.preventDefault()
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-        if (
-            window.confirm(
-                `Do tou want to delete the temperature ${this.props.id} permanently?`,
-            )
-        ) {
-            api.deleteTemperatureById(this.props.id)
-            window.location.reload()
-        }
+  const filteredTemperatures = temperatures.filter((temperature) => {
+    const timestamp = new Date(temperature.timestamp);
+    return timestamp >= oneWeekAgo && typeof temperature.value === 'number';
+  });
+  const filteredHumidity = humidity.filter((h) => {
+    const timestamp = new Date(h.timestamp);
+    return timestamp >= oneWeekAgo && typeof h.value === 'number';
+  });
+
+  // Remove all the empty values and show it in the graph
+  let result = [];
+  let prevTimestamp = null;
+  for (let i = 0; i < filteredTemperatures.length; i++) {
+    const currTimestamp = new Date(filteredTemperatures[i].timestamp);
+    
+    if (prevTimestamp !== null && (currTimestamp - prevTimestamp) > 60000) {
+      // add null values for missing minutes
+      const minutesDiff = Math.floor((currTimestamp - prevTimestamp) / 60000);
+      for (let j = 1; j < minutesDiff; j++) {
+        result.push({ timestamp: new Date(prevTimestamp.getTime() + (j * 60000)).toISOString(), value: null });
+      }
     }
+    
+    result.push(filteredTemperatures[i]);
+    prevTimestamp = currTimestamp;
+  }
+  // Add the current time to the graph
+  result.push({
+    timestamp: new Date(),
+    value: null,
+  });
 
-    render() {
-        return <Delete onClick={this.deleteUser}>Delete</Delete>
+
+  const dataPointsTemperatures = result.map((h) => {
+    return {
+      x: new Date(h.timestamp),
+      y: h.value,
+    };
+  });
+
+
+  
+  // Remove all the empty values and show it in the graph
+  result = [];
+  prevTimestamp = null;
+  for (let i = 0; i < filteredHumidity.length; i++) {
+    const currTimestamp = new Date(filteredHumidity[i].timestamp);
+    
+    if (prevTimestamp !== null && (currTimestamp - prevTimestamp) > 60000) {
+      // add null values for missing minutes
+      const minutesDiff = Math.floor((currTimestamp - prevTimestamp) / 60000);
+      for (let j = 1; j < minutesDiff; j++) {
+        result.push({ timestamp: new Date(prevTimestamp.getTime() + (j * 60000)).toISOString(), value: null });
+      }
     }
-}
+    
+    result.push(filteredHumidity[i]);
+    prevTimestamp = currTimestamp;
+  }
+  // Add the current time to the graph
+  result.push({
+    timestamp: new Date(),
+    value: null,
+  });
 
-class TemperaturesList extends PureComponent {
-    constructor(props) {
-        super(props)
-        this.state = {
-            temperatures: [],
-            humidity: [],
-            columns: [],
-        }
-    }
+  console.log(result);
 
-    componentDidMount = async () => {
+  const dataPointsHumidity = result.map((h) => {
+    return {
+      x: new Date(h.timestamp),
+      y: h.value,
+    };
+  });
 
-        await api.getAllTemperatures().then(temperatures => {
-            this.setState({
-                temperatures: temperatures.data.data,
-            })
-        })
-        await api.getAllHumidity().then(humidity => {
-            this.setState({
-                humidity: humidity.data.data,
-            })
-        })
+  console.log(dataPointsHumidity);
 
-        // await getWeatherData();
-        // function getWeatherData() {
-        //     if (navigator.geolocation) {
-        //       navigator.geolocation.getCurrentPosition(position => {
-        //         const lat = position.coords.latitude;
-        //         const lon = position.coords.longitude;
-          
-        //         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        //         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=cloudcover,precipitation_probability&daily=sunrise,sunset&timezone=${timezone}`;
-          
-        //         fetch(url)
-        //           .then(response => response.json())
-        //           .then(data => {
-        //             console.log(data);
-        //           });
-        //       });
-        //     } else {
-        //       console.log("Geolocation is not supported by this browser.");
-        //     }
-        // }
-        
-    }
+  const graph = {
+    series: [
+      {
+        name: 'Temp',
+        data: dataPointsTemperatures,
+      },
+      {
+        name: 'Water',
+        data: dataPointsHumidity,
+      },
+    ],
+    options: {
+      chart: {
+        height: 350,
+        type: 'line',
+        zoom: {
+          enabled: false,
+        },
+        toolbar: {
+          show: false, 
+        },
+        animations: {
+          enabled: false
+        },
+        zoom: {
+            type: 'x',
+            enabled: true,
+            autoScaleYaxis: true
+          },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: 'smooth',
+      },
+      title: {
+        text: 'Algemene data',
+        align: 'left',
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5,
+        },
+      },
+      xaxis: {
+        type: 'datetime',
+        tickAmount: 24, // Display every hour
+        labels: {
+          datetimeFormatter: {
+            hour: 'HH:mm'
+          }
+        },
+      },
+      yaxis: [
+        {
+          title: {
+            text: "°C",
+          },
+        },
+        {
+          opposite: true,
+          title: {
+            text: "g/m3",
+          },
+        },
+      ],
+      tooltip: {
+        x: {
+          format: 'dd/MM/yy HH:mm'
+        },
+        y: [
+          {
+            formatter: function (val) {
+              if(val == undefined || val == null) return "Geen waarde";
+              return val.toFixed(2) + " c°"
+            },  
+          },
+          {
+            formatter: function (val) {
+              if(val == undefined || val == null) return "Geen waarde";
+              return val.toFixed(2) + " g/m3"
+            },
+          },
+        ],
+      },
+    },
+  };
 
-	render() {
-        const { temperatures, humidity } = this.state
-        console.log('TCL: TemperatureList -> render -> temperatures', temperatures)
-        console.log('TCL: TemperatureList -> render -> temperatures', humidity)
+  return (
+    <div id='chart'>
+      <ReactApexChart options={graph.options} series={graph.series} type='line' height={350} />
+    </div>
+  );
+};
 
-        if (!temperatures.length) {
-            console.log("No temperature found");
-        }
-        if (!humidity.length) {
-            console.log("No humidity found");
-        }
-        
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 8);
-        
-        const filteredTemperatures = temperatures.filter(temperature => {
-            const timestamp = new Date(temperature.timestamp);
-            return timestamp >= oneWeekAgo && typeof temperature.value === 'number';
-        });
-        const filteredHumidity = humidity.filter(h => {
-            const timestamp = new Date(h.timestamp);
-            return timestamp >= oneWeekAgo && typeof h.value === 'number';
-        });
-          
-        
-        const dataPointsTemperatures = filteredTemperatures.map(temperature => {
-          return {
-            x: moment(new Date(temperature.timestamp)).format('DD/MM HH:mm'),
-            y: temperature.value
-          };
-        });
-        const dataPointsHumidity = filteredHumidity.map(h => {
-            return {
-              x: moment(new Date(h.timestamp)).format('DD/MM HH:mm'),
-              y: h.value
-            };
-          });
-
-        const graph = {
-      
-            series: [{
-                name: "Temp",
-                data: dataPointsTemperatures
-            },{
-                name: "Water",
-                data: dataPointsHumidity
-            }],
-            options: {
-              chart: {
-                height: 350,
-                type: 'line',
-                zoom: {
-                  enabled: false
-                }
-              },
-              dataLabels: {
-                enabled: false
-              },
-              stroke: {
-                curve: 'smooth'
-              },
-              title: {
-                text: 'Temperatures',
-                align: 'left'
-              },
-              grid: {
-                row: {
-                  colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                  opacity: 0.5
-                },
-              },
-              xaxis: {
-                type: 'datatime',
-              }
-            }, 
-          };
-          
-         return (
-            
-            <div id="chart">
-                <ReactApexChart options={graph.options} series={graph.series} type="line" height={350} />
-            </div>
-        )
-	}
-}
-          
-
-export default TemperaturesList
+export default TemperaturesList;

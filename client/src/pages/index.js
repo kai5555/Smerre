@@ -1,6 +1,7 @@
 import TemperaturesList from './TemperaturesList'
-import TemperatureInsert from './TemperatureInsert'
-import TemperatureUpdate from './TemperatureUpdate'
 import ComponentControl from './ComponentControl'
+import Login from './Login'
+import Register from './Register'
+import EmailVerify from './EmailVerify'
 
-export { TemperaturesList, TemperatureInsert, TemperatureUpdate, ComponentControl }
+export { TemperaturesList, ComponentControl, Login, Register, EmailVerify}

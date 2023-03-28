@@ -2,38 +2,38 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const session = require('express-session');
+
+require('dotenv').config();
 
 const HTTPPort = 5000;
 
 const http = require('http');
 const server = http.createServer(app);
-const {initSocket} = require('./controllers/socketController')
+const {initSocket} = require('./controllers/socketController');
 
-const db = require('./db')
+const db = require('./db');
 
-const temperatureRouter = require('./routes/temperature-router')
-const humidityRouter = require('./routes/humidity-router')
+const temperatureRouter = require('./routes/temperatureRouter');
+const humidityRouter = require('./routes/humidityRouter');
+const userRouter = require("./routes/userRouter");
 
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cors())
+app.use(cors());
+app.use(session({
+  secret: 'codeforgeek',
+  resave: true,
+  saveUninitialized: true,
+}));
+
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 
-app.get('/', (req, res) => {  
-  res.send('Hello World!')
-})
-
-// Setup mongoDB connection
-//db.on('error', console.error.bind(console, 'MongoDB connection error:'))
-
 // Setup routes
-app.use('/api', temperatureRouter, humidityRouter)
+app.use('/api', temperatureRouter);
+app.use('/api', humidityRouter);
+app.use('/api', userRouter);
 
-// Start the server
-// app.listen(PORT, () => {
-//   console.log(`Server started on port ${PORT}`);
-// });
-
-
+// Initiate sockets
 initSocket(server);
 
 server.listen(HTTPPort, () => {

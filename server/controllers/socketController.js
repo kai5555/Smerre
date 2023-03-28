@@ -1,6 +1,6 @@
 
-function initSocket(server){
 
+function initSocket(server){
     const io = require("socket.io")(server, {
         cors: {
             origin: "*",
@@ -8,16 +8,19 @@ function initSocket(server){
         }
     });
 
+
+    //let components = getComponents();
+
+
     const leds = {
         'led1': false,
         'led2': false,
         'led3': false
     };
 
-    console.log("test 123")
     io.on('connection', (socket) => {
         console.log('a user connected');
-
+        //console.log(components);
         // Stuur de huidige status van alle LED's naar de nieuwe client
         socket.emit('initial', leds);
 
@@ -55,5 +58,20 @@ function initSocket(server){
         });
     });
 }
+
+getComponents = async (req, res) => {
+    const Component = require('../modals/ComponentModal')
+    await Component.find({})
+        .then(components => {
+            if (!components.length) {
+                return res
+                    .status(404)
+                    .json({ success: false, error: `components list empty` })
+            }
+            return res.status(200).json({ success: true, data: components })
+        })
+        .catch(err => console.log(err))
+}
+
 
 module.exports = {initSocket};

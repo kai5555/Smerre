@@ -17,6 +17,8 @@ const db = require('./db');
 const temperatureRouter = require('./routes/temperatureRouter');
 const humidityRouter = require('./routes/humidityRouter');
 const userRouter = require("./routes/userRouter");
+const componentRouter = require("./routes/componentRouter");
+const automationRouter = require("./routes/automationRouter");
 
 app.use(cors());
 app.use(session({
@@ -32,6 +34,8 @@ app.use(bodyParser.json())
 app.use('/api', temperatureRouter);
 app.use('/api', humidityRouter);
 app.use('/api', userRouter);
+app.use('/api', componentRouter);
+app.use('/api', automationRouter);
 
 // Initiate sockets
 initSocket(server);

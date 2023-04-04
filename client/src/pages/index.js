@@ -3,5 +3,9 @@ import ComponentControl from './ComponentControl'
 import Login from './Login'
 import Register from './Register'
 import EmailVerify from './EmailVerify'
+import PasswordRecovery from './PasswordRecovery'
+import PasswordRecoveryVerify from './PasswordRecoveryVerify'
+import AddAutomation from './AddAutomation'
+import DragAutomation from './DragAutomation'
 
-export { TemperaturesList, ComponentControl, Login, Register, EmailVerify}
+export { TemperaturesList, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, DragAutomation}

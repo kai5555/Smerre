@@ -46,6 +46,19 @@ class Links extends Component {
                                 Register
                             </Link>
                         </Item>
+                                                
+                        <Item>
+                            <Link to="/automation" className="nav-link">
+                                Automation
+                            </Link>
+                        </Item>
+
+                        <Item>
+                            <Link to="/testAutomation" className="nav-link">
+                                Drag Automation
+                            </Link>
+                        </Item>
+
 
                     </List>
                 </Collapse>

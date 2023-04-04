@@ -19,6 +19,18 @@ export const loginUser = payload => api.post(`/login`, payload);
 export const registerUser = payload => api.post(`/register`, payload);
 export const isUserAuth = payload => api.post(`/isUserAuth`, payload);
 export const verifyEmailUser = payload => api.post(`/verifyEmailUser`, payload);
+export const sendPasswordRecovery = payload => api.post(`/sendPasswordRecovery`, payload);
+export const verifyPasswordRecovery = payload => api.post(`/verifyPasswordRecovery`, payload);
+export const passwordRecovery = payload => api.post(`/passwordRecovery`, payload);
+
+export const getAllActors = () => api.get(`/getAllActors`);
+export const getAllSensors = () => api.get(`/getAllSensors`);
+
+export const getAllAutomations = () => api.get(`/getAllAutomations`);
+export const getAutomationById = () => api.get(`/getAllAutomations`);
+export const createAutomation = () => api.get(`/createAutomation`);
+export const updateAutomation = () => api.get(`/updateAutomation`);
+export const deleteAutomation = () => api.get(`/deleteAutomation`);
 
 const apis = {
     insertTemperature,
@@ -33,6 +45,18 @@ const apis = {
     registerUser,
     isUserAuth,
     verifyEmailUser,
+    sendPasswordRecovery,
+    verifyPasswordRecovery,
+    passwordRecovery,
+    
+    getAllActors,
+    getAllSensors,
+
+    getAllAutomations,
+    getAutomationById,
+    createAutomation,
+    updateAutomation,
+    deleteAutomation,
 }
 
 export default apis

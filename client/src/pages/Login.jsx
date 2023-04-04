@@ -29,6 +29,13 @@ const Button = styled.button.attrs({
     className: `btn btn-primary`,
 })`
     margin: 15px 15px 15px 5px;
+    width: 100px;
+`
+
+const Link = styled.a.attrs({
+    className: ``,
+})`
+    margin: 5px 15px 0px 5px;
 `
 
 function Login() {
@@ -73,11 +80,13 @@ function Login() {
                     <InputText type="text" name="username" id="username"/>
                     <Label htmlFor="password">Password</Label>
                     <InputText type="password" name="password" id="password" />
-                    <Button type="submit">Login</Button>
-                    {/* <div className="flex flex-row items-center justify-center">
-                        <h1>Don't have an account?</h1>
-                        <Link className="m-1 px-2 py-1 rounded font-bold text-xl border-2 border-green-400 text-green-400 text-center" to="/register">Register</Link>
-                    </div>             */}
+
+                    <div class="d-flex flex-column">
+                        <Link href="/recovery">Forgot password?</Link>
+                        <Link href="/register">Don't have an account yet?</Link>
+
+                        <Button type="submit">Login</Button>
+                    </div>
                 </form>
                 {errorMessage && <ValidationError key={errorKey} message={errorMessage} />}
         </Wrapper>

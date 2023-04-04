@@ -240,9 +240,7 @@ exports.verifyEmailUser = async (req, res) => {
     //Check if the user exists, if not so this is a invalid link and redirect to invalid page
 		const user = await User.findOne({ _id: req.body.user });
 		if (!user){ 
-      res.status(400).json({message: "Invalid user provided"});
-      console.log("Invalid verification link provided");
-      return;
+      return res.status(400).json({message: "Email has already been taken"});
     }
 
     //Check if the token exists, if not so this is a invalid link and redirect to invalid page
@@ -251,9 +249,7 @@ exports.verifyEmailUser = async (req, res) => {
 			token: req.body.token,
 		});
 		if (!token){
-      res.status(400).json({message: "Invalid token provided"});
-      console.log("Invalid verification link provided");
-      return;
+      return res.status(400).json({message: "Token has already been taken"});
     }
 
     // Update the user to verified and remove the token
@@ -262,7 +258,7 @@ exports.verifyEmailUser = async (req, res) => {
 
     // Open the verified page to let the user know
 		console.log("Email verified successfully");
-    res.json({message: "Successfully verified"});
+    res.json({message: "Success"});
 	} catch (error) {
     console.log(error);
 		console.log("Internal Server Error");
@@ -301,3 +297,97 @@ exports.resend = async (req, res) => {
   res.redirect("/login")
 
 }
+
+// When we post a recovey request form
+exports.sendPasswordRecovery = async (req, res) => {
+  try {
+      
+      // Check if the user exists using the provided email, if not so prompt with error
+      const user = await User.findOne({ email: req.body.email});
+      if(!user) {
+        return res.json({message: "No user found with email"});
+      } 
+
+      //Check if the token exists, if not so make a new token
+      let token = await Token.findOne({userId: user._id});
+      if (!token){
+          token = await Token.create({
+            userId: user._id,
+            token: crypto.randomBytes(32).toString('hex')
+          });
+      } 
+
+      //Use the token and user to create an url, then sent this via a mail
+      const url = `${process.env.BASE_URL}recovery/${user._id}/${token.token}/`;
+      await sendEmail(user.email, "Password Reset","recoveryEmailTemplate", {url: url, username: user.username});   
+      console.log("Recovery email has been sent");
+      
+      // Redirect user to recovery request page and prompt with succes
+      return res.json({message: "Success"});
+  } catch (error) {
+      res.status(400).json({ error });
+  }
+}
+
+
+// When we open a recovery link
+exports.verifyPasswordRecovery = async (req, res) => {
+  try {
+
+    //Check if the user exists, if not so this is a invalid link and redirect to invalid page
+    const user = await User.findOne({ _id: req.body.user });
+    if (!user){ 
+      return res.status(400).json({message: "Invalid recovery link provided"});
+    }
+
+    //Check if the token exists, if not so this is a invalid link and redirect to invalid page
+    const token = await Token.findOne({
+        userId: user._id,
+        token: req.body.token,
+    });
+    if (!token){
+      return res.status(400).json({message: "Invalid recovery link provided"});
+    }
+
+    //Render to the recovery page 
+    return res.json({message: "Success"});
+  } catch (error) {
+    console.log("Internal Server Error");
+    return res.status(400).json({message: "Internal Server Error"});
+  }
+}
+
+// Post the new password for recovery
+exports.passwordRecovery = async (req, res) => {
+  try {
+
+    //Check if the user exists, if not so something went very wrong
+  const user = await User.findOne({ _id: req.body.user });
+  if (!user){ 
+      return res.json({message: "User not found"});
+    }
+
+    //Check if the token exists, if not so something went very wrong
+    const token = await Token.findOne({
+        userId: user._id,
+        token: req.body.token,
+    });
+    if (!token){
+      return res.json({message: "Token for recovery not found"});
+    }
+
+    // Since these tokens are also opened via mail and are the same for recovery and verification,
+    // the user also opened this via mail so we set him as verified. We also adjust the new password.
+    // After that remove the token 
+    const password = await bcrypt.hash(req.body.password, 10);
+    await User.updateOne({ _id: user._id}, {verified: true, password: password});
+		await Token.deleteOne({ _id: token._id });
+
+    // Everything went well, redirect to login page and prompt with succes alert
+    console.log("Password succesfully recovered");
+    return res.json({message: "Success"});
+  } catch (error) {
+    console.log("Internal Server Error");
+  }
+}
+

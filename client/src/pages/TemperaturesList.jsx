@@ -31,13 +31,14 @@ const TemperaturesList = () => {
 
   const setup = async () => {
     const temperaturesResponse = await api.getAllTemperatures();
+    console.log(temperaturesResponse);
     const humidityResponse = await api.getAllHumidity();
     setTemperatures(temperaturesResponse.data.data);
     setHumidity(humidityResponse.data.data);
 }
 
   const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
 
   const filteredTemperatures = temperatures.filter((temperature) => {
     const timestamp = new Date(temperature.timestamp);

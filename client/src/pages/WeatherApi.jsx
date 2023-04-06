@@ -8,33 +8,60 @@ import '../style/weather.css'
 
 
 function WeatherApi() {
-  //const url = 'https://api.openweathermap.org/data/2.5/weather?q=ghent&appid=7c29b2d75ea3419fe77514b3d6bdd43b'
+  const [data,setData] = useState({})
+  const [location, setLocation] = useState('')
+
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
+
+  const searchLocation = (event) => {
+    if (event.key === 'Enter') {
+      axios.get(url).then((response) => {
+        setData(response.data)
+        console.log(response.data)
+      })
+      setLocation('')
+    }
+  }
 
   return (
       <div className='weather'>
-        <div className='container'>
+        <div className='search'>
+          <input
+          value={location}
+          onChange={event => setLocation(event.target.value)}
+          onKeyPress={searchLocation}
+          placeholder='Enter Location'
+          type='text'/>
+        </div>
+        <div className='containerWeather'>
           <div className='top'>
             <div className='location'>
-              <p>Ghent</p>
+              <p>{data.name}</p>
             </div>
             <div className='temp'>
-              <h1>20 graden ofzo jwz</h1>
+              {data.main ? <h1>{data.main.temp.toFixed()}°C</h1> : null}
             </div>
             <div className='description'>
-              <p>Clear</p>
+              {data.weather ? <p>{data.weather[0].main}</p> : null}
             </div>
           </div>
+
+        {data.name !== undefined &&
           <div className='bottom'>
             <div className="feels">
-              <p>22 graden</p>
+              {data.main ? <p className='boldWeather'>{data.main.feels_like.toFixed()}°C</p> : null}
+              <p>Feels Like</p>
             </div>
             <div className="humidity">
-              <p>20%</p>
+              {data.main ? <p className='boldWeather'>{data.main.humidity}%</p> : null}
+              <p>Humidity</p>
             </div>
             <div className="wind">
-              <p>12 mph</p>
+              {data.wind ? <p className='boldWeather'>{data.wind.speed.toFixed()} m/s</p> : null}
+              <p>Wind Speed</p>
             </div>
           </div>
+        }
         </div>
       </div>
   );

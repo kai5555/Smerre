@@ -58,7 +58,11 @@ class Links extends Component {
                                 Drag Automation
                             </Link>
                         </Item>
-
+                        <Item>
+                            <Link to="/weather" className='nav-link'>
+                                Weather
+                            </Link>
+                        </Item>
 
                     </List>
                 </Collapse>

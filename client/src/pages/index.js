@@ -7,5 +7,6 @@ import PasswordRecovery from './PasswordRecovery'
 import PasswordRecoveryVerify from './PasswordRecoveryVerify'
 import AddAutomation from './AddAutomation'
 import DragAutomation from './DragAutomation'
+import WeatherApi from './WeatherApi'
 
-export { TemperaturesList, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, DragAutomation}
+export { TemperaturesList, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, DragAutomation, WeatherApi}

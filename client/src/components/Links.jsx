@@ -49,13 +49,7 @@ class Links extends Component {
                                                 
                         <Item>
                             <Link to="/automation" className="nav-link">
-                                Automation
-                            </Link>
-                        </Item>
-
-                        <Item>
-                            <Link to="/testAutomation" className="nav-link">
-                                Drag Automation
+                                Automations
                             </Link>
                         </Item>
 

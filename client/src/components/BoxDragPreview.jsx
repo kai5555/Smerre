@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from 'react'
-import { EntityBox, IfBox, StartBox } from './Boxes'
+import componentMap from './Boxes'
 
 const styles = {
   display: 'inline-block',
@@ -7,8 +7,10 @@ const styles = {
   WebkitTransform: 'rotate(-7deg)',
 }
 
-const BoxDragPreview = memo(function BoxDragPreview({ title, content }) {
+const BoxDragPreview = memo(function BoxDragPreview({ title, content, type, wrong }) {
   const [tickTock, setTickTock] = useState(false)
+  const Component = componentMap[type+"Box"];
+
   useEffect(
     function subscribeToIntervalTick() {
       const interval = setInterval(() => setTickTock(!tickTock), 500)
@@ -18,7 +20,7 @@ const BoxDragPreview = memo(function BoxDragPreview({ title, content }) {
   )
   return (
     <div style={styles}>
-      <EntityBox title={title} yellow={tickTock} preview content={content} />
+      <Component title={title} yellow={tickTock} preview content={content} wrong={wrong}/>
     </div>
   )
 })

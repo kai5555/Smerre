@@ -1,14 +1,8 @@
 import { memo, useEffect } from 'react'
 import { useDrag } from 'react-dnd'
 import { getEmptyImage } from 'react-dnd-html5-backend'
-import { EntityBox, IfBox, StartBox } from './Boxes'
+import componentMap from './Boxes'
 import { ItemTypes } from '../scripts'
-
-const componentMap = {
-  EntityBox,
-  IfBox,
-  StartBox,
-};
 
 function getStyles(left, top, isDragging) {
   const transform = `translate3d(${left}px, ${top}px, 0)`
@@ -18,22 +12,23 @@ function getStyles(left, top, isDragging) {
     WebkitTransform: transform,
     opacity: isDragging ? 0 : 1,
     height: isDragging ? 0 : '',
+    zIndex: 1,
   }
 }
 
 const DraggableBox = memo(function DraggableBox(props) {
-  const { id, title, left, top, wrong, type, content, onClick, onDoubleClick } = props;
+  const { id, left, top, wrong, type, content, onClick, onDoubleClick } = props;
 
   const Component = componentMap[type+"Box"];
   const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type: ItemTypes.BOX,
-      item: { id, left, top, title, type, content },
+      item: { id, left, top, type, content, wrong },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
     }),
-    [id, left, top, title, type, content],
+    [id, left, top, type, content, wrong],
   );
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
@@ -47,7 +42,7 @@ const DraggableBox = memo(function DraggableBox(props) {
       onClick ={onClick}
       onDoubleClick ={onDoubleClick}
     >
-      <Component title={title} wrong={wrong} content={content}/>
+      <Component wrong={wrong} content={content}/>
     </div>
   );
 });

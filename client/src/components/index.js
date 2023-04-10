@@ -1,12 +1,11 @@
-import Links from './Links'
-import Logo from './Logo'
-import NavBar from './NavBar'
-import DraggableBox from './DraggableBox'
-import Container from './Container'
-import CustomDragLayer from './CustomDragLayer'
-import BoxDragPreview from './BoxDragPreview'
-import Line from './Line'
-import { EntityBox, IfBox, StartBox } from './Boxes'
-import { EntityBoxModal, IfBoxModal, StartBoxModal } from './BoxesModals'
+export { default as Links } from './Links';
+export { default as Logo } from './Logo';
+export { default as NavBar } from './NavBar';
+export { default as DraggableBox } from './DraggableBox';
+export { default as Container } from './Container';
+export { default as CustomDragLayer } from './CustomDragLayer';
+export { default as BoxDragPreview } from './BoxDragPreview';
+export { default as Line } from './Line';
 
-export { Links, Logo, NavBar, DraggableBox, Container, CustomDragLayer, BoxDragPreview, Line, EntityBox, IfBox, StartBox, EntityBoxModal, IfBoxModal, StartBoxModal}
+export { default as componentMap } from './Boxes';
+export { default as modalMap } from './BoxesModals';

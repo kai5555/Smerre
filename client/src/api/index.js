@@ -27,10 +27,11 @@ export const getAllActors = () => api.get(`/getAllActors`);
 export const getAllSensors = () => api.get(`/getAllSensors`);
 
 export const getAllAutomations = () => api.get(`/getAllAutomations`);
-export const getAutomationById = () => api.get(`/getAllAutomations`);
-export const createAutomation = () => api.get(`/createAutomation`);
-export const updateAutomation = () => api.get(`/updateAutomation`);
-export const deleteAutomation = () => api.get(`/deleteAutomation`);
+export const getAutomationByName = payload => api.post(`/getAutomationByName`, payload);
+export const createAutomation = payload => api.post(`/createAutomation`, payload);
+export const updateAutomation = payload => api.post(`/updateAutomation`, payload);
+export const deleteAutomation = payload => api.post(`/deleteAutomation`, payload);
+export const toggleAutomation = payload => api.post(`/toggleAutomation`, payload);
 
 const apis = {
     insertTemperature,
@@ -53,10 +54,11 @@ const apis = {
     getAllSensors,
 
     getAllAutomations,
-    getAutomationById,
+    getAutomationByName,
     createAutomation,
     updateAutomation,
     deleteAutomation,
+    toggleAutomation,
 }
 
 export default apis

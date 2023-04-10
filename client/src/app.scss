@@ -1,0 +1,13 @@
+// Overwrite variables
+$primary: #22b542; // Change to the color you want
+$primary-hover: darken($primary, 10%);
+
+@import "~bootstrap/scss/bootstrap.scss";   
+
+// // Import Google Fonts
+// @import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+
+// // Apply custom font to the entire application
+// body {
+//   font-family: 'Roboto', sans-serif;
+// }

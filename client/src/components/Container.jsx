@@ -1,15 +1,26 @@
 import update from 'immutability-helper';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useDrop } from 'react-dnd';
 import DraggableBox from './DraggableBox';
 import { ItemTypes } from '../scripts';
-import { snapToGrid as doSnapToGrid } from '../scripts';
-import { EntityBoxModal, IfBoxModal, StartBoxModal } from './BoxesModals'
+//import { snapToGrid as doSnapToGrid } from '../scripts';
+import modalMap from './BoxesModals'
 import Line from './Line.jsx'
 import styled, { keyframes } from 'styled-components'
-import { connection } from 'mongoose';
+import api from '../api'
 
 const EditBar = styled.div.attrs({
+  className: 'form-group',
+})`
+  margin: 0 0px;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  transition: opacity 0.5s ease-out;
+  background: white;
+  opacity: ${(props) => (props.visible ? 1 : 0)};
+`
+const ToolBar = styled.div.attrs({
   className: 'form-group',
 })`
   margin: 0 0px;
@@ -35,13 +46,20 @@ const bounceAnimation = keyframes`
   }
 `;
 
-const SubmitButton = styled.button.attrs({
+const StepButton = styled.button.attrs({
   className: 'btn btn-primary',
 })`
+  margin-left: 10px;
+`;
+
+const StepButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
   position: fixed;
-  top: 120px;
+  top: 100px;
   right: 20px;
-`
+`;
+
 
 const Arrow = styled.span`
   display: inline-block;
@@ -58,37 +76,105 @@ const PickButton = styled.button.attrs({
 `;
 
 
-const modalMap = {
-  EntityBoxModal,
-  IfBoxModal,
-  StartBoxModal,
-};
+const Title = styled.p`
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 100px;
+`
 
-const styles = {
-  width: '100vw',
-  height: '100vh',
-  border: '1px solid black',
-  position: 'relative',
-};
+const Info = styled.p`
+  text-align: center;
+`
 
-const Container = () => {
+const Button = styled.button.attrs({
+  className: `btn btn-primary`,
+})`
+  margin: 15px 15px 15px 5px;
+  width: 100px;
+`
+
+const ContentBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  box-shadow: 3px 3px 5px 5px rgba(0,0,0,0.3);
+  max-width: 500px;
+  margin: 0 auto;
+`;
+
+const DragContainer = styled.div`
+  width: 100vw;
+  height: 100vh;,
+  border: 1px solid black;
+  position: relative;
+`;
+
+const Container = (props) => {
+  const {automation, onSubmitCall} = props;
+
   const [boxes, setBoxes] = useState({
-    a: { top: 20, left: 80, title: 'Trigger', type:'Start', content: {}},
-    b: { top: 20, left: 580, title: 'Condition', type:'Start', content: {}},
-    c: { top: 20, left: 1080, title: 'Action', type:'Start', content: {}},
-    d: { top: 180, left: 20, title: 'Entity', type:'Entity', content: { entity_id: "sensor.plant_temperature"}},
-    e: { top: 100, left: 90, title: 'Als...', type:'If', content: { type: ">=", value: "90"}},
+    A: { top: 20, left: 380, type:'Start', content: { title: "Als"}, errors: [], step: 0 },
+    B: { top: 20, left: 1080, type:'Start', content: { title: "Dan"}, errors: [], step: 1 },
   });
+
   const [selectedBox, setSelectedBox] = useState(null);
   const [editBarVisible, setEditBarVisible] = useState(false);
   const [lines, setLines] = useState({});
   const [editBarContent, setEditBarContent] = useState(null);
+  const [viewStep, setViewStep] = useState(0);
+  const [entities, setEntities] = useState([]);
+  
+  // Load a automation when editing
+  useEffect(() => {
+    // Do something with the automation data here
+    if(automation){
+      setLines(automation.lines);
+      setBoxes(automation.boxes);
+    }
+  }, [automation]);
+
+  // Get all the sensors and actors
+  useEffect(() => {
+    async function getAllEntities() {
+        try {
+          var newEntities = [];
+          var res = await api.getAllSensors();
+          newEntities = res.data.data;
+  
+          res = await api.getAllActors();
+          newEntities = newEntities.concat(res.data.data); 
+
+          setEntities(newEntities);
+
+        } catch (err) {
+
+        }
+    }
+    getAllEntities();
+  }, [])  
+
+  useEffect(() => {
+    setLines(prevLines => {
+      const updatedLines = {};
+      Object.entries(prevLines).forEach(([lineKey, line]) => {
+        const updatedLineKey = lineKey.slice(0, -1) + (parseInt(lineKey.slice(-1)) + 1);
+        updatedLines[updatedLineKey] = line;
+      });
+      return updatedLines;
+    });
+  }, [boxes, viewStep])
+
 
   const getCenterPoint = (left, top, index) => {
     const boxElement = document.getElementById(index);
     const boxRect = boxElement.getBoundingClientRect();
     const centerX = left + (boxRect.width / 2);
-    const centerY = top + (boxRect.height / 2) + 10;
+    console.log(boxRect.height);
+    const centerY = top + (boxRect.height) / 2 + 50;
     return { left: centerX, top: centerY };
   };  
   
@@ -101,30 +187,15 @@ const Container = () => {
           },
         }),
       );
-
-      setLines(lines => {
-        const updatedLines = {};
-        Object.entries(lines).forEach(([lineKey, line]) => {
-          if (lineKey[0] == id) {
-            line = { ...line, start: getCenterPoint(left, top, id) };
-          } 
-          else if (lineKey[1] == id) {
-            line = { ...line, end: getCenterPoint(left, top, id)  };
-          }
-          const updatedLineKey = lineKey.slice(0, -1) + (parseInt(lineKey.slice(-1)) + 1);
-          updatedLines[updatedLineKey] = line;
-        });
-        return updatedLines;
-      });
     },
-    [boxes, lines],
+    [boxes],
   );
   
   const handleBoxClick = (id) => {
     setSelectedBox(id);
   
     // Check if there are two boxes clicked
-    if (selectedBox != null && id != selectedBox) {
+    if (selectedBox != null && id !== selectedBox) {
       
       // Check if the line already exists between these two boxes
       const key1 = selectedBox + id;
@@ -134,12 +205,10 @@ const Container = () => {
 
       // You can't drag a line to a starting box, only from
       const endBoxType = boxes[id].type;
-      if(endBoxType == "Start") return;
+      if(endBoxType === "Start") return;
       
       // Create new line between the two clicked boxes
-      const startBox = boxes[selectedBox];
-      const endBox = boxes[id];
-      const newLine = { start: getCenterPoint(startBox.left, startBox.top, selectedBox), end: getCenterPoint(endBox.left, endBox.top, id) };
+      const newLine = { step: viewStep};
       
       setLines((prevLines) => {
         const updatedLines = {
@@ -194,10 +263,6 @@ const Container = () => {
     setEditBarVisible(false);
   }, []);
 
-  const handleLineClick = (key) => {
-    console.log(key);
-  }
-
   const handleBoxDoubleClick = (id) => {
     const boxType = boxes[id].type;
     const BoxModal = modalMap[boxType + "BoxModal"];
@@ -205,89 +270,185 @@ const Container = () => {
       <BoxModal 
         key={id} 
         content={boxes[id].content} 
+        errors={boxes[id].errors} 
         onOk={(content) => changedModal(id, content)}
         onCancel={() => cancelledModal()}
         onDelete={() => deleteModal(id)}
+        entities={[...entities]}
       />
     );
     setEditBarVisible(true);
   };
 
-  const submitAutomation = () => {
+  const submitAutomation = async () => {
+    
+    const processNode = [{
+      "Start": function(content, cond_obj){
+        return cond_obj;
+      },
+      "Entity": function(content, cond_obj){
+        // Add the trigger to triggers if not already in array
+        const exists = trigger.some(obj => obj.entity_id === content.entity_id);
+        if(!exists){
+          trigger.push({
+            platform: "state",
+            entity_id: content.entity_id
+          });
+        }
 
-    var automation = {};
+        // Add the condition
+        cond_obj.push({
+          condition: "numeric_state",
+          entity_id: content.entity_id,
+        });
+
+        return cond_obj[cond_obj.length - 1];
+      },
+      "CheckValue": function(content, cond_obj){
+        // Add condition value
+        if(content.type === ">"){
+          cond_obj.above = content.value;
+        }
+        else if(content.type === "<"){
+          cond_obj.below = content.value;
+        }
+        else{
+          cond_obj.idk = content.value;
+        }
+
+        return cond_obj;
+      },
+      "CheckStatus": function(content, cond_obj){
+        return cond_obj;
+      },
+      "And": function(content, cond_obj){
+        // Add and condition 
+        cond_obj.push({
+          condition: "and",
+          conditions: []
+        });
+
+        return cond_obj[cond_obj.length - 1].conditions;
+      },
+      "Or": function(content, cond_obj){
+        // Add or condition 
+        cond_obj.push({
+          condition: "or",
+          conditions: []
+        });
+
+        return cond_obj[cond_obj.length - 1].conditions;
+      },
+      "Time": function(content, cond_obj){
+           // Add the trigger to triggers
+           trigger.push({
+            platform: "time",
+            at: content.time
+          });
+
+          return cond_obj;
+      },
+    },
+    {
+      "Start": function(content, action_obj){
+        return action_obj;
+      },
+      "Entity": function(content, action_obj){
+        // Add the action
+        action_obj.push({
+          service: "",
+          data: {},
+          target: {
+            entity_id: content.entity_id
+          }
+        });
+        
+        return action_obj[action_obj.length - 1];
+      },
+      "BasicAction": function(content, action_obj){
+        action_obj.service = "switch." + content.type;
+
+        return action_obj;
+      },
+      "AdvancedAction": function(content, action_obj){
+        action_obj.service = content.service;
+        action_obj.data = JSON.parse(content.data);
+
+        return action_obj;
+      },
+    }]
+
+    let automation = {};
+    let trigger = [];
+    let condition = [];
+    let action = [];
+
+    // Create a graph 
+    let graph = createGraph();
 
     // Set the basic information of the automation
-    automation['alias'] = "Nieuwe automatisering TESTER";
     automation['description'] = "";
     automation['mode'] ="single";
 
-    // Set the tree information
-    automation['trigger'] = setupTrigger('a');
-  }
+    // Set the automation for condition and trigger
+    let startNode = Object.keys(boxes)[0];
+    setupTriggerAndConditon(startNode, condition, 0);
+    automation['trigger'] = trigger;
+    automation['condition'] = condition;
 
-  function setupTrigger(boxKey){
+    // Set the automation for action
+    startNode = Object.keys(boxes)[1];
+    setupAction(startNode, action, 1);
+    automation['action'] = action;
 
-    // Get all possible triggers in a tree
-    const tree = {};
-    addNodeToTree(boxKey, tree); 
+    // Finally sent the created automation and current structure to the parent component
+    onSubmitCall(automation, lines, boxes);
 
-    //TEST
-    setBoxes(prevBoxes => {
-      Object.entries(prevBoxes).forEach(([boxKey, box]) => {
-        box.wrong = true;
+    function setupTriggerAndConditon(key, obj, step){
+      let box = boxes[key];
+      let next = processNode[step][box.type](box.content, obj);
+
+      let node = graph[key];
+      node.children.forEach(child => {
+        setupTriggerAndConditon(child, next, step);
       });
-
-      return prevBoxes;
-    });
-    
-    // Validate tree
-    if(!validateTree(tree)) return;
-    
-
-    return null;
-  }
-
-  function addNodeToTree(node, tree) {
-    const connections = getConnections(node);
-
-    if(connections.length == 0){
-      tree[node] = [];
-      return tree;
     }
-    tree[node] = connections.map((childNode) => {
-      const childTree = {};
-      addNodeToTree(childNode, childTree);
-      return childTree;
-    });
-  }
 
-  function getConnections(fromBox){
-    var connections = [];
+    function setupAction(key, obj, step){
+      let box = boxes[key];
+      let next = processNode[step][box.type](box.content, obj);
 
-    Object.entries(lines).forEach(([lineKey, line]) => {
-      if(lineKey[0] == fromBox){
-        connections.push(lineKey[1])
-      }
-    });
-
-    return connections;
-  }
-
-  function validateTree(tree){
-    const stack = [tree];
-    while (stack.length > 0) {
-      const node = stack.pop();
-     
-      if (typeof node === "object") {
-        for (const child of Object.values(node)) {
-          stack.push(child);
-        }
-      }
-
-      console.log("Node" + node);
-      console.log(stack);
+      let node = graph[key];
+      node.children.forEach(child => {
+        setupAction(child, next, step);
+      });
     }
+  }
+
+  function createGraph(){
+    // Setup the graph
+    var graph = {};
+    for(let box in boxes){
+      graph[box] = {parent: null, children: []}
+    }
+    for(let line in lines){
+      let u = line[0];
+      let v = line[1];
+      graph[u].children.push(v);
+      graph[v].parent = u;
+    }
+
+    return graph;
+  }
+
+  function goNextStep(){
+    if(!validateCurrentGraph()) return;
+
+    setViewStep((prevCount) => prevCount + 1)
+  }
+
+  function goPreviousStep(){
+    setViewStep((prevCount) => prevCount - 1)
   }
 
   const handleAddBox = useCallback((type, event) => {
@@ -298,10 +459,38 @@ const Container = () => {
       const lastBoxKey = Object.keys(boxes).pop();
       const nextKey = String.fromCharCode(lastBoxKey.charCodeAt(0) + 1);
 
-      const newBox = { top: clientY - 100, left: clientX, title: type, type: type, content: {} };
+      const newBox = { top: clientY, left: clientX, title: type, type: type, content: {}, errors: [], step: viewStep };
       return { ...boxes, [nextKey]: newBox };
     });
-  }, []);
+  }, [viewStep]);
+
+  const handleLineClick = (id) => {
+    const BoxModal = modalMap["LineModal"];
+    setEditBarContent(
+      <BoxModal 
+        key={id} 
+        content={{}} 
+        errors={[]} 
+        onOk={() => {}}
+        onCancel={() => cancelledModal()}
+        onDelete={() => deleteLine(id)}
+      />
+    );
+    setEditBarVisible(true);
+  };
+  
+  const deleteLine = useCallback(
+    (id) => {
+      setLines((prevLines) => {
+        const newLines = { ...prevLines };
+        delete newLines[id];
+        return newLines;
+      });
+
+      setEditBarVisible(false);
+    },
+    []
+  );
       
   const [, drop] = useDrop(
     () => ({
@@ -320,40 +509,465 @@ const Container = () => {
   );
   
   return (
-    <><div ref={drop} style={styles}>
-      {Object.keys(boxes).map((key) => (
-        <DraggableBox
-          key={key}
-          id={key}
-          {...boxes[key]}
-          onClick={() => handleBoxClick(key)}
-          onDoubleClick={() => handleBoxDoubleClick(key)} />
-      ))}
-      {Object.entries(lines).map(([key, line]) => (
-        <Line
-          key={key}
-          points={[
-            { x: line.start.left, y: line.start.top },
-            { x: line.end.left, y: line.end.top },
-          ]} 
-          onClick={() => handleLineClick(key)}
-          />
-      ))}
-    </div>
-    <EditBar visible={editBarVisible}>
-      {editBarContent}
-    </EditBar>
-    <EditBar visible={!editBarVisible}>
-      <PickButton onClick={(event) => handleAddBox("Entity", event)}>Add Entity</PickButton>
-      <PickButton onClick={(event) => handleAddBox("If", event)}>Add If</PickButton>
-    </EditBar>
+    <>
+      {viewStep !== 2 && (
+        <>
+          <DragContainer ref={drop}>
+            {Object.keys(boxes)
+              .filter((key) => boxes[key].step === viewStep)
+              .map((key) => (
+                <DraggableBox
+                  key={key}
+                  id={key}
+                  onClick={() => handleBoxClick(key)}
+                  onDoubleClick={() => handleBoxDoubleClick(key)}
+                  {...boxes[key]} 
+                />
+              ))}
+            {Object.entries(lines)
+              .filter(([key, line]) => line.step === viewStep)
+              .map(([key, line]) => (
+                <Line
+                  key={key}
+                  boxes={[
+                    {key: key.charAt(0), box:boxes[key.charAt(0)]},
+                    {key: key.charAt(1), box:boxes[key.charAt(1)]},
+                  ]} 
+                  onClick={() => handleLineClick(key)}
+                  {...lines[key]}
+                />
+              ))}
+          </DragContainer>
 
-    <SubmitButton onClick={() => submitAutomation()}>
-      Klaar
-      <Arrow>&#10148;</Arrow>
-    </SubmitButton>
+          <EditBar visible={editBarVisible} style={{pointerEvents : (!editBarVisible ? 'none' : 'auto')}}>
+            {editBarContent}
+          </EditBar>
+        </>
+      )}
+
+      {viewStep === 0 && (
+        <>
+          <ToolBar visible={!editBarVisible}>
+            <PickButton onClick={(event) => handleAddBox("Entity", event)} disabled={editBarVisible}>Entity</PickButton>
+            <PickButton onClick={(event) => handleAddBox("And", event)} disabled={editBarVisible}>And</PickButton>
+            <PickButton onClick={(event) => handleAddBox("Or", event)} disabled={editBarVisible}>Or</PickButton>
+            <PickButton onClick={(event) => handleAddBox("Time", event)} disabled={editBarVisible}>Time</PickButton>
+            <PickButton onClick={(event) => handleAddBox("CheckValue", event)} disabled={editBarVisible}>CheckValue</PickButton>
+            <PickButton onClick={(event) => handleAddBox("CheckStatus", event)} disabled={editBarVisible}>CheckStatus</PickButton>
+          </ToolBar>
+          <StepButtonsContainer>
+            <StepButton onClick={() => goNextStep()}>
+              Next 
+            </StepButton>
+          </StepButtonsContainer>
+        </>
+      )}
+      {viewStep === 1 && (
+        <>
+          <ToolBar visible={!editBarVisible}>
+            <PickButton onClick={(event) => handleAddBox("Entity", event)} disabled={editBarVisible}>Entity</PickButton>
+            <PickButton onClick={(event) => handleAddBox("BasicAction", event)} disabled={editBarVisible}>BasicAction</PickButton>
+            <PickButton onClick={(event) => handleAddBox("AdvancedAction", event)} disabled={editBarVisible}>AdvancedAction</PickButton>
+          </ToolBar>
+          <StepButtonsContainer>
+            <StepButton onClick={() => goPreviousStep()}>
+              Previous 
+            </StepButton>
+            <StepButton onClick={() => goNextStep()}>
+              Next 
+            </StepButton>
+          </StepButtonsContainer>
+        </>
+      )}
+      {viewStep === 2 && (
+        <>
+          <Title>Ready to upload automation</Title>
+          <ContentBox>
+            <Info>Your automation has been verified, to upload it to homeassitant and mongodb press the button below</Info>
+            <Button onClick={() => submitAutomation()}>
+              Done
+              <Arrow>&#10148;</Arrow>
+            </Button>
+            
+            <Button onClick={() => goPreviousStep()}>
+              Go Back 
+            </Button>
+          </ContentBox>
+        </>
+      )}
+
     </>
   );
-};
+
+  function validateCurrentGraph(){
+    
+    const regexPresets = {
+      everything: /.*/,
+      everything_or_none: /^.*$/,
+      none: /^$/,
+      everything_except: function(exceptions) {
+        const regex = new RegExp(`^(?!(${exceptions.join("|")})).*$`);
+        return regex;
+      },
+      only: function(allowed) {
+        const regex = new RegExp(`^(${allowed.join("|")})$`);
+        return regex;
+      },
+      or: (expressions) => new RegExp(`(${expressions.join("|")})`),
+      and: (expressions) => new RegExp(`^${expressions.join("")}$`)
+    };
+
+    function isKeyValid(obj, key) {
+      return obj[key]?.trim() ?? false;
+    }
  
+    const connectionValidations = [{
+      "Start": {
+        "min_children": 1,
+        "max_children": 1,
+        "possible_parents": regexPresets.none,
+        "parent_warning": "'Start' can't have any parents",
+        "child_warning": "'Start' can have only one child",
+      },
+      "Entity": {
+        "min_children": 1,
+        "max_children": 2,
+        "possible_parents": regexPresets.only(["Start", "And", "Or"]),
+        "parent_warning": "'Entity' can only have the 'Als', 'And', 'Or' as parent",
+        "child_warning": "'Entity' can have 1 to 2 children",
+      },
+      "CheckValue": {
+        "min_children": 0,
+        "max_children": 0,
+        "possible_parents": regexPresets.only(["Entity"]),
+        "parent_warning": "'Value' can only have the 'Entity' as parent",
+        "child_warning": "'Value' can't have any children",
+      },
+      "CheckStatus": {
+        "min_children": 0,
+        "max_children": 0,
+        "possible_parents": regexPresets.only(["Entity"]),
+        "parent_warning": "'Status' can only have the 'Entity' as parent",
+        "child_warning": "'Status' can't have any children",
+      },
+      "And": {
+        "min_children": 2,
+        "max_children": Infinity,
+        "possible_parents": regexPresets.only(["Start", "And", "Or"]),
+        "parent_warning": "'And' can only have the 'Als', 'And', 'Or' as parents",
+        "child_warning": "'And' must have more then 2 children",
+      },
+      "Or": {
+        "min_children": 2,
+        "max_children": Infinity,
+        "possible_parents": regexPresets.only(["Start", "And", "Or"]),
+        "parent_warning": "'Or' can only have the 'Als', 'And', 'Or' as parents",
+        "child_warning": "'Or' must have more then 2 children",
+      },
+      "Time": {
+        "min_children": 0,
+        "max_children": 0,
+        "possible_parents": regexPresets.only(["Start", "And", "Or"]),
+        "parent_warning": "'Time' can only have the 'Als', 'And', 'Or' as parents",
+        "child_warning": "'Time' can't have any children",
+      },
+    },
+    {
+      "Start": {
+        "min_children": 1,
+        "max_children": Infinity,
+        "possible_parents": regexPresets.none,
+        "parent_warning": "'Start' can't have any parents",
+        "child_warning": "'Start' must have more than one child",
+      },
+      "Entity": {
+        "min_children": 1,
+        "max_children": 1,
+        "possible_parents": regexPresets.only(["Start"]),
+        "parent_warning": "'Entity' can only have the 'Dan' as parent",
+        "child_warning": "'Entity' can only have 1 child",
+      },
+      "BasicAction": {
+        "min_children": 0,
+        "max_children": 0,
+        "possible_parents": regexPresets.only(["Entity"]),
+        "parent_warning": "'Entity' can only have the 'Entity' as parent",
+        "child_warning": "'Entity' can't have any children",
+      },
+      "AdvancedAction": {
+        "min_children": 0,
+        "max_children": 0,
+        "possible_parents": regexPresets.only(["Entity"]),
+        "parent_warning": "'Entity' can only have the 'Entity' as parent",
+        "child_warning": "'Entity' can't have any children",
+      },
+    }]
+    
+    const contentValidations = [{
+      "Start": function validate(key) {
+        return 'success';
+      },
+      "Entity": function validate(key) {
+        let box = boxes[key];
+        let node = graph[key];
+    
+        let content = box.content;
+        let obj = entities.find(obj => obj.entity_id === content.entity_id);
+        if(!obj) return "'Entity' has a entity that can be found"
+        
+        if(obj.type === "sensor"){
+          const values = []
+
+          // Check for only value children and if these values make sense?
+          for(let i = 0; i < node.children.length; i++){
+            let child = boxes[node.children[i]];
+            if(child.type !== "CheckValue") return "'Entity' can only have values as children";
+
+            let childContent = child.content;
+            if(values.includes(childContent.type) || values.includes("=") || (values.length > 0 && childContent.type === "=")) return "'Entity' values don't make sense"; // If same type or equals
+            values.push(childContent.type);
+          }
+
+        }
+        else{
+          // Check for only status child
+          for(let i = 0; i < node.children.length; i++){
+            let child = boxes[node.children[i]];
+            if(child.type !== "StatusValue") return "'Entity' can only have status as children";
+          }
+        }
+
+        return 'success';
+      },
+      "CheckValue": function validate(key){
+        let box = boxes[key];
+        let content = box.content;
+        if(!content) return "'Value' doesn't have any content";
+        
+        if(!isKeyValid(content, "type")) return "'Value' doesn't have any type";
+
+        if(!isKeyValid(content, "value")) return "'Value' doesn't have any value";
+
+        return 'success';
+      },
+      "CheckStatus": function validate(key) {
+        let box = boxes[key];
+        let content = box.content;
+        if(!content) return "'Value' doesn't have any content";
+        
+        if(!isKeyValid(content, "status")) return "'Status' doesn't have any status";
+
+        return 'success';
+      },
+      "SetValue": function validate(key) {
+        let box = boxes[key];
+        let content = box.content;
+        if(!content) return "'Value' doesn't have any content";
+        
+        if(!isKeyValid(content, "value")) return "'Value' doesn't have any value";
+
+        return 'success';
+      },
+      "SetStatus": function validate(key) {
+        let box = boxes[key];
+        let content = box.content;
+        if(!content) return "'Value' doesn't have any content";
+        
+        if(!isKeyValid(content, "status")) return "'Status' doesn't have any status";
+
+        return 'success';
+      },
+      "And": function validate(key) {
+        return 'success';
+      },
+      "Or": function validate(key) {
+        return 'success';
+      },
+      "Time": function validate(key) {
+        let box = boxes[key];
+        let content = box.content;
+        if(!content) return "'Time' doesn't have any content";
+        
+        if(!isKeyValid(content, "time")) return "'Time' doesn't have any time";
+
+        return 'success';
+      },
+    },
+    {
+      "Start": function validate(key) {
+        return 'success';
+      },
+      "Entity": function validate(key) {
+        let box = boxes[key];
+        let node = graph[key];
+    
+        let content = box.content;
+        let obj = entities.find(obj => obj.entity_id === content.entity_id);
+        if(!obj) return "'Entity' has a entity that can be found"
+        
+        if(obj.type === "sensor"){
+
+          for(let i = 0; i < node.children.length; i++){
+            let child = boxes[node.children[i]];
+            if(child.type === "BasicAction" || child.type === "AdvancedAction") return "'Entity' can't have any action as child";
+          }
+
+        }
+        else{
+
+          for(let i = 0; i < node.children.length; i++){
+            let child = boxes[node.children[i]];
+            if(child.type !== "BasicAction" && child.type !== "AdvancedAction") return "'Entity' must have a action as child";
+          }
+        }
+
+        return 'success';
+      },
+      "BasicAction": function validate(key) {
+        let box = boxes[key];
+        let content = box.content;
+        if(!content) return "'BasicAction' doesn't have any content";
+        
+        if(!isKeyValid(content, "type")) return "'BasicAction' doesn't have any type";
+
+        let node = graph[key];
+        let parent = boxes[node.parent];
+        let obj = entities.find(obj => obj.entity_id === parent.content.entity_id);
+        if(!obj) return "'BasicAction' has a provided entity that can be found"
+
+        // Check if advanced action is valid
+        if(obj.services){
+          return "'BasicAction' can't only have a advanced action: " + obj.services.map(s => s.service).join(", ");
+        }
+
+        return 'success';
+      },
+      "AdvancedAction": function validate(key) {
+        let box = boxes[key];
+        let content = box.content;        
+        if(!content) return "'AdvancedAction' doesn't have any content";
+        
+        if(!isKeyValid(content, "service")) return "'AdvancedAction' doesn't have any service";
+        if(!isKeyValid(content, "data")) return "'AdvancedAction' doesn't have any data";
+
+        let node = graph[key];
+        let parent = boxes[node.parent];
+        let obj = entities.find(obj => obj.entity_id === parent.content.entity_id);
+        if(!obj) return "'AdvancedAction' has a provided entity that can be found"
+
+        // Check if advanced action is valid
+        if(!obj.services){
+          return "'Entity' can't have a advanced action, try a basic action instead";
+        }
+
+        var service = obj.services.find(s => s.service === content.service);
+        if(!service){
+          return "'Entity' doesn't have a serivce called " + content.service + ", chose from: " + obj.services.map(s => s.service).join(", ");
+        }
+
+        var contentData;
+        try {
+          contentData = JSON.parse(content.data);
+        } catch (error) {
+          return "'Entity' provided data isn't of a valid format, must look like: {'key': value}";
+        }
+
+        for(let key in contentData){
+          if(!service.data.includes(key)){
+            return "'Entity' doesn't need this data";
+          }
+        }
+        
+        
+        return 'success';
+      }
+    }]
+
+    // Setup vars and clear error lists
+    let graph = createGraph();
+    let updatedBoxes = {...boxes};
+    for (let key in updatedBoxes) {
+      updatedBoxes[key].errors = [];
+    }
+    let valid = true;
+
+    // Start initial node of the current step
+    dfs(Object.keys(boxes)[viewStep]);
+
+    // Finnally set wrong boxes and lines and errors
+    setBoxes(updatedBoxes);
+    
+    // If not errors have occured return that
+    return valid;
+
+    // Do a depth first search on the tree to travese all nodes and check the order and content
+    function dfs(key) {
+      let box = updatedBoxes[key];
+
+      // Check if content and order are valid and set colors and errors if not
+      let nodeValid = validateNode(key);
+      if(nodeValid !== "success"){
+        box.wrong = "connection";
+        updatedBoxes[key].errors.push({message: nodeValid, type: "connection"});
+        valid = false;
+      }
+      else{
+        let contentValid = validateContent(key);
+        if(contentValid !== "success"){
+          box.wrong = "content";
+          updatedBoxes[key].errors.push({message: contentValid, type: "content"});
+          valid = false;
+        }
+        else{
+          box.wrong = "";
+        }
+      }
+      
+      // Loop through rest of graph recursively and mark visited nodes
+      graph[key].visited = true; 
+      for (let child of graph[key].children) {
+        if (!graph[child].visited) {
+          dfs(child); 
+        }
+      }
+    }
+
+    // Check if the node order is valid of the given node, check parent type and number of children
+    function validateNode(key){
+      let box = boxes[key];
+      let node = graph[key];
+
+      let type = box.type;
+      let validation = connectionValidations[viewStep][type];
+
+      if(!node.parent){
+        let children = node.children.length;
+        if(validation.min_children > children || children > validation.max_children) return validation.child_warning;
+        return 'success';
+      };
+
+      let parentType = boxes[node.parent].type; 
+
+      // Validate node children
+      let children = node.children.length;
+      if(validation.min_children > children || children > validation.max_children) return validation.child_warning;
+
+      // Validate nodes order
+      let allowedParentsRegex = validation.possible_parents; 
+      let isParentAllowed = allowedParentsRegex.test(parentType); 
+      if(!isParentAllowed) return validation.parent_warning;
+
+      return 'success';
+    }
+
+    // Check if the content if valid of a given node
+    function validateContent(key){
+      let box = boxes[key];
+      let type = box.type;
+
+      return contentValidations[viewStep][type](key);
+    }
+  }
+};
+
 export default Container;

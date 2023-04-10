@@ -6,6 +6,7 @@ import EmailVerify from './EmailVerify'
 import PasswordRecovery from './PasswordRecovery'
 import PasswordRecoveryVerify from './PasswordRecoveryVerify'
 import AddAutomation from './AddAutomation'
-import DragAutomation from './DragAutomation'
+import EditAutomation from './EditAutomation'
+import Automations from './Automations'
 
-export { TemperaturesList, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, DragAutomation}
+export { TemperaturesList, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations}

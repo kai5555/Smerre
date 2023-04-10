@@ -1,4 +1,4 @@
-import React, { Component, useLayoutEffect, useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import api from '../api'
 import ValidationError from './ValidationError'
 import { useNavigate} from 'react-router-dom';
@@ -32,12 +32,6 @@ const Button = styled.button.attrs({
     width: 100px;
 `
 
-const Link = styled.a.attrs({
-    className: ``,
-})`
-    margin: 5px 15px 0px 5px;
-`
-
 function PasswordRecovery() {
 
     const navigate = useNavigate();
@@ -57,7 +51,7 @@ function PasswordRecovery() {
             const data = await res.data;
 
             // If something went wrong
-            if(data.message != "Success"){
+            if(data.message !== "Success"){
                 setErrorMessage(data.message);
                 setErrorKey((prevKey) => prevKey + 1);
                 return;
@@ -69,70 +63,6 @@ function PasswordRecovery() {
         }
     }
   
-    useLayoutEffect(() => {
-        async function checkUserAuth() {
-            // try {
-            //     console.log("TRIED LED");
-            //     const response = await fetch('http://10.129.55.146:8123/api/config/automation/config/automation_tester', {
-            //         method: 'POST',
-            //         body: JSON.stringify({
-            //             alias: "Nieuwe automatisering TESTER",
-            //             description: "",
-            //             trigger: {
-            //                 platform: "state",
-            //                 entity_id: "switch.magneetventiel"
-            //             },
-            //             condition: [],
-            //             action: {
-            //                 service: "switch.toggle",
-            //                 data: {}
-            //             },
-            //             mode: "single"
-            //         }),
-            //         headers: {
-            //             "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2ZmE2NThhMzJlN2M0YTA5OTg1MzA5OTYzNTNhMGNlOCIsImlhdCI6MTY2OTcyNTgwNCwiZXhwIjoxOTg1MDg1ODA0fQ.PQsPlGsNVNxbYGwXfvsGi1k10rskekiDkayAD59gziw",
-            //             'Content-Type': 'application/json',
-            //         },
-                    
-            //     });
-            // } catch (err) {
-            //     console.log(err.errorMessage);
-            // }
-
-            // try {
-            //     console.log("TRIED LED");
-            //     const response = await fetch('http://10.129.55.146:8123/api/services/homeassistant/turn_off', {
-            //         method: 'POST',
-            //         body: JSON.stringify({
-            //             "entity_id": "automation.nieuwe_automatisering",
-            //         }),
-            //         headers: {
-            //             "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2ZmE2NThhMzJlN2M0YTA5OTg1MzA5OTYzNTNhMGNlOCIsImlhdCI6MTY2OTcyNTgwNCwiZXhwIjoxOTg1MDg1ODA0fQ.PQsPlGsNVNxbYGwXfvsGi1k10rskekiDkayAD59gziw",
-            //             'Content-Type': 'application/json',
-            //         },
-            //     });
-            // } catch (err) {
-            //     console.log(err.message);
-            // }
-            // try {
-            //     console.log("TRIED LED");
-            //     const response = await fetch('http://10.129.55.146:8123/api/services/automation/toggle', {
-            //         method: 'POST',
-            //         body: JSON.stringify({
-            //             "entity_id": "automation.nieuwe_automatisering",
-            //         }),
-            //         headers: {
-            //             "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2ZmE2NThhMzJlN2M0YTA5OTg1MzA5OTYzNTNhMGNlOCIsImlhdCI6MTY2OTcyNTgwNCwiZXhwIjoxOTg1MDg1ODA0fQ.PQsPlGsNVNxbYGwXfvsGi1k10rskekiDkayAD59gziw",
-            //             'Content-Type': 'application/json',
-            //         },
-            //     });
-            // } catch (err) {
-            //     console.log(err.message);
-            // }
-        }
-        checkUserAuth();
-    },[]);
-
     return (
         <Wrapper>
                 <Title>Reset password</Title>

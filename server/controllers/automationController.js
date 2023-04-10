@@ -1,4 +1,5 @@
 const Automation = require('../modals/AutomationModal')
+const fetch = require('node-fetch');
 
 exports.getAllAutomations = async (req, res) => {
     await Automation.find({})
@@ -13,8 +14,8 @@ exports.getAllAutomations = async (req, res) => {
         .catch(err => console.log(err))
 }
 
-exports.getAutomationById = async (req, res) => {
-    await Automation.findOne({_id: req.body.id})
+exports.getAutomationByName = async (req, res) => {
+    await Automation.findOne({name: req.body.name})
         .then(automation => {
             if (!automation) {
                 return res
@@ -36,20 +37,25 @@ exports.createAutomation = async (req, res) => {
         })
     }
 
-    const automation = new Automation(body)
+    // Add to mongodb
+    body.automation.alias = body.automationName;
+
+    const automationName = body.automationName.toLowerCase().replace(/\s+/g, '_');
+    const automation = new Automation({
+        name: automationName,
+        alias: body.automationName,
+        lines: body.lines,
+        boxes: body.boxes,
+    })
 
     if (!automation) {
         return res.status(400).json({ success: false, error: err })
     }
 
-    automation
+    await automation
         .save()
         .then(() => {
-            return res.status(201).json({
-                success: true,
-                id: automation._id,
-                message: 'Automation created!',
-            })
+            console.log("Automation created");
         })
         .catch(error => {
             return res.status(400).json({
@@ -59,6 +65,21 @@ exports.createAutomation = async (req, res) => {
         })
 
     // Create automation in homeassitant
+     try {
+        await fetch(`http://${process.env.HOMEASSISTANT_IP}/api/config/automation/config/${automationName}`, {
+            method: 'POST',
+            body: JSON.stringify(body.automation),
+            headers: {
+                "Authorization": `Bearer ${process.env.HOMEASSISTANT_TOKEN}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log("Created " + body.automationName);
+    } catch (err) {
+        res.status(404)
+    }
+
+    return res.json({message: "Success"});
 }
 
 exports.updateAutomation = async (req, res) => {
@@ -71,19 +92,17 @@ exports.updateAutomation = async (req, res) => {
         })
     }
 
-    Automation.findOne({ _id: req.params.id })
+    Automation.findOne({ name: body.automationName })
         .then(automation => {
-            temperature.name = body.name
-            temperature.alias = body.alias
-            temperature.tree = body.tree
+            if(automation == null) return res.status(404).json({message: "Automation not found"});
+
+            automation.lines = body.lines;
+            automation.boxes = body.boxes;
+
             automation
                 .save()
                 .then(() => {
-                    return res.status(200).json({
-                        success: true,
-                        id: automation._id,
-                        message: 'Automation updated!',
-                    })
+                    console.log("Automation updated");
                 })
                 .catch(error => {
                     return res.status(404).json({
@@ -94,13 +113,77 @@ exports.updateAutomation = async (req, res) => {
         })
 
         
-    // Edit automation in homeassitant
+    // Update automation in homeassitant
+     try {
+        await fetch(`http://${process.env.HOMEASSISTANT_IP}/api/config/automation/config/${body.automationName}`, {
+            method: 'POST',
+            body: JSON.stringify(body.automation),
+            headers: {
+                "Authorization": `Bearer ${process.env.HOMEASSISTANT_TOKEN}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log("Updated " + body.automationName);
+    } catch (err) {
+        return res.status(404).json({message: err});
+    }
+
+    return res.json({message: "Success"});
 }
 
 exports.deleteAutomation = async (req, res) => {
+    const body = req.body
 
-    const automation = await Automation.deleteOne({ _id: body.req.id });
+    const automation = await Automation.findOne({ name: body.automationName  });
+    if(automation == null) return res.status(404).json({message: "Automation not found"});
+
+    await Automation.deleteOne({ name: body.automationName  });
         
     // Delete automation in homeassitant
+    try {
+        await fetch(`http://${process.env.HOMEASSISTANT_IP}/api/config/automation/config/${body.automationName}`, {
+          method: 'DELETE',
+          headers: {
+            "Authorization": `Bearer ${process.env.HOMEASSISTANT_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log("Deleted " + body.automationName);
+    } catch (err) {
+        console.log(err);
+        return res.status(404).json({message: err});
+    }
+
+    return res.json({message: "Success"});
 }
 
+exports.toggleAutomation = async (req, res) => {
+    const body = req.body
+
+    const automation = await Automation.findOne({ name: body.automationName })
+    if(automation == null) return res.status(404).json({message: "Automation not found"});
+    const enabled = !automation.enabled;
+
+    // Toggle in mongoose and update
+    automation.enabled = enabled;
+    await automation.save();
+        
+    // Toggle in homeassitant
+    try {
+        await fetch(`http://${process.env.HOMEASSISTANT_IP}/api/services/automation/toggle`, {
+            method: 'POST',
+            body: JSON.stringify({
+                "entity_id": `automation.${body.automationName}`,
+            }),
+            headers: {
+                "Authorization": `Bearer ${process.env.HOMEASSISTANT_TOKEN}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log("Toggled " + body.automationName);
+    } catch (err) {
+        return res.status(404).json({message: err});
+    }
+
+    return res.json({message: "Success"});
+}

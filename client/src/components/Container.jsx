@@ -1,5 +1,5 @@
 import update from 'immutability-helper';
-import { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useDrop } from 'react-dnd';
 import DraggableBox from './DraggableBox';
 import { ItemTypes } from '../scripts';
@@ -117,8 +117,8 @@ const Container = (props) => {
   const {automation, onSubmitCall} = props;
 
   const [boxes, setBoxes] = useState({
-    A: { top: 20, left: 380, type:'Start', content: { title: "Als"}, errors: [], step: 0 },
-    B: { top: 20, left: 1080, type:'Start', content: { title: "Dan"}, errors: [], step: 1 },
+    A: { top: 20, left: window.innerWidth / 2 - 25, type:'Start', content: { title: "Als"}, errors: [], step: 0 },
+    B: { top: 20, left: window.innerWidth / 2 - 25, type:'Start', content: { title: "Dan"}, errors: [], step: 1 },
   });
 
   const [selectedBox, setSelectedBox] = useState(null);
@@ -167,16 +167,6 @@ const Container = (props) => {
       return updatedLines;
     });
   }, [boxes, viewStep])
-
-
-  const getCenterPoint = (left, top, index) => {
-    const boxElement = document.getElementById(index);
-    const boxRect = boxElement.getBoundingClientRect();
-    const centerX = left + (boxRect.width / 2);
-    console.log(boxRect.height);
-    const centerY = top + (boxRect.height) / 2 + 50;
-    return { left: centerX, top: centerY };
-  };  
   
   const moveBox = useCallback(
     (id, left, top) => {
@@ -219,6 +209,7 @@ const Container = (props) => {
         return updatedLines;
       });
     }
+    
   };
 
   const changedModal = useCallback(
@@ -538,22 +529,24 @@ const Container = (props) => {
                 />
               ))}
           </DragContainer>
-
-          <EditBar visible={editBarVisible} style={{pointerEvents : (!editBarVisible ? 'none' : 'auto')}}>
-            {editBarContent}
-          </EditBar>
         </>
       )}
 
-      {viewStep === 0 && (
+      {viewStep !== 2 && editBarVisible &&(
+        <EditBar visible={editBarVisible}>
+          {editBarContent}
+        </EditBar>
+      )}
+
+      {viewStep === 0 && !editBarVisible &&(
         <>
           <ToolBar visible={!editBarVisible}>
-            <PickButton onClick={(event) => handleAddBox("Entity", event)} disabled={editBarVisible}>Entity</PickButton>
-            <PickButton onClick={(event) => handleAddBox("And", event)} disabled={editBarVisible}>And</PickButton>
-            <PickButton onClick={(event) => handleAddBox("Or", event)} disabled={editBarVisible}>Or</PickButton>
-            <PickButton onClick={(event) => handleAddBox("Time", event)} disabled={editBarVisible}>Time</PickButton>
-            <PickButton onClick={(event) => handleAddBox("CheckValue", event)} disabled={editBarVisible}>CheckValue</PickButton>
-            <PickButton onClick={(event) => handleAddBox("CheckStatus", event)} disabled={editBarVisible}>CheckStatus</PickButton>
+            <PickButton onClick={(event) => handleAddBox("Entity", event)}>Entity</PickButton>
+            <PickButton onClick={(event) => handleAddBox("And", event)}>And</PickButton>
+            <PickButton onClick={(event) => handleAddBox("Or", event)}>Or</PickButton>
+            <PickButton onClick={(event) => handleAddBox("Time", event)}>Time</PickButton>
+            <PickButton onClick={(event) => handleAddBox("CheckValue", event)}>CheckValue</PickButton>
+            <PickButton onClick={(event) => handleAddBox("CheckStatus", event)}>CheckStatus</PickButton>
           </ToolBar>
           <StepButtonsContainer>
             <StepButton onClick={() => goNextStep()}>
@@ -562,12 +555,12 @@ const Container = (props) => {
           </StepButtonsContainer>
         </>
       )}
-      {viewStep === 1 && (
+      {viewStep === 1 && !editBarVisible &&(
         <>
           <ToolBar visible={!editBarVisible}>
-            <PickButton onClick={(event) => handleAddBox("Entity", event)} disabled={editBarVisible}>Entity</PickButton>
-            <PickButton onClick={(event) => handleAddBox("BasicAction", event)} disabled={editBarVisible}>BasicAction</PickButton>
-            <PickButton onClick={(event) => handleAddBox("AdvancedAction", event)} disabled={editBarVisible}>AdvancedAction</PickButton>
+            <PickButton onClick={(event) => handleAddBox("Entity", event)}>Entity</PickButton>
+            <PickButton onClick={(event) => handleAddBox("BasicAction", event)}>BasicAction</PickButton>
+            <PickButton onClick={(event) => handleAddBox("AdvancedAction", event)}>AdvancedAction</PickButton>
           </ToolBar>
           <StepButtonsContainer>
             <StepButton onClick={() => goPreviousStep()}>

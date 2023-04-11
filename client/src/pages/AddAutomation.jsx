@@ -125,6 +125,7 @@ const AddAutomation = () => {
       return;
 
     } catch (error) {
+      console.log(error);
       if (error.response.status !== 404) {
         setErrorMessage("An eror occured: " + error.message);
         setErrorKey((prevKey) => prevKey + 1);
@@ -181,7 +182,6 @@ const AddAutomation = () => {
       {showDndProvider ? (
         <DndProvider backend={HTML5Backend}>
           <div>
-            {console.log(templates[selectedTemplate])}
             <Container onSubmitCall={handleContainerSubmitCall} automation={templates[selectedTemplate]}/>
             <CustomDragLayer />
           </div>

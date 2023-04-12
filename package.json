@@ -35,6 +35,7 @@
         "nodemailer": "^6.9.1",
         "nodemailer-pug-engine": "^2.0.1",
         "nodemon": "^2.0.21",
+        "react-accessible-accordion": "^5.0.0",
         "react-apexcharts": "^1.4.0",
         "react-bootstrap": "^2.7.2",
         "react-burger-menu": "^3.0.9",

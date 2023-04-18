@@ -8,9 +8,11 @@ function initSocket(server){
         const components = await Component.find({type: 'actor'});
         if (components.length) {
             for (const component of components){
-                actors[component.entity_id] = component.state;
+                actors[component.entity_id] = component.state === "on";
             }
         }
+
+        console.log(actors)
     })();
 
     const io = require("socket.io")(server, {
@@ -33,25 +35,24 @@ function initSocket(server){
         console.log('a user connected');
 
         // Stuur de huidige status van alle LED's naar de nieuwe client
-        socket.emit('initial', leds);
+        socket.emit('initial', actors);
 
         // Luister naar wijzigingen in de LED-status van de client
-        socket.on('toggle', (led) => {
-            leds[led] = !leds[led];
-            console.log(leds);
+        socket.on('toggle', (actor) => {
+            actors[actor] = !actors[actor];
             // Stuur de nieuwe LED-status naar alle clients, behalve degene die de wijziging heeft aangebracht
-            socket.broadcast.emit('toggle', led, leds[led]);
+            socket.broadcast.emit('toggle', actor, leds[actor]);
 
-            handleClick();
+            handleClick(actor);
         });
 
-        handleClick = async () => {
+        handleClick = async (actor) => {
             try {
                 console.log("TRIED LED");
                 const response = await fetch('http://10.129.55.146:8123/api/services/switch/toggle', {
                     method: 'POST',
                     body: JSON.stringify({
-                        "entity_id": "switch.status_led",
+                        "entity_id": actor,
                     }),
                     headers: {
                         "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2ZmE2NThhMzJlN2M0YTA5OTg1MzA5OTYzNTNhMGNlOCIsImlhdCI6MTY2OTcyNTgwNCwiZXhwIjoxOTg1MDg1ODA0fQ.PQsPlGsNVNxbYGwXfvsGi1k10rskekiDkayAD59gziw",

@@ -1,78 +1,55 @@
-import { useState, useEffect, useLayoutEffect } from 'react';
 import logo from '../logo.svg';
-import img from '../images/img.png';
+import React from 'react';
+import img from '../images/img.png'
 import api, {toggleLed} from "../api";
 import io from 'socket.io-client';
-import { useNavigate} from 'react-router-dom';
+import { Navigate  } from 'react-router-dom';
+import { withAuth } from './Authentication';
 
-function ComponentControl(){
-    const navigate = useNavigate();
-    const [errorMessage, setErrorMessage] = useState("");
-    const [leds, setLeds] = useState({
-        'led1': false,
-        'led2': false,
-        'led3': false
-    });
+class ComponentControl extends React.Component {
 
-    useLayoutEffect(() => {
-        async function checkUserAuth() {
-            try {
-                const res = await api.isUserAuth({token: localStorage.getItem("token")});
-                if(res.data.isLoggedIn) {
-                    console.log("Logged in");
-                    setup();
-                }
-                else{
-                    console.log("Not logged in");
-                    navigate('/login');
-                }
-            } catch (err) {
-                setErrorMessage(err)
+    constructor(props) {
+        super(props);
+
+        this.ip = "10.129.55.155";
+
+        this.state = {
+            leds: {
+                'led1': false,
+                'led2': false,
+                'led3': false
             }
+        };
+
+        this.socket = io('http://laptop_van_wout:5000');
+        if(!this.socket.connected)
+            this.socket = io('http://'+ this.ip + ':5000');
+
+        this.socket.on('initial', (leds) => {
+            this.setState({ leds });
+        });
+
+        this.socket.on('toggle', (led, value) => {
+            this.setState({ leds: { ...this.state.leds, [led]: value } });
+
+        });
+    }
+
+    toggleLed(led) {
+        const button = document.getElementById(`${led}`);
+        const currentStatus = this.state.leds[led];
+        this.socket.emit('toggle', led);
+        this.setState({ leds: { ...this.state.leds, [led]: !currentStatus } });
+
+        if(currentStatus) {
+            button.style.backgroundColor = 'MediumSeaGreen';
         }
-        checkUserAuth();
-    }, [navigate])
-
-    const setup = () => {
-        let socket = io('http://laptop_van_wout:5000');
-        if(!socket.connected)
-            socket = io('http://10.129.55.147:5000');
-
-        socket.on('initial', (leds) => {
-            setLeds(leds);
-        });
-
-        socket.on('toggle', (led, value) => {
-            setLeds({ ...leds, [led]: value });
-        });
-
-        return () => {
-            socket.disconnect();
+        else {
+            button.style.backgroundColor ="LightGrey";
         }
     }
 
-    const toggleLed = (led) => {
-        const button = document.getElementById(`${led}`);
-        const currentStatus = leds[led];
-        let socket = io('http://laptop_van_wout:5000');
-    
-        if (!socket.connected) {
-          socket = io('http://10.129.55.147:5000');
-        }
-    
-        socket.emit('toggle', led);
-        setLeds({ ...leds, [led]: !currentStatus });
-    
-        if (currentStatus) {
-          button.style.backgroundColor = 'MediumSeaGreen';
-        } else {
-          button.style.backgroundColor = 'LightGrey';
-        }
-    };
-    
-  
-
-    const handleClick = async () => {
+    handleClick = async () => {
         try {
             console.log("TRIED LED");
             const response = await fetch('http://10.129.55.146:8123/api/services/switch/toggle', {
@@ -88,9 +65,9 @@ function ComponentControl(){
         } catch (err) {
             console.log(err.message);
         }
-    };
+    }
 
-    const handleClick2 = async () => {
+    handleClick2 = async () => {
         try {
             console.log("TRIED SERVO");
             const response = await fetch('http://10.129.55.146:8123/api/services/input_number/set_value', {
@@ -107,9 +84,9 @@ function ComponentControl(){
         } catch (err) {
             console.log(err.message);
         }
-    };
+    }
 
-    const handleClick3 = async () => {
+    handleClick3 = async () => {
         try {
             console.log("TRIED SERVO");
             const response = await fetch('http://10.129.55.146:8123/api/services/switch/toggle', {
@@ -125,9 +102,9 @@ function ComponentControl(){
         } catch (err) {
             console.log(err.message);
         }
-    };
+    }
 
-    const handleSlider =async () => {
+    handleSlider =async () => {
         try{
             console.log("TRIED SERVO");
             var slider = document.getElementById("servo_range")
@@ -145,58 +122,81 @@ function ComponentControl(){
         }catch (err) {
             console.log(err.message);
         }
-    };
+    }
+    /*  var slider = document.getElementById("servo_range");
+      var output = document.getElementById("servo_range_hmtl");
+      output.innerHTML = slider.value;
+      alert(test);*/
+    render() {
+        return (
+            <>
+                {/*<div class="container" >*/}
+                {/*  <div class="row justify-content-center"   >*/}
+                {/*    <button type="button" class="btn btn-success p-4 my-3 col-4"   onClick={this.handleClick}>Toggle LED</button>*/}
+                {/*  </div>*/}
+                {/*  <div class="row justify-content-center" >*/}
+                {/*    <button type="button"  class="btn btn-success p-4  my-3 col-4" onClick={this.handleClick2}>Toggle Servo</button>*/}
+                {/*  </div>*/}
+                {/*  <div class="row justify-content-center">*/}
+                {/*    <button type="button" class="btn btn-success p-4  my-3 col-4" onClick={this.handleClick3}>Toggle Magneet</button>*/}
+                {/*  </div>*/}
 
-    return (
-        <>
-          <div className="container ">
-            <div className="card mt-5">
-              <div className="row g-0">
-                <div className="col-md-2">
-                  <img src={img} className="img-fluid rounded-start"></img>
-                </div>
-                <div className="col-md-8">
-                  <div className="card-body">
-                    <h5 className="card-title">LED LIGHT</h5>
-                    <p className="card-text"></p>
-                    <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
-                  </div>
-                </div>
-    
-                <div className="col-md-2">
-                  <div className="form p-3">
-                    <div className="form-check form-switch">
-                      <input className="form-check-input ms-1" type="checkbox" role="switch" id="flexSwitchCheckDefault" onClick={handleClick}></input>
-                      <label className="form-check-label" htmlFor="flexSwitchCheckDefault"></label>
+                {/*  <div className="row justify-content-center">*/}
+                {/*    <label id="servo_range_hmtl" className="form-label">Example range</label>*/}
+                {/*    <input type="range" className="form-range" min="-100" max="100" id="servo_range" onInput={this.handleSlider}/>*/}
+                {/*  </div>*/}
+
+                {/*</div>*/}
+
+                <div className="container ">
+                    <div className="card mt-5">
+                        <div className="row g-0">
+                            <div className="col-md-2">
+                                <img src={img} className="img-fluid rounded-start"></img>
+                            </div>
+                            <div className="col-md-8">
+                                <div className="card-body">
+                                    <h5 className="card-title">LED LIGHT</h5>
+                                    <p className="card-text"></p>
+                                    <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
+                                </div>
+                            </div>
+
+                            <div className="col-md-2">
+                                <div className="form p-3">
+                                    <div className="form-check form-switch">
+                                        <input className="form-check-input ms-1" type="checkbox" role="switch" id="flexSwitchCheckDefault" onClick={this.handleClick}></input>
+                                        <label className="form-check-label" htmlFor="flexSwitchCheckDefault"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        < /div>
                     </div>
-                  </div>
+
+
+                    <div className="card mt-5">
+                        <div className="row g-0">
+                            <div className="col-md-2">
+                                <img src={img} className="img-fluid rounded-start"></img>
+                            </div>
+                            <div className="col-md-9">
+                                <div className="card-body">
+                                    <h5 className="card-title">LED LIGHT</h5>
+                                    <p className="card-text"></p>
+                                    <p className="card-text"><small className="text-muted">Last updated 3 mins
+                                        ago</small></p>
+                                </div>
+                            </div>
+
+                            <div className="col-md-1 py-4">
+                                <button style={{backgroundColor: (this.state.leds['led1'] ? 'MediumSeaGreen' : 'LightGrey')}} id={'led1'} type="button" className="btn" onClick={() => this.toggleLed('led1')}>power</button>
+                            </div>
+                        < /div>
+                    </div>
                 </div>
-              </div>
-            </div>
-    
-    
-            <div className="card mt-5">
-              <div className="row g-0">
-                <div className="col-md-2">
-                  <img src={img} className="img-fluid rounded-start"></img>
-                </div>
-                <div className="col-md-9">
-                  <div className="card-body">
-                    <h5 className="card-title">LED LIGHT</h5>
-                    <p className="card-text"></p>
-                    <p className="card-text"><small className="text-muted">Last updated 3 mins
-                      ago</small></p>
-                  </div>
-                </div>
-    
-                <div className="col-md-1 py-4">
-                  <button style={{backgroundColor: (leds['led1'] ? 'MediumSeaGreen' : 'LightGrey')}} id={'led1'} type="button" className="btn" onClick={() => toggleLed('led1')}>power</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      );
+            </>
+        );
+    }
 }
 
-export default ComponentControl;
+export default withAuth(ComponentControl);

@@ -1,6 +1,6 @@
 import logo from '../logo.svg';
 import React from 'react';
-import img from '../images/img.png'
+import img from '../images/led.png'
 import api, {toggleLed} from "../api";
 import io from 'socket.io-client';
 import { Navigate  } from 'react-router-dom';

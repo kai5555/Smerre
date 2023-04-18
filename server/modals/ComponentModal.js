@@ -6,6 +6,7 @@ var ComponentSchema = new Schema({
     type: {type: String},
     sub_type: {type: String},
     block: {type: String, required: true},
+    state: {type: String}
 });  
 
 var Component = model("Component", ComponentSchema, "Components");

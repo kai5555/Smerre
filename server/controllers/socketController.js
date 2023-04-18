@@ -1,5 +1,17 @@
+const Component = require('../modals/ComponentModal')
 
 function initSocket(server){
+
+    let actors = {};
+
+    (async () =>{
+        const components = await Component.find({type: 'actor'});
+        if (components.length) {
+            for (const component of components){
+                actors[component.entity_id] = component.state;
+            }
+        }
+    })();
 
     const io = require("socket.io")(server, {
         cors: {
@@ -15,6 +27,8 @@ function initSocket(server){
     };
 
     console.log("test 123")
+
+
     io.on('connection', (socket) => {
         console.log('a user connected');
 

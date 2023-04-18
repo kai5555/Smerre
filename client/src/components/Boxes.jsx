@@ -98,9 +98,12 @@ const AdvancedActionBox = memo(function AdvancedActionBox(props) {
         <p style={{fontWeight: 'bold', color: 'white'}}>Advanced Action</p>
       </div>
       <div>
-        {content.status && (
-          <p>To {content.status}</p>
+        {content.service && (
+          <p>Call {content.service}</p>
         )}
+        { Object.entries(content.data || {}).forEach(([name, value]) => {
+          <p>{name}:{value}</p>
+        })}
       </div>
     </div>
   );
@@ -190,8 +193,11 @@ const TimeBox = memo(function TimeBox(props) {
         <p style={{fontWeight: 'bold', color: 'white'}}>Time</p>
       </div>
       <div>
-        {content.time && (
-          <p>Time {content.time}</p>
+        {(content.seconds || content.minutes|| content.hours) &&(
+          <p>Time {content.hours || "--"}:{content.minutes || "--"}:{content.seconds || "--"}</p>
+        )}
+        {content.repeatType && (
+          <p>Repeat every {content.repeatValue} {content.repeatType}</p>
         )}
       </div>
     </div>

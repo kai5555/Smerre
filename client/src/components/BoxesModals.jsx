@@ -2,7 +2,10 @@ import { memo } from 'react'
 import styled from 'styled-components'
 import React, { useState, useEffect } from 'react'
 import { DropdownButton, Dropdown, InputGroup, FormControl } from 'react-bootstrap';
+import InfoButton from './InfoButton'
 
+const defaultColor = "#22b542";
+const defaultLightColor = '#cdf7d6';
 const wrongConnectionColor = "#9c2828";
 const wrongContentColor = "#ff9933";
 
@@ -39,6 +42,13 @@ const InputText = styled.input.attrs({
 })`
     margin: 5px;
 `
+const InputTextSmall = styled.input.attrs({
+  className: 'form-control',
+})`
+  margin: 0 5px 0 5px;
+  width: 75px;
+`
+
 const InputSelect = styled.select.attrs({
   className: 'form-control',
 })`
@@ -67,6 +77,23 @@ const ContentError = styled.div`
   color: #fff;
 `;
 
+const SmallButton = styled.button.attrs({
+  className: `btn btn-primary`,
+})`
+  margin-right: 10px;
+  width: 60px;
+  font-size: 10px;
+  transition: transform 0.2s ease-in-out;
+  transform: ${props => (props.selected ? 'scale(1)' : 'scale(0.8)')};
+  background-color: ${props => (props.selected ? defaultColor : defaultLightColor)};
+  border-color: ${props => (props.selected ? defaultColor : defaultLightColor)};
+
+  &:hover {
+    transform: scale(1.2);
+  }
+`;
+
+
 function useModalMethods(content, onOk, onCancel, onDelete) {
   const [updatedContent, setUpdatedContent] = useState(content);
 
@@ -93,6 +120,7 @@ function useModalMethods(content, onOk, onCancel, onDelete) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   };
 }
 
@@ -121,6 +149,7 @@ const LineModal = memo(function StartBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -144,6 +173,7 @@ const StartBoxModal = memo(function StartBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -165,6 +195,7 @@ const EntityBoxModal = memo(function EntityBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -200,6 +231,7 @@ const CheckValueBoxModal = memo(function CheckValueBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -235,6 +267,7 @@ const CheckStatusBoxModal = memo(function CheckStatusBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -267,6 +300,7 @@ const BasicActionBoxModal = memo(function BasicActionBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -290,7 +324,7 @@ const BasicActionBoxModal = memo(function BasicActionBoxModal(props) {
 });
 
 const AdvancedActionBoxModal = memo(function AdvancedActionBoxModal(props) {
-  var { content, errors, onOk, onCancel, onDelete } = props;
+  var { content, errors, onOk, onCancel, onDelete, connectionData } = props;
   content =  {
     service: content?.service || "",
     data: content?.data || "",
@@ -302,7 +336,38 @@ const AdvancedActionBoxModal = memo(function AdvancedActionBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
+
+  const [serviceData, setServiceData] = useState({});
+  const changeService = (event) => {
+    const { value } = event.target;
+
+    getSetService(value);
+    handleInputChange(event);
+  };
+  
+
+  const changeServiceData = (event) => {
+    const { name, value } = event.target;
+    updatedContent.data = {
+      ...updatedContent.data,
+      [name]: value,
+    };
+    setUpdatedContent({ ...updatedContent});
+  };
+
+  const getSetService = (name) => {
+    if(!connectionData) return;
+    let service = connectionData.find(obj => obj.service === name);
+    if(!service) return;
+
+    setServiceData(service.data);
+  }
+
+  useEffect( () => {
+    getSetService(updatedContent.service);
+  }, []);
 
   return (
     <ContentBox>
@@ -311,8 +376,25 @@ const AdvancedActionBoxModal = memo(function AdvancedActionBoxModal(props) {
 
       <Label>Set your action</Label>
       
-      <InputText value={updatedContent.service} onChange={handleInputChange}type="text" name="service" placeholder="Service name"/>
-      <InputText value={updatedContent.data} onChange={handleInputChange}type="text" name="data" placeholder="Data as json format"/>
+      <InputSelect onChange={changeService} name="service" value={updatedContent.service || "none" }>
+        {connectionData.length == 0 ? (
+          <option value="none" disabled>No services available for the entity</option>
+        ) : (
+          <option value="none" disabled>Select a service</option>
+        )};
+        
+        {connectionData.length > 0 && connectionData.map((service, index) => (
+          <option key={service.service} value={service.service}>{service.name}</option>
+        ))}
+      </InputSelect>
+      
+        {serviceData.length > 0 && serviceData.map((value, index) => (
+          <div key={value} >
+            <Label>{value.charAt(0).toUpperCase() + value.slice(1)}</Label>
+            <InputText name={value} value={updatedContent.data[value]} onChange={changeServiceData} />
+          </div>
+        ))}
+        
 
       <br></br>
       <OkButton onClick={handleOkClick}>Oké</OkButton>
@@ -331,6 +413,7 @@ const AndBoxModal = memo(function AndBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -353,6 +436,7 @@ const OrBoxModal = memo(function OrBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -369,9 +453,14 @@ const OrBoxModal = memo(function OrBoxModal(props) {
 const TimeBoxModal = memo(function TimeBoxModal(props) {
   var { content, errors, onOk, onCancel, onDelete } = props;
   content =  {
-    time: content?.time || "",
+    seconds: content?.seconds || "",
+    minutes: content?.minutes || "",
+    hours: content?.hours || "",
+    repeatType: content?.repeatType || "",
+    repeatValue: content?.repeatValue || "",
   }
 
+  const [selectedView, setSelectedView] = useState(0);
 
   const {
     updatedContent,
@@ -379,15 +468,50 @@ const TimeBoxModal = memo(function TimeBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
+    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
+
+  const clickViewButton = (step) => {
+    updatedContent.type = step;
+    setSelectedView(step)
+  }
 
   return (
     <ContentBox>
       <ErrorList errors={errors} />
       <h1>Time</h1>
+      
+      <SmallButton onClick={() => clickViewButton(0)} selected={selectedView == 0}>Specific</SmallButton>
+      <SmallButton onClick={() => clickViewButton(1)} selected={selectedView == 1}>Repeat</SmallButton>
+      <br></br>
+      <br></br>
+      {selectedView == 0 && (
+        <>
+          <Label>Time</Label>
+          <InfoButton message="Vul hier de gewenste tijd in, vult u bijvoorbeeld enkel 10 minuten in zal dit elk uur afgaan op 10 na dat uur." />
+          <div style={{ display: "flex", flexWrap: "nowrap" }}>
+            <InputTextSmall value={updatedContent.hours} onChange={handleInputChange} type="text" placeholder="hour" name="hours"/>:
+            <InputTextSmall value={updatedContent.minutes} onChange={handleInputChange} type="text" placeholder="min" name="minutes"/>:
+            <InputTextSmall value={updatedContent.seconds} onChange={handleInputChange} type="text" placeholder="sec" name="seconds"/>
+          </div>
+        </>
+      )}
 
-      <Label>Set your time conditions</Label>
-      <InputText value={updatedContent.time} onChange={handleInputChange} type="text" name="time"/>
+      {selectedView == 1 && (
+        <>
+          <Label>Repeat every</Label>
+          <InfoButton message="Herhaal elke X tijdseenheden." />
+          <InputGroup>
+            <InputText value={updatedContent.repeatValue} onChange={handleInputChange} type="text" name="repeatValue"/>
+            <InputSelect onChange={handleInputChange} name="repeatType" value={updatedContent.repeatType || "none" } >
+              <option value="none" disabled>Select an option</option>
+              <option value="seconds">{"Seconds"}</option>
+              <option value="minutes">{"Minutes"}</option>
+              <option value="hours">{"Hours"}</option>
+            </InputSelect>
+          </InputGroup>
+        </>
+      )}
 
       <OkButton onClick={handleOkClick}>Oké</OkButton>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>

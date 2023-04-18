@@ -62,7 +62,7 @@ function Register () {
             }
 
             // Redirect to the login page
-            navigate("login");
+            navigate("/login");
         } catch(err) {
             console.log(err);
             setErrorMessage(err)

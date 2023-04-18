@@ -106,6 +106,9 @@ const AddAutomation = () => {
 
   const handleContainerSubmitCall = useCallback(async (automation, lines, boxes) => {
     await api.createAutomation({automation, automationName, lines, boxes});
+    console.log(automation);
+    console.log(boxes);
+    console.log(lines);
     navigate('/automation');
   }, [automationName]);
 
@@ -148,7 +151,7 @@ const AddAutomation = () => {
     null,
     {
       lines: {"AC1":{"start":{"left":407.421875,"top":50},"end":{"left":406.34375,"top":106},"step":0,"wrong":["",""]},"CD1":{"start":{"left":406.34375,"top":106},"end":{"left":404.484375,"top":236},"step":0,"wrong":["",""]},"BF1":{"start":{"left":511.046875,"top":79},"end":{"left":512.3046875,"top":145},"step":1,"wrong":["",""]},"FG1":{"start":{"left":512.3046875,"top":145},"end":{"left":514.8515625,"top":317},"step":1,"wrong":["",""]}},
-      boxes: {"A":{"top":20,"left":380,"type":"Start","content":{"title":"Als"},"errors":[],"step":0,"wrong":""},"B":{"top":49,"left":480,"type":"Start","content":{"title":"Dan"},"errors":[],"step":1,"wrong":""},"C":{"top":96,"left":302,"title":"Entity","type":"Entity","content":{"entity_id":"sensor.esp2_temperature"},"errors":[],"step":0,"wrong":""},"D":{"top":226,"left":368,"title":"CheckValue","type":"CheckValue","content":{"type":">","value":"30"},"errors":[],"step":0,"wrong":""},"F":{"top":135,"left":398,"title":"Entity","type":"Entity","content":{"entity_id":"input_number.servo_control"},"errors":[],"step":1,"wrong":""},"G":{"top":307,"left":435,"title":"AdvancedAction","type":"AdvancedAction","content":{"service":"espkainielswout_control_servo","data":"{\"level\": 100}"},"errors":[],"step":1,"wrong":""}},
+      boxes: {"A":{"top":20,"left":380,"type":"Start","content":{"title":"Als"},"errors":[],"step":0,"wrong":""},"B":{"top":49,"left":480,"type":"Start","content":{"title":"Dan"},"errors":[],"step":1,"wrong":""},"C":{"top":96,"left":302,"title":"Entity","type":"Entity","content":{"entity_id":"sensor.esp2_temperature"},"errors":[],"step":0,"wrong":""},"D":{"top":226,"left":368,"title":"CheckValue","type":"CheckValue","content":{"type":">","value":"30"},"errors":[],"step":0,"wrong":""},"F":{"top":135,"left":398,"title":"Entity","type":"Entity","content":{"entity_id":"input_number.servo_control"},"errors":[],"step":1,"wrong":""},"G":{"top":307,"left":435,"title":"AdvancedAction","type":"AdvancedAction","content":{"service":"esphome.espkainielswout_control_servo","data": {level: 100}},"errors":[],"step":1,"wrong":""}},
     },
     {
       lines: {"AC1":{"start":{"left":407.421875,"top":50},"end":{"left":405.8203125,"top":110},"step":0,"wrong":["",""]},"CD1":{"start":{"left":405.8203125,"top":110},"end":{"left":404.484375,"top":236},"step":0,"wrong":["",""]},"BF1":{"start":{"left":511.046875,"top":79},"end":{"left":509.6640625,"top":170},"step":1,"wrong":["",""]},"FG1":{"start":{"left":509.6640625,"top":218},"end":{"left":512.859375,"top":345},"step":1,"wrong":["",""]}},

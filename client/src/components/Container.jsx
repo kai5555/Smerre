@@ -130,12 +130,12 @@ const Container = (props) => {
   
   // Load a automation when editing
   useEffect(() => {
-    // Do something with the automation data here
     if(automation){
       setLines(automation.lines);
       setBoxes(automation.boxes);
     }
   }, [automation]);
+
 
   // Get all the sensors and actors
   useEffect(() => {
@@ -208,6 +208,8 @@ const Container = (props) => {
         
         return updatedLines;
       });
+
+      setSelectedBox(null);
     }
     
   };
@@ -257,6 +259,10 @@ const Container = (props) => {
   const handleBoxDoubleClick = (id) => {
     const boxType = boxes[id].type;
     const BoxModal = modalMap[boxType + "BoxModal"];
+
+    // Get the parent data if available
+    const connectionData = getParentConnectionData(id);
+
     setEditBarContent(
       <BoxModal 
         key={id} 
@@ -266,10 +272,30 @@ const Container = (props) => {
         onCancel={() => cancelledModal()}
         onDelete={() => deleteModal(id)}
         entities={[...entities]}
+        connectionData={connectionData}
       />
     );
     setEditBarVisible(true);
   };
+
+  const getParentConnectionData = (childId) => {
+    // Get the line where this is second, meaning the line to the parent (Can only have one parent)
+    let parentLine = Object.keys(lines).filter((id) => id.charAt(1) == childId);
+    if(!parentLine[0]) return [];
+    let parentId = parentLine[0].charAt(0);
+
+    const childBox = boxes[childId];
+    const parentBox = boxes[parentId];
+
+    if(parentBox.type == "Entity" && childBox.type == "AdvancedAction"){
+      if(!parentBox.content.entity_id) return []; 
+
+      const service = entities.find(obj => obj.entity_id === parentBox.content.entity_id);
+      if(service) return service.services;
+    }
+
+    return [];
+  }
 
   const submitAutomation = async () => {
     
@@ -289,13 +315,14 @@ const Container = (props) => {
 
         // Add the condition
         cond_obj.push({
-          condition: "numeric_state",
           entity_id: content.entity_id,
         });
 
         return cond_obj[cond_obj.length - 1];
       },
       "CheckValue": function(content, cond_obj){
+        cond_obj.condition = "numeric_state";
+
         // Add condition value
         if(content.type === ">"){
           cond_obj.above = content.value;
@@ -310,6 +337,9 @@ const Container = (props) => {
         return cond_obj;
       },
       "CheckStatus": function(content, cond_obj){
+        cond_obj.condition = "state";
+        cond_obj.state = content.status == "active" ? "Aan" : "Uit";
+
         return cond_obj;
       },
       "And": function(content, cond_obj){
@@ -331,12 +361,15 @@ const Container = (props) => {
         return cond_obj[cond_obj.length - 1].conditions;
       },
       "Time": function(content, cond_obj){
-           // Add the trigger to triggers
-           trigger.push({
-            platform: "time",
-            at: content.time
+          // Add the trigger to triggers
+          trigger.push({
+            platform: "time_pattern",
+            ...(content.seconds !== "" && { seconds: content.seconds}),
+            ...(content.minutes !== "" && { minutes: content.minutes}),
+            ...(content.hours !== "" && { hours: content.hours}),
+            ...(content.repeatType !== "" && { [content.repeatType]: `/${content.repeatValue}` }),
           });
-
+          
           return cond_obj;
       },
     },
@@ -363,7 +396,7 @@ const Container = (props) => {
       },
       "AdvancedAction": function(content, action_obj){
         action_obj.service = content.service;
-        action_obj.data = JSON.parse(content.data);
+        action_obj.data = content.data;
 
         return action_obj;
       },
@@ -393,6 +426,7 @@ const Container = (props) => {
     automation['action'] = action;
 
     // Finally sent the created automation and current structure to the parent component
+    console.log(automation);
     onSubmitCall(automation, lines, boxes);
 
     function setupTriggerAndConditon(key, obj, step){
@@ -435,10 +469,12 @@ const Container = (props) => {
   function goNextStep(){
     if(!validateCurrentGraph()) return;
 
+    setSelectedBox(null);
     setViewStep((prevCount) => prevCount + 1)
   }
 
   function goPreviousStep(){
+    setSelectedBox(null);
     setViewStep((prevCount) => prevCount - 1)
   }
 
@@ -515,19 +551,21 @@ const Container = (props) => {
                   {...boxes[key]} 
                 />
               ))}
-            {Object.entries(lines)
-              .filter(([key, line]) => line.step === viewStep)
-              .map(([key, line]) => (
-                <Line
-                  key={key}
-                  boxes={[
-                    {key: key.charAt(0), box:boxes[key.charAt(0)]},
-                    {key: key.charAt(1), box:boxes[key.charAt(1)]},
-                  ]} 
-                  onClick={() => handleLineClick(key)}
-                  {...lines[key]}
-                />
-              ))}
+            <svg id="lineContainer" style={{position: "absolute", width:"100%", height:"100%"}}>
+              {Object.entries(lines)
+                .filter(([key, line]) => line.step === viewStep)
+                .map(([key, line]) => (
+                  <Line
+                    key={key}
+                    boxes={[
+                      {key: key.charAt(0), box:boxes[key.charAt(0)]},
+                      {key: key.charAt(1), box:boxes[key.charAt(1)]},
+                    ]} 
+                    onClick={() => handleLineClick(key)}
+                    {...lines[key]}
+                  />
+                ))}
+            </svg>
           </DragContainer>
         </>
       )}
@@ -726,7 +764,7 @@ const Container = (props) => {
           // Check for only status child
           for(let i = 0; i < node.children.length; i++){
             let child = boxes[node.children[i]];
-            if(child.type !== "StatusValue") return "'Entity' can only have status as children";
+            if(child.type !== "CheckStatus") return "'Entity' can only have status as children";
           }
         }
 
@@ -780,8 +818,8 @@ const Container = (props) => {
         let box = boxes[key];
         let content = box.content;
         if(!content) return "'Time' doesn't have any content";
-        
-        if(!isKeyValid(content, "time")) return "'Time' doesn't have any time";
+
+        if(isKeyValid(content, "repeatType" ) && !isKeyValid(content, "repeatValue")) return "'Time' doesn't have a repeat value";
 
         return 'success';
       },
@@ -830,7 +868,7 @@ const Container = (props) => {
 
         // Check if advanced action is valid
         if(obj.services){
-          return "'BasicAction' can't only have a advanced action: " + obj.services.map(s => s.service).join(", ");
+          return "'BasicAction' can only have a advanced action";
         }
 
         return 'success';
@@ -841,7 +879,6 @@ const Container = (props) => {
         if(!content) return "'AdvancedAction' doesn't have any content";
         
         if(!isKeyValid(content, "service")) return "'AdvancedAction' doesn't have any service";
-        if(!isKeyValid(content, "data")) return "'AdvancedAction' doesn't have any data";
 
         let node = graph[key];
         let parent = boxes[node.parent];
@@ -855,22 +892,17 @@ const Container = (props) => {
 
         var service = obj.services.find(s => s.service === content.service);
         if(!service){
-          return "'Entity' doesn't have a serivce called " + content.service + ", chose from: " + obj.services.map(s => s.service).join(", ");
-        }
-
-        var contentData;
-        try {
-          contentData = JSON.parse(content.data);
-        } catch (error) {
-          return "'Entity' provided data isn't of a valid format, must look like: {'key': value}";
-        }
-
-        for(let key in contentData){
-          if(!service.data.includes(key)){
-            return "'Entity' doesn't need this data";
-          }
+          return "'Entity' doesn't have a serivce called " + content.service;
         }
         
+        // Check the data
+        if(!content.data)return "'Entity' doesn't have any data "
+        Object.entries(service.data || {}).forEach(([name, value]) => {
+          if(!isKeyValid(content.data, name)){
+            return "'Entity' has a empty field for " + name;
+          }
+        });
+
         
         return 'success';
       }

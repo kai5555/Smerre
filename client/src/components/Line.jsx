@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
 import { PathLine } from 'react-svg-pathline';
-import { GradientPath } from "gradient-path";
 
 const defaultColor = '#22b542';
 const defaultLightColor = '#cdf7d6';
@@ -54,10 +53,6 @@ function getHeight(box){
 }; 
 
 function Line({ boxes, onClick}) {
-  const myRef = useRef(null);
-  const [arrowPosition, setArrowPosition] = useState({x: 0, y:0});
-  const [arrowColor, setArrowColor] = useState(defaultColor);
-
   // Setup points
   const startBox = boxes[0];
   const endBox = boxes[1];
@@ -95,70 +90,38 @@ function Line({ boxes, onClick}) {
     newArrowPosition = {x: endPoint.x, y: endPoint.y + above * endHeight/2};
   }
   points[points.length - 1] = newArrowPosition;
-  
-  
-  useEffect(() => {
-    const svgElem = myRef.current;
-    const path = svgElem.getElementsByTagName("path")[0];
-    const gp = new GradientPath({
-      path: path,
-      segments: 50,
-      samples: 3,
-      precision: 2 // Optional
-    });
 
-    const myColors = [{ color: getStartColor(startBox.box.wrong), pos: 0 }, { color: getEndColor(endBox.box.wrong), pos: 1 }];
-    gp.render({
-      type: "path",
-      fill: myColors,
-      width: 2,
-      stroke: "transparent",
-      strokeWidth: 25
-
-    });
-
-    // Bad paths fix
-    const elementPath = svgElem.getElementsByClassName("element-path")[0];
-    elementPath.firstChild.remove();
-    elementPath.lastChild.remove();
-
-    // Add onClick methods
-    const paths = elementPath.querySelectorAll('path');
-    paths.forEach(path => {
-      path.addEventListener('click', (event) => {
-        event.stopPropagation();
-        console.log(`Clicked`);
-
-        onClick();
-      });
-    });
-
-    setArrowPosition(newArrowPosition);
-    setArrowColor(getEndColor(endBox.box.wrong));
-
-    // Cleanup function to remove event listeners when component unmounts
-    return () => {
-      paths.forEach(path => {
-        path.removeEventListener('click', () => {});
-      });
-    };
-
-  }, [boxes]);
-
+  const gradientId = `gradient${startBox.key}${endBox.key}`;
 
   return (
-    <svg ref={myRef} style={{position: "absolute", width:"100%", height:"100%"}}>
+    <>
+     <PathLine
+        points={points}
+        stroke="transparent"
+        strokeWidth="50"
+        fill="none" 
+        r={1}
+        onClick={onClick}
+      />
+
       <PathLine
         points={points}
-        stroke="grey"
+        strokeLinecap="round"
         strokeWidth="2"
-        fill="none" 
+        stroke={`url(#gradient${gradientId})`} 
+        fill="none"
         r={2}
       />
-      <g transform={`translate(${arrowPosition.x},${arrowPosition.y})`}>
-        <circle r="10" fill={arrowColor} />
+      <defs>
+        <linearGradient id={`gradient${gradientId}`} x1={left == -1 ? "0%":"100%"} x2={left == -1 ? "100%":"0%"} y1={above == -1 ? "0%":"100%"} y2={above == -1 ? "100%":"0%"}>
+          <stop offset="0%" stopColor={getStartColor(startBox.box.wrong)} />
+          <stop offset="100%" stopColor={getEndColor(endBox.box.wrong)} />
+        </linearGradient>
+      </defs>
+      <g transform={`translate(${newArrowPosition.x},${newArrowPosition.y})`}>
+        <circle r="10" fill={getEndColor(endBox.box.wrong)} />
       </g>
-    </svg>
+    </>
   );
 }
 

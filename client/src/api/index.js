@@ -1,8 +1,11 @@
 import axios from 'axios'
 
+const ip = "10.129.55.155";
+
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api',
+    baseURL: `http://${ip}:5000/api`,
 })
+
 
 // Temperature routes
 export const insertTemperature = payload => api.post(`/temperatures`, payload)

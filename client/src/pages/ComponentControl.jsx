@@ -8,6 +8,7 @@ import io from 'socket.io-client';
 import { Navigate  } from 'react-router-dom';
 import { withAuth } from './Authentication';
 import { ip } from '../index';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 class ComponentControl extends React.Component {
 
@@ -55,10 +56,10 @@ class ComponentControl extends React.Component {
         this.setState({ actors: { ...this.state.actors, [actor]: !currentStatus } });
 
         if(currentStatus) {
-            button.style.backgroundColor = 'MediumSeaGreen';
+            button.style.color = 'MediumSeaGreen';
         }
         else {
-            button.style.backgroundColor ="LightGrey";
+            button.style.color ="LightGrey";
         }
     }
 
@@ -106,18 +107,12 @@ class ComponentControl extends React.Component {
                                     </div>
                                 </div>
 
-                                <div className="col-md-1 py-4">
-                                    <button
-                                        style={{
-                                            backgroundColor: value ? "MediumSeaGreen" : "LightGrey",
-                                        }}
-                                        id={key}
-                                        type="button"
-                                        className="btn"
-                                        onClick={() => this.toggleActor(key)}
-                                    >
-                                        power
-                                    </button>
+                                <div className="col-md-1 py-3 d-flex justify-content-center">
+                                    <i className="bi bi-power"
+                                       style={{fontSize: "2rem", color: value ? "MediumSeaGreen" : "LightGrey"}}
+                                       id={key}
+                                       onClick={() => this.toggleActor(key)}
+                                    ></i>
                                 </div>
                             </div>
                         </div>

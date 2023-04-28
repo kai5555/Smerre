@@ -205,6 +205,51 @@ const TimeBox = memo(function TimeBox(props) {
 });
 
 
+const DelayBox = memo(function DelayBox(props) {
+  const { yellow, preview, content, wrong } = props;
+
+  const backgroundColor = yellow ? 'yellow' : 'white'
+  return (
+    <div  
+      style={{ ...styles, backgroundColor, position: 'relative', overflow: 'hidden' }}
+      role={preview ? 'BoxPreview' : 'Box'}
+    >
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 'calc(100% - 2.5rem)', backgroundColor:getBackgroundColor(wrong) }}></div>
+      <div style={{ position: 'relative' }}>
+        <p style={{fontWeight: 'bold', color: 'white'}}>Delay</p>
+      </div>
+      <div>
+        {(content.time) &&(
+          <p>Time {content.time}</p>
+        )}
+      </div>
+    </div>
+  );
+});
+
+const WeatherBox = memo(function WeatherBox(props) {
+  const { yellow, preview, content, wrong } = props;
+
+  const backgroundColor = yellow ? 'yellow' : 'white'
+  return (
+    <div  
+      style={{ ...styles, backgroundColor, position: 'relative', overflow: 'hidden' }}
+      role={preview ? 'BoxPreview' : 'Box'}
+    >
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 'calc(100% - 2.5rem)', backgroundColor:getBackgroundColor(wrong) }}></div>
+      <div style={{ position: 'relative' }}>
+        <p style={{fontWeight: 'bold', color: 'white'}}>Weather</p>
+      </div>
+      <div>
+        {(content.status) &&(
+          <p>Status {content.status}</p>
+        )}
+      </div>
+    </div>
+  );
+});
+
+
 
 const componentMap = {
   StartBox,
@@ -216,6 +261,8 @@ const componentMap = {
   AndBox,
   OrBox,
   TimeBox,
+  DelayBox,
+  WeatherBox,
 };
 
 export default componentMap;

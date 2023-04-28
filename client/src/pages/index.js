@@ -1,4 +1,3 @@
-import TemperaturesList from './TemperaturesList'
 import ComponentControl from './ComponentControl'
 import Login from './Login'
 import Register from './Register'
@@ -8,5 +7,8 @@ import PasswordRecoveryVerify from './PasswordRecoveryVerify'
 import AddAutomation from './AddAutomation'
 import EditAutomation from './EditAutomation'
 import Automations from './Automations'
+import PlantList from './PlantList'
+import Plant from './Plant'
+import AddPlant from './AddPlant'
 
-export { TemperaturesList, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations}
+export { ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, PlantList, Plant, AddPlant}

@@ -121,9 +121,10 @@ const AddAutomation = () => {
 
     // Check if name doesn't already exist
     try {
-      await api.getAutomationByName(automationName);
+      let name = automationName.toLowerCase().replace(/\s+/g, '_');
+      await api.getAutomationByName({name: name});
 
-      setErrorMessage("Automation Name can't be empty");
+      setErrorMessage("Automation Name already exists");
       setErrorKey((prevKey) => prevKey + 1);
       return;
 
@@ -157,7 +158,10 @@ const AddAutomation = () => {
       lines: {"AC1":{"start":{"left":407.421875,"top":50},"end":{"left":405.8203125,"top":110},"step":0,"wrong":["",""]},"CD1":{"start":{"left":405.8203125,"top":110},"end":{"left":404.484375,"top":236},"step":0,"wrong":["",""]},"BF1":{"start":{"left":511.046875,"top":79},"end":{"left":509.6640625,"top":170},"step":1,"wrong":["",""]},"FG1":{"start":{"left":509.6640625,"top":218},"end":{"left":512.859375,"top":345},"step":1,"wrong":["",""]}},
       boxes: {"A":{"top":20,"left":380,"type":"Start","content":{"title":"Als"},"errors":[],"step":0,"wrong":""},"B":{"top":49,"left":480,"type":"Start","content":{"title":"Dan"},"errors":[],"step":1,"wrong":""},"C":{"top":100,"left":334,"title":"Entity","type":"Entity","content":{"entity_id":"sensor.humidity"},"errors":[],"step":0,"wrong":""},"D":{"top":226,"left":368,"title":"CheckValue","type":"CheckValue","content":{"type":"<","value":"50"},"errors":[],"step":0,"wrong":""},"F":{"top":160,"left":415,"title":"Entity","type":"Entity","content":{"entity_id":"switch.Magneetventiel"},"errors":[],"step":1,"wrong":""},"G":{"top":335,"left":451,"title":"BasicAction","type":"BasicAction","content":{"type":"turn_on"},"errors":[],"step":1,"wrong":""}},
     },
-    null,
+    {
+      lines: {"AC1110":{"start":{"left":407.421875,"top":50},"end":{"left":406.34375,"top":106},"step":0,"wrong":["",""]},"CD1110":{"start":{"left":406.34375,"top":106},"end":{"left":404.484375,"top":236},"step":0,"wrong":["",""]},"BF1110":{"start":{"left":511.046875,"top":79},"end":{"left":512.3046875,"top":145},"step":1,"wrong":["",""]},"FG1110":{"start":{"left":512.3046875,"top":145},"end":{"left":514.8515625,"top":317},"step":1,"wrong":["",""]},"GH7":{"step":1},"HI6":{"step":1},"IJ5":{"step":1}},
+      boxes: {"A":{"top":20,"left":380,"type":"Start","content":{"title":"Als"},"errors":[],"step":0,"wrong":""},"B":{"top":49,"left":480,"type":"Start","content":{"title":"Dan"},"errors":[],"step":1,"wrong":""},"C":{"top":96,"left":302,"title":"Entity","type":"Entity","content":{"entity_id":"sensor.esp2_temperature"},"errors":[],"step":0,"wrong":""},"D":{"top":226,"left":368,"title":"CheckValue","type":"CheckValue","content":{"type":">","value":"30"},"errors":[],"step":0,"wrong":""},"F":{"top":135,"left":398,"title":"Entity","type":"Entity","content":{"entity_id":"input_number.servo_control"},"errors":[],"step":1,"wrong":""},"G":{"top":307,"left":435,"title":"AdvancedAction","type":"AdvancedAction","content":{"service":"esphome.espkainielswout_control_servo","data":{"level":100}},"errors":[],"step":1,"wrong":""},"H":{"top":465,"left":488,"title":"Delay","type":"Delay","content":{"time":"00:00:10:00"},"errors":[],"step":1,"wrong":""},"I":{"top":604,"left":480,"title":"Entity","type":"Entity","content":{"entity_id":"input_number.servo_control"},"errors":[],"step":1,"wrong":""},"J":{"top":721,"left":455,"title":"AdvancedAction","type":"AdvancedAction","content":{"service":"esphome.espkainielswout_control_servo","data":{"level":"-100"}},"errors":[],"step":1,"wrong":""}}
+    },
   ]
 
   useLayoutEffect(() => {

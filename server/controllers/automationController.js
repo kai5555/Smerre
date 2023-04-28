@@ -52,6 +52,8 @@ exports.createAutomation = async (req, res) => {
         return res.status(400).json({ success: false, error: err })
     }
 
+    console.log(automation);
+
     await automation
         .save()
         .then(() => {
@@ -92,30 +94,29 @@ exports.updateAutomation = async (req, res) => {
         })
     }
 
-    Automation.findOne({ name: body.automationName })
-        .then(automation => {
-            if(automation == null) return res.status(404).json({message: "Automation not found"});
-
-            automation.lines = body.lines;
-            automation.boxes = body.boxes;
-
-            automation
-                .save()
-                .then(() => {
-                    console.log("Automation updated");
-                })
-                .catch(error => {
-                    return res.status(404).json({
-                        error,
-                        message: 'Automation not updated!',
-                    })
-                })
-        })
-
+    const automation = await Automation.findOne({ name: body.automationName });
+    if (automation == null) {
+      return res.status(404).json({ message: "Automation not found" });
+    }
+    
+    automation.lines = body.lines;
+    automation.boxes = body.boxes;
+    
+    try {
+      await automation.save();
+      console.log("Automation "+automation.alias+" updated");
+    } catch (error) {
+      return res.status(404).json({
+        error,
+        message: 'Automation '+automation.alias+' not updated!',
+      })
+    }
         
     // Update automation in homeassitant
+    body.automation.alias = automation.name;
+    console.log(body.automation);
      try {
-        await fetch(`http://${process.env.HOMEASSISTANT_IP}/api/config/automation/config/${body.automationName}`, {
+        await fetch(`http://${process.env.HOMEASSISTANT_IP}/api/config/automation/config/${automation.name}`, {
             method: 'POST',
             body: JSON.stringify(body.automation),
             headers: {
@@ -123,7 +124,7 @@ exports.updateAutomation = async (req, res) => {
                 'Content-Type': 'application/json',
             },
         });
-        console.log("Updated " + body.automationName);
+        console.log("Updated " + automation.name);
     } catch (err) {
         return res.status(404).json({message: err});
     }

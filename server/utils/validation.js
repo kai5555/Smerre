@@ -22,8 +22,26 @@ const loginValidation = (data => {
     return loginSchema.validate(data);
 })
 
+const plantSchema = Joi.object({
+    name: Joi.string().required().messages({
+        'string.empty': 'Please provide a name for the plant'
+    }),
+    description: Joi.string().required().messages({
+        'string.empty': 'Please provide a description for the plant'
+    }),
+    block: Joi.number().required().messages({
+        'number.base': 'Please provide a valid block number',
+        'number.empty': 'Please provide a value for the block number'
+    }),
+})
+
+const plantValidation = (data => {
+    return plantSchema.validate(data);
+})
+
 
 module.exports = {
     registrationValidation: registrationValidation,
     loginValidation: loginValidation,
+    plantValidation: plantValidation
 }

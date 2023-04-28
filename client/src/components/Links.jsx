@@ -24,8 +24,8 @@ class Links extends Component {
                 <Collapse>
                     <List>
                         <Item>
-                            <Link to="/temperatures/list" className="nav-link">
-                                View data
+                            <Link to="/plant" className="nav-link">
+                                Plants
                             </Link>
                         </Item>
 

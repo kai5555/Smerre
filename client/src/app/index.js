@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 import { NavBar } from '../components'
-import { TemperaturesList, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations} from '../pages'
+import { PlantList, Plant, AddPlant, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations} from '../pages'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -12,7 +12,9 @@ function App() {
         <Router>
             <NavBar />
             <Routes>
-                <Route path="/temperatures/list" element={<TemperaturesList />} />
+                <Route path="/plant" element={<PlantList />} />
+                <Route path="/plant/:name" element={<Plant />} />
+                <Route path="/plant/add" element={<AddPlant />} />
                 <Route path="/component/control" element={< ComponentControl />} />
                 <Route path="/login" element={< Login />} />
                 <Route path="/register" element={< Register />} />

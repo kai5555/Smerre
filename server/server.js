@@ -14,11 +14,11 @@ const {initSocket} = require('./controllers/socketController');
 
 const db = require('./db');
 
-const temperatureRouter = require('./routes/temperatureRouter');
-const humidityRouter = require('./routes/humidityRouter');
+const dataRouter = require('./routes/dataRouter');
 const userRouter = require("./routes/userRouter");
 const componentRouter = require("./routes/componentRouter");
 const automationRouter = require("./routes/automationRouter");
+const plantRouter = require("./routes/plantRouter");
 
 app.use(cors());
 app.use(session({
@@ -31,11 +31,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 
 // Setup routes
-app.use('/api', temperatureRouter);
-app.use('/api', humidityRouter);
+app.use('/api', dataRouter);
 app.use('/api', userRouter);
 app.use('/api', componentRouter);
 app.use('/api', automationRouter);
+app.use('/api', plantRouter);
 
 // Initiate sockets
 initSocket(server);

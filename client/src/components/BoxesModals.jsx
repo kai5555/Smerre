@@ -521,7 +521,84 @@ const TimeBoxModal = memo(function TimeBoxModal(props) {
 });
 
 
+const DelayBoxModal = memo(function DelayBoxModal(props) {
+  var { content, errors, onOk, onCancel, onDelete } = props;
+  content =  {
+    time: content?.time || "",
+  }
 
+  const {
+    updatedContent,
+    handleInputChange,
+    handleOkClick,
+    handleCancelClick,
+    handleDeleteClick,
+    setUpdatedContent,
+  } = useModalMethods(content, onOk, onCancel, onDelete);
+
+  return (
+    <ContentBox>
+      <ErrorList errors={errors} />
+      <h1>Delay</h1>
+
+      <Label>Fill in the delay</Label>
+      <InfoButton message="Format hh:mm:ss:ms" />
+      <InputText value={updatedContent.time} onChange={handleInputChange} type="text" placeholder="time" name="time"/>
+
+      <OkButton onClick={handleOkClick}>Oké</OkButton>
+      <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
+      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+    </ContentBox>
+  )
+});
+
+const WeatherBoxModal = memo(function WeatherBoxModal(props) {
+  var { content, errors, onOk, onCancel, onDelete } = props;
+  content =  {
+    status: content?.status || "",
+  }
+
+  const {
+    updatedContent,
+    handleInputChange,
+    handleOkClick,
+    handleCancelClick,
+    handleDeleteClick,
+    setUpdatedContent,
+  } = useModalMethods(content, onOk, onCancel, onDelete);
+
+  return (
+    <ContentBox>
+      <ErrorList errors={errors} />
+      <h1>Weather</h1>
+
+      <Label>Fill in the weather</Label>
+      <InfoButton message="Choose one of the available conditions" />
+
+      {console.log(updatedContent.status)}
+      <InputSelect onChange={handleInputChange} name="status" value={updatedContent.status || "none" } >
+          <option value="none" disabled>Select an condition</option>
+          <option value="clear,night">{"Clear or night"}</option>
+          <option value="cloudy">{"Cloudy"}</option>
+          <option value="fog">{"Fog"}</option>
+          <option value="hail">{"Hail"}</option>
+          <option value="lightning,rainy">{"Lightning and rainy"}</option>
+          <option value="lightning">{"Lightning"}</option>
+          <option value="partly clouded">{"Partly clouded"}</option>
+          <option value="pouring">{"Pouring"}</option>
+          <option value="rainy">{"Rainy"}</option>
+          <option value="sneeuw-,regenachtig">{"Snowy and rainy"}</option>
+          <option value="snowy">{"Snowy"}</option>
+          <option value="sunny">{"Sunny"}</option>
+          <option value="windy">{"Windy"}</option>
+        </InputSelect>
+
+      <OkButton onClick={handleOkClick}>Oké</OkButton>
+      <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
+      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+    </ContentBox>
+  )
+});
 
 const modalMap = {
   LineModal,
@@ -534,6 +611,8 @@ const modalMap = {
   AndBoxModal,
   OrBoxModal,
   TimeBoxModal,
+  DelayBoxModal,
+  WeatherBoxModal,
 };
 
 export default modalMap;

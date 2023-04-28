@@ -372,33 +372,71 @@ const Container = (props) => {
           
           return cond_obj;
       },
+      "Weather": function(content, cond_obj){
+        // Add the trigger to triggers
+        trigger.push({
+          platform: "state",
+          entity_id: "weather.openweathermap"
+        });
+
+        // Add or condition 
+        cond_obj.push({
+          condition: "state",
+          entity_id: "weather.openweathermap",
+          state: content.status,
+        });
+        
+        return cond_obj;
+      },
     },
     {
       "Start": function(content, action_obj){
-        return action_obj;
+        const parallel = [];
+        action_obj.push({parallel: parallel});
+        return parallel;
       },
       "Entity": function(content, action_obj){
         // Add the action
-        action_obj.push({
+        const sequence = [];
+        action_obj.push({ sequence: sequence});
+        sequence.push({
           service: "",
-          data: {},
           target: {
             entity_id: content.entity_id
           }
         });
-        
-        return action_obj[action_obj.length - 1];
+
+        return sequence;
       },
       "BasicAction": function(content, action_obj){
-        action_obj.service = "switch." + content.type;
+        const action = action_obj[action_obj.length - 1];
+        action.service = "switch." + content.type;
 
         return action_obj;
       },
       "AdvancedAction": function(content, action_obj){
-        action_obj.service = content.service;
-        action_obj.data = content.data;
+        const action = action_obj[action_obj.length - 1];
+        action.service = content.service;
+        action.data_template = content.data;
+        delete action.target;
 
         return action_obj;
+      },
+      "Delay": function(content, action_obj){
+        let times = content.time.split(":");
+        let delay = {
+          hours: times[0],
+          minutes: times[1],
+          seconds: times[2],
+          milliseconds: times[3],
+        }
+        action_obj.push({
+          delay: delay,
+        });
+
+        const parallel = [];
+        action_obj.push({parallel: parallel});
+        return parallel;
       },
     }]
 
@@ -416,36 +454,26 @@ const Container = (props) => {
 
     // Set the automation for condition and trigger
     let startNode = Object.keys(boxes)[0];
-    setupTriggerAndConditon(startNode, condition, 0);
+    traverseGraph(startNode, condition, 0);
     automation['trigger'] = trigger;
     automation['condition'] = condition;
 
     // Set the automation for action
     startNode = Object.keys(boxes)[1];
-    setupAction(startNode, action, 1);
+    traverseGraph(startNode, action, 1);
     automation['action'] = action;
 
     // Finally sent the created automation and current structure to the parent component
     console.log(automation);
     onSubmitCall(automation, lines, boxes);
 
-    function setupTriggerAndConditon(key, obj, step){
+    function traverseGraph(key, obj, step){
       let box = boxes[key];
       let next = processNode[step][box.type](box.content, obj);
-
+      
       let node = graph[key];
       node.children.forEach(child => {
-        setupTriggerAndConditon(child, next, step);
-      });
-    }
-
-    function setupAction(key, obj, step){
-      let box = boxes[key];
-      let next = processNode[step][box.type](box.content, obj);
-
-      let node = graph[key];
-      node.children.forEach(child => {
-        setupAction(child, next, step);
+        traverseGraph(child, next, step);
       });
     }
   }
@@ -585,6 +613,7 @@ const Container = (props) => {
             <PickButton onClick={(event) => handleAddBox("Time", event)}>Time</PickButton>
             <PickButton onClick={(event) => handleAddBox("CheckValue", event)}>CheckValue</PickButton>
             <PickButton onClick={(event) => handleAddBox("CheckStatus", event)}>CheckStatus</PickButton>
+            <PickButton onClick={(event) => handleAddBox("Weather", event)}>Weather</PickButton>
           </ToolBar>
           <StepButtonsContainer>
             <StepButton onClick={() => goNextStep()}>
@@ -599,6 +628,7 @@ const Container = (props) => {
             <PickButton onClick={(event) => handleAddBox("Entity", event)}>Entity</PickButton>
             <PickButton onClick={(event) => handleAddBox("BasicAction", event)}>BasicAction</PickButton>
             <PickButton onClick={(event) => handleAddBox("AdvancedAction", event)}>AdvancedAction</PickButton>
+            <PickButton onClick={(event) => handleAddBox("Delay", event)}>Delay</PickButton>
           </ToolBar>
           <StepButtonsContainer>
             <StepButton onClick={() => goPreviousStep()}>
@@ -702,6 +732,13 @@ const Container = (props) => {
         "parent_warning": "'Time' can only have the 'Als', 'And', 'Or' as parents",
         "child_warning": "'Time' can't have any children",
       },
+      "Weather": {
+        "min_children": 0,
+        "max_children": 0,
+        "possible_parents": regexPresets.only(["Start", "And", "Or"]),
+        "parent_warning": "'Weather' can only have the 'Als', 'And', 'Or' as parents",
+        "child_warning": "'Weather' can't have any children",
+      },
     },
     {
       "Start": {
@@ -714,23 +751,30 @@ const Container = (props) => {
       "Entity": {
         "min_children": 1,
         "max_children": 1,
-        "possible_parents": regexPresets.only(["Start"]),
-        "parent_warning": "'Entity' can only have the 'Dan' as parent",
+        "possible_parents": regexPresets.only(["Start","Delay"]),
+        "parent_warning": "'Entity' can only have the 'Dan' and 'Delay' as parent",
         "child_warning": "'Entity' can only have 1 child",
       },
       "BasicAction": {
         "min_children": 0,
-        "max_children": 0,
+        "max_children": 1,
         "possible_parents": regexPresets.only(["Entity"]),
-        "parent_warning": "'Entity' can only have the 'Entity' as parent",
-        "child_warning": "'Entity' can't have any children",
+        "parent_warning": "'BasicAction' can only have the 'Entity' as parent",
+        "child_warning": "'BasicAction' can only have one child",
       },
       "AdvancedAction": {
         "min_children": 0,
-        "max_children": 0,
+        "max_children": 1,
         "possible_parents": regexPresets.only(["Entity"]),
-        "parent_warning": "'Entity' can only have the 'Entity' as parent",
-        "child_warning": "'Entity' can't have any children",
+        "parent_warning": "'AdvancedAction' can only have the 'Entity' as parent",
+        "child_warning": "'AdvancedAction' can only have one child",
+      },
+      "Delay": {
+        "min_children": 1,
+        "max_children": Infinity,
+        "possible_parents": regexPresets.only(["BasicAction","AdvancedAction"]),
+        "parent_warning": "'Delay' can only have the 'Actions' as parent",
+        "child_warning": "'Delay' must have one or more children",
       },
     }]
     
@@ -823,6 +867,15 @@ const Container = (props) => {
 
         return 'success';
       },
+      "Weather": function validate(key) {
+        let box = boxes[key];
+        let content = box.content;
+        if(!content) return "'Time' doesn't have any content";
+
+        if(!isKeyValid(content, "status" )) return "'Weather' doesn't have a status";
+
+        return 'success';
+      },
     },
     {
       "Start": function validate(key) {
@@ -905,7 +958,27 @@ const Container = (props) => {
 
         
         return 'success';
-      }
+      },
+      "Delay": function validate(key) {
+        let box = boxes[key];
+        let content = box.content;
+        if(!content) return "'Delay' doesn't have any content";
+
+        if(!isKeyValid(content, "time" )) return "'Delay' doesn't have a time";
+        
+        var time = content.time;
+        if(time.length != 11){
+          return "'Delay' isn't of a good format, try hh:mm:ss:ms";
+        }
+
+        let times = time.split(":");
+        if(times.length != 4){
+          return "'Delay' isn't of a good format, try hh:mm:ss:ms";
+        }
+
+        return 'success';
+      },
+      
     }]
 
     // Setup vars and clear error lists

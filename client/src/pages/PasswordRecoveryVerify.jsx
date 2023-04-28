@@ -96,15 +96,27 @@ function PasswordRecovery() {
         <Fragment>
             { validUrl ? (
                 <Wrapper>
-                        <Title>Reset password</Title>
-                        <form onSubmit={(e) => handlePasswordRecovery(e)}>
-                            <Label htmlFor="password">Password</Label>
-                            <InputText type="password" name="password" id="password" />
-                            <Label htmlFor="password">Confirm Password</Label>
-                            <InputText type="password" name="password" id="confirmpassword" />
 
-                            <Button type="submit">Reset</Button>
-                        </form>
+                    <div className="d-flex justify-content-center align-items-start vh-100">
+                        <div className="p-5 rounded shadow-lg bg-white my-5" style={{ width: '400px' }}>
+                            <h2 className="mb-4">Reset Password</h2>
+                            <form onSubmit={(e)=>handlePasswordRecovery(e)}>
+                                <div className="form-group mb-3">
+                                    <label htmlFor="password">Password</label>
+                                    <input className="form-control" type="password" name="password" id="password" />
+                                </div>
+
+                                <div className="form-group mb-3">
+                                    <label htmlFor="password">Confirm Password</label>
+                                    <input  className="form-control" type="password" name="password" id="confirmpassword" />
+                                </div>
+
+                                <button type="submit" className="btn btn-primary mt-3">
+                                    Reset Password
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                         {errorMessage && <ValidationError key={errorKey} message={errorMessage} />}
                 </Wrapper>
             ) : (
@@ -113,6 +125,7 @@ function PasswordRecovery() {
 
         </Fragment>
     )
+
 }
 
 export default PasswordRecovery;

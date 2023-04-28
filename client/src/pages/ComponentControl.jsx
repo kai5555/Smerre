@@ -21,6 +21,7 @@ class ComponentControl extends React.Component {
         this.state = {
             components:{},
             actors: {},
+            lastUpdated: {}, // new state variable
             loading: true
         };
 
@@ -53,7 +54,10 @@ class ComponentControl extends React.Component {
         const button = document.getElementById(`${actor}`);
         const currentStatus = this.state.actors[actor];
         this.socket.emit('toggle', actor);
-        this.setState({ actors: { ...this.state.actors, [actor]: !currentStatus } });
+        this.setState({
+            actors: { ...this.state.actors, [actor]: !currentStatus } ,
+            lastUpdated: { ...this.state.lastUpdated, [actor]: new Date() } // update the last updated time for the actor
+        });
 
         if(currentStatus) {
             button.style.color = 'MediumSeaGreen';
@@ -88,6 +92,9 @@ class ComponentControl extends React.Component {
                 const name = component ? component.name : null;
                 const image = this.getImageForSubType(subType);
 
+                const lastUpdated = this.state.lastUpdated[key];
+                const timeSinceUpdated = lastUpdated ? Math.floor((new Date() - new Date(lastUpdated)) / 60000) : 0; // calculate time since last update in minutes
+
                 if(image != null) {
                     return (
                         <div className="card mt-5" key={key}>
@@ -101,7 +108,8 @@ class ComponentControl extends React.Component {
                                         <p className="card-text"></p>
                                         <p className="card-text">
                                             <small className="text-muted">
-                                                Last updated 3 mins ago
+                                                Last updated 3 minute ago.
+                                                {/*{lastUpdated ? `Last updated ${timeSinceUpdated} minute${timeSinceUpdated > 1 ? 's' : ''} ago` : ''}*/}
                                             </small>
                                         </p>
                                     </div>

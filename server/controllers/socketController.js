@@ -3,8 +3,19 @@ const WebSocket = require('ws');
 
 function initSocket(server){
 
+    let tel = 2;
     let actors = {};
     const socket = new WebSocket(`ws://10.129.55.146:8123/api/websocket`);
+
+    const heartbeatInterval = 60000; // 30 seconds
+
+    let heartbeat = () =>{
+        if (socket.readyState === WebSocket.OPEN) {
+            tel += 1;
+            socket.send(JSON.stringify({ "id":tel, "type": 'ping' }));
+            console.log("ping send");
+        }
+    }
 
     const io = require("socket.io")(server, {
         cors: {
@@ -42,6 +53,8 @@ function initSocket(server){
             "type": "get_states"
         };
         socket.send(JSON.stringify(states));
+
+        setInterval(heartbeat, heartbeatInterval);
     });
 
     socket.addEventListener('message', (event) => {
@@ -51,7 +64,10 @@ function initSocket(server){
             console.log('Received message:', message);
 
         else if(message.type ==="result" && message.result !== null){
-            setActorsValues(message);
+            console.log(message);
+            if(message.success === "true") {
+                setActorsValues(message);
+            }
         }
         else if(message.type === 'event' && message.event.event_type ==="state_changed") {
             changeActorValue(message);

@@ -157,7 +157,8 @@ const AndBox = memo(function AndBox(props) {
 
   return (
     <div
-      style={{ ...styles, backgroundColor: defaultColor, fontWeight: 'bold', backgroundColor:getBackgroundColor(wrong)  }}
+
+      style={{ ...styles, fontWeight: 'bold', backgroundColor:getBackgroundColor(wrong)  }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <p style={{color: 'white'}}>And</p>
@@ -170,7 +171,7 @@ const OrBox = memo(function OrBox(props) {
 
   return (
     <div
-      style={{ ...styles, backgroundColor: defaultColor, fontWeight: 'bold', backgroundColor:getBackgroundColor(wrong)  }}
+      style={{ ...styles, fontWeight: 'bold', backgroundColor:getBackgroundColor(wrong)  }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <p style={{color: 'white'}}>Or</p>

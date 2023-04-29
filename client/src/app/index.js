@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 import { NavBar } from '../components'
-import { PlantList, Plant, AddPlant, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations} from '../pages'
+import { PlantList, Plant, AddPlant, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, WeatherApi} from '../pages'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -23,6 +23,7 @@ function App() {
                 <Route path="/recovery/:id/:token" element={< PasswordRecoveryVerify />} />
                 <Route path="/automation/add" element={< AddAutomation />} />
                 <Route path="/automation/:name/edit" element={< EditAutomation />} />
+                <Route path="/weather" element={< WeatherApi />}></Route>
                 <Route path="/automation" element={< Automations />} />
             </Routes>
         </Router>

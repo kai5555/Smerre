@@ -6,9 +6,10 @@ import PasswordRecovery from './PasswordRecovery'
 import PasswordRecoveryVerify from './PasswordRecoveryVerify'
 import AddAutomation from './AddAutomation'
 import EditAutomation from './EditAutomation'
+import WeatherApi from './WeatherApi'
 import Automations from './Automations'
 import PlantList from './PlantList'
 import Plant from './Plant'
 import AddPlant from './AddPlant'
 
-export { ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, PlantList, Plant, AddPlant}
+export { ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automation, WeatherApis, PlantList, Plant, AddPlant}

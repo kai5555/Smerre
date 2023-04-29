@@ -52,7 +52,11 @@ class Links extends Component {
                                 Automations
                             </Link>
                         </Item>
-
+                        <Item>
+                            <Link to="/weather" className='nav-link'>
+                                Weather
+                            </Link>
+                        </Item>
 
                     </List>
                 </Collapse>

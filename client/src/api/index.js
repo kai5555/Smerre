@@ -1,9 +1,7 @@
 import axios from 'axios'
 
-const ip = "192.168.0.103";
-
 const api = axios.create({
-    baseURL: `http://${ip}:5000/api`,
+    baseURL: `http://${process.env.REACT_APP_MY_IP}:5000/api`,
 })
 
 

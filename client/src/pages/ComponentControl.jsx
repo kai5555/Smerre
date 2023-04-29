@@ -7,7 +7,6 @@ import api from "../api";
 import io from 'socket.io-client';
 import { Navigate  } from 'react-router-dom';
 import { withAuth } from './Authentication';
-import { ip } from '../index';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 class ComponentControl extends React.Component {
@@ -15,8 +14,8 @@ class ComponentControl extends React.Component {
     constructor(props) {
         super(props);
 
-        this.ip = ip;
-        console.log("server ip is: " + ip);
+        this.ip = process.env.REACT_APP_MY_IP;
+        console.log("server ip is: " + this.ip);
 
         this.state = {
             components:{},

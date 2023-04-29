@@ -66,8 +66,8 @@ function Navbar() {
                 >
                     <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                            <Link to="/temperatures/list" className="nav-link">
-                                View data
+                            <Link to="/plant" className="nav-link">
+                                Plants
                             </Link>
                         </li>
                         <li className="nav-item">

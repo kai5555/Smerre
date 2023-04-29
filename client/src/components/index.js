@@ -1,4 +1,3 @@
-export { default as Links } from './Links';
 export { default as Logo } from './Logo';
 export { default as NavBar } from './NavBar';
 export { default as DraggableBox } from './DraggableBox';

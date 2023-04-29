@@ -12,6 +12,7 @@ function App() {
         <Router>
             <NavBar />
             <Routes>
+                <Route path="/" element={<WeatherApi />} />
                 <Route path="/plant" element={<PlantList />} />
                 <Route path="/plant/:name" element={<Plant />} />
                 <Route path="/plant/add" element={<AddPlant />} />

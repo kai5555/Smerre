@@ -8,6 +8,7 @@ var ComponentSchema = new Schema({
     name: {type: String},
     entity_id: {type: String, unique: true, required: true},
     type: {type: String},
+    sub_type: {type: String},
     block: {type: Number, required: true},
 });  
 

@@ -51,11 +51,11 @@ const Plant = () => {
     const prop = data[key];
 
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 14);
   
     const filteredProps = (prop || []).filter((p) => {
       const timestamp = new Date(p.timestamp);
-      return timestamp >= oneWeekAgo && typeof p.value === 'number';
+      return timestamp >= oneWeekAgo && (typeof p.value === 'number');
     });
 
     // Remove all the empty values and show it in the graph
@@ -64,12 +64,10 @@ const Plant = () => {
     for (let i = 0; i < filteredProps.length; i++) {
       const currTimestamp = new Date(filteredProps[i].timestamp);
       
-      if (prevTimestamp !== null && (currTimestamp - prevTimestamp) > 60000) {
+      if (prevTimestamp !== null && (currTimestamp - prevTimestamp) > 70000) {
         // add null values for missing minutes
-        const minutesDiff = Math.floor((currTimestamp - prevTimestamp) / 60000);
-        for (let j = 1; j < minutesDiff; j++) {
-          result.push({ timestamp: new Date(prevTimestamp.getTime() + (j * 60000)).toISOString(), value: null });
-        }
+        result.push({ timestamp: new Date(prevTimestamp.getTime() + 1000).toISOString(), value: null });
+        result.push({ timestamp: new Date(currTimestamp.getTime() - 1000).toISOString(), value: null });
       }
       
       result.push(filteredProps[i]);
@@ -194,14 +192,14 @@ console.log(graphData);
         <h1>Sensors</h1>
         {console.log(sensors)}
         {sensors.map((sensor) => (
-          <>
+          <React.Fragment key={sensor.name}>
             {sensor.sub_type === 'led' && (
-              <Button key={sensor.name} onClick={() => console.log("Clicked Led")}>Led</Button>
+              <Button onClick={() => console.log("Clicked Led")}>Led</Button>
             )}
             {sensor.sub_type === 'ventiel' && (
-              <Button key={sensor.name} onClick={() => console.log("Clicked Ventiel")}>Ventiel</Button>
+              <Button onClick={() => console.log("Clicked Ventiel")}>Ventiel</Button>
             )}
-          </>
+          </React.Fragment>
         ))}
       </div>
     </>

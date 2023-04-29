@@ -12,4 +12,4 @@ import PlantList from './PlantList'
 import Plant from './Plant'
 import AddPlant from './AddPlant'
 
-export { ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automation, WeatherApis, PlantList, Plant, AddPlant}
+export { ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, WeatherApi, PlantList, Plant, AddPlant}

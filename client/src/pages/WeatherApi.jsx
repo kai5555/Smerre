@@ -15,8 +15,8 @@ function WeatherApi() {
   const [forecastData,setforecastData] = useState({})
   const [location, setLocation] = useState('')
 
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
-  const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${process.env.REACT_APP_OPENWEATHER_KEY}`
+  const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&units=metric&appid=${process.env.REACT_APP_OPENWEATHER_KEY}`
 
   const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const dayInAWeek = new Date().getDay();

@@ -5,7 +5,7 @@ function initSocket(server){
 
     let tel = 2;
     let actors = {};
-    const socket = new WebSocket(`ws://10.129.55.146:8123/api/websocket`);
+    const socket = new WebSocket(`ws://${process.env.HOMEASSISTANT_IP}:8123/api/websocket`);
 
     const heartbeatInterval = 60000; // 30 seconds
 
@@ -37,7 +37,7 @@ function initSocket(server){
     socket.addEventListener('open', (event) => {
         const auth = {
             "type": "auth",
-            "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2ZmE2NThhMzJlN2M0YTA5OTg1MzA5OTYzNTNhMGNlOCIsImlhdCI6MTY2OTcyNTgwNCwiZXhwIjoxOTg1MDg1ODA0fQ.PQsPlGsNVNxbYGwXfvsGi1k10rskekiDkayAD59gziw",
+            "access_token": process.env.HOMEASSISTANT_TOKEN,
         };
         socket.send(JSON.stringify(auth));
 
@@ -128,13 +128,13 @@ function initSocket(server){
         handleSwitch = async (actor) => {
             try {
                 console.log("TRIED LED");
-                await fetch('http://10.129.55.146:8123/api/services/switch/toggle', {
+                await fetch(`http://${process.env.HOMEASSISTANT_IP}:8123/api/services/switch/toggle`, {
                     method: 'POST',
                     body: JSON.stringify({
                         "entity_id": actor,
                     }),
                     headers: {
-                        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2ZmE2NThhMzJlN2M0YTA5OTg1MzA5OTYzNTNhMGNlOCIsImlhdCI6MTY2OTcyNTgwNCwiZXhwIjoxOTg1MDg1ODA0fQ.PQsPlGsNVNxbYGwXfvsGi1k10rskekiDkayAD59gziw",
+                        "Authorization": `Bearer ${process.env.HOMEASSISTANT_TOKEN}`,
                         'Content-Type': 'application/json',
                     },
                 });
@@ -146,14 +146,14 @@ function initSocket(server){
         handleInputNumber = async (actor) => {
             try {
                 console.log("TRIED SERVO, value is: " + String(actors[actor] ? 100 : -100));
-                await fetch('http://10.129.55.146:8123/api/services/input_number/set_value', {
+                await fetch(`http://${process.env.HOMEASSISTANT_IP}:8123/api/services/input_number/set_value`, {
                     method: 'POST',
                     body: JSON.stringify({
                         "entity_id": "input_number.servo_control",
                         "value": actors[actor] ? 100 : -100,
                     }),
                     headers: {
-                        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2ZmE2NThhMzJlN2M0YTA5OTg1MzA5OTYzNTNhMGNlOCIsImlhdCI6MTY2OTcyNTgwNCwiZXhwIjoxOTg1MDg1ODA0fQ.PQsPlGsNVNxbYGwXfvsGi1k10rskekiDkayAD59gziw",
+                        "Authorization": `Bearer ${process.env.HOMEASSISTANT_TOKEN}`,
                         'Content-Type': 'application/json',
                     },
                 });
@@ -161,7 +161,7 @@ function initSocket(server){
                 console.log(err.message);
             }
         }
-
+    });
 }
 
 module.exports = {initSocket};

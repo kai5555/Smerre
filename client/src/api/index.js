@@ -1,8 +1,11 @@
 import axios from 'axios'
 
+const ip = "192.168.0.103";
+
 const api = axios.create({
-    baseURL: 'http://10.129.48.9:5000/api',
+    baseURL: `http://${ip}:5000/api`,
 })
+
 
 // Data routes
 export const getDataOfPlant = payload => api.post(`/getDataOfPlant`, payload)

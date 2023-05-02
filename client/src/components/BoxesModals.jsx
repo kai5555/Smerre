@@ -3,11 +3,8 @@ import styled from 'styled-components'
 import React, { useState, useEffect } from 'react'
 import { DropdownButton, Dropdown, InputGroup, FormControl } from 'react-bootstrap';
 import InfoButton from './InfoButton'
-
-const defaultColor = "#22b542";
-const defaultLightColor = '#cdf7d6';
-const wrongConnectionColor = "#9c2828";
-const wrongContentColor = "#ff9933";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import COLORS from '../scripts/colors'
 
 const OkButton = styled.button.attrs({
   className: `btn btn-primary`,
@@ -16,14 +13,20 @@ const OkButton = styled.button.attrs({
   width: 100px;
 `
 
-const DeleteButton = styled.button.attrs({
+const StyledDeleteButton = styled.button.attrs({
   className: `btn btn-danger`,
 })`
   width: 40px;
   position: absolute;
   top: 15px;
   right: 15px;
+  
 `
+const DeleteButton = ({ onClick }) => (
+  <StyledDeleteButton onClick={onClick}>
+      <FontAwesomeIcon icon="fa-solid fa-trash" flip size="sm" style={{ color: '#ffffff' }} />
+  </StyledDeleteButton>
+);
 
 
 const CancelButton = styled.button.attrs({
@@ -32,6 +35,7 @@ const CancelButton = styled.button.attrs({
   margin: 15px 15px 15px 5px;
   width: 100px;
 `
+
 
 const Label = styled.label`
     margin: 5px;
@@ -61,20 +65,35 @@ const ContentBox = styled.div`
   box-shadow: 3px 3px 5px 5px rgba(0,0,0,0.3);
 `
 
-const ConnectionError = styled.div`
+const ConnectionError = styled.li`
   display: inline-block;
-  background-color: ${wrongConnectionColor};
+  background-color: ${COLORS.errorColor};
   border-radius: 10px;
   padding: 10px;
   color: #fff;
 `;
 
-const ContentError = styled.div`
+const ContentError = styled.li`
   display: inline-block;
-  background-color: ${wrongContentColor};
+  background-color: ${COLORS.warningColor};
   border-radius: 10px;
   padding: 10px;
   color: #fff;
+`;
+
+const ErrorListContainer = styled.ul`
+  display: inline-block;
+  border-radius: 10px;
+  padding: 3px;
+  margin-top: 5px;
+  
+  li {
+    transition: all 0.2s ease-in-out;
+  }
+
+  li:hover {
+    transform: scale(1.05);
+  }
 `;
 
 const SmallButton = styled.button.attrs({
@@ -85,8 +104,8 @@ const SmallButton = styled.button.attrs({
   font-size: 10px;
   transition: transform 0.2s ease-in-out;
   transform: ${props => (props.selected ? 'scale(1)' : 'scale(0.8)')};
-  background-color: ${props => (props.selected ? defaultColor : defaultLightColor)};
-  border-color: ${props => (props.selected ? defaultColor : defaultLightColor)};
+  background-color: ${props => (props.selected ? COLORS.defaultColor : COLORS.defaultLightColor)};
+  border-color: ${props => (props.selected ? COLORS.defaultColor : COLORS.defaultLightColor)};
 
   &:hover {
     transform: scale(1.2);
@@ -126,17 +145,17 @@ function useModalMethods(content, onOk, onCancel, onDelete) {
 
 const ErrorList = ({ errors }) => {
   return (
-    <ul>
+    <ErrorListContainer>
       {errors.map(({ message, type }, index) => {
-        if (type === 'content') {
-          return <ContentError key={index}> (X) {message} </ContentError>;
-        } else if (type === 'connection') {
-          return <ConnectionError key={index}> (!) {message} </ConnectionError>;
-        } else {
-          return null;
-        }
+          if (type === 'content') {
+            return <ContentError key={index}> <FontAwesomeIcon icon="fa-solid fa-circle-question" /> {message} </ContentError>;
+          } else if (type === 'connection') {
+            return <ConnectionError key={index}> <FontAwesomeIcon icon="fa-solid fa-circle-exclamation" /> {message} </ConnectionError>;
+          } else {
+            return null;
+          }
       })}
-    </ul>
+    </ErrorListContainer>
   );
 };
 
@@ -213,7 +232,7 @@ const EntityBoxModal = memo(function EntityBoxModal(props) {
 
       <OkButton onClick={handleOkClick}>Oké</OkButton>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
-      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+      <DeleteButton onClick={handleDeleteClick} />
     </ContentBox>
   )
 });
@@ -252,7 +271,7 @@ const CheckValueBoxModal = memo(function CheckValueBoxModal(props) {
 
       <OkButton onClick={handleOkClick}>Oké</OkButton>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
-      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+      <DeleteButton onClick={handleDeleteClick} />
     </ContentBox>
   )
 });
@@ -285,7 +304,7 @@ const CheckStatusBoxModal = memo(function CheckStatusBoxModal(props) {
       <br></br>
       <OkButton onClick={handleOkClick}>Oké</OkButton>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
-      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+      <DeleteButton onClick={handleDeleteClick} />
     </ContentBox>
   )
 });
@@ -318,7 +337,7 @@ const BasicActionBoxModal = memo(function BasicActionBoxModal(props) {
 
       <OkButton onClick={handleOkClick}>Oké</OkButton>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
-      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+      <DeleteButton onClick={handleDeleteClick} />
     </ContentBox>
   )
 });
@@ -399,7 +418,7 @@ const AdvancedActionBoxModal = memo(function AdvancedActionBoxModal(props) {
       <br></br>
       <OkButton onClick={handleOkClick}>Oké</OkButton>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
-      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+      <DeleteButton onClick={handleDeleteClick} />
     </ContentBox>
   )
 });
@@ -422,7 +441,7 @@ const AndBoxModal = memo(function AndBoxModal(props) {
       <h1>And</h1>
       <p>This is a and block</p>
 
-      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+      <DeleteButton onClick={handleDeleteClick} />
     </ContentBox>
   )
 });
@@ -445,7 +464,7 @@ const OrBoxModal = memo(function OrBoxModal(props) {
       <h1>Or</h1>
       <p>This is a or block</p>
 
-      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+      <DeleteButton onClick={handleDeleteClick} />
     </ContentBox>
   )
 });
@@ -515,7 +534,7 @@ const TimeBoxModal = memo(function TimeBoxModal(props) {
 
       <OkButton onClick={handleOkClick}>Oké</OkButton>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
-      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+      <DeleteButton onClick={handleDeleteClick} />
     </ContentBox>
   )
 });
@@ -547,7 +566,7 @@ const DelayBoxModal = memo(function DelayBoxModal(props) {
 
       <OkButton onClick={handleOkClick}>Oké</OkButton>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
-      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+      <DeleteButton onClick={handleDeleteClick} />
     </ContentBox>
   )
 });
@@ -595,7 +614,7 @@ const WeatherBoxModal = memo(function WeatherBoxModal(props) {
 
       <OkButton onClick={handleOkClick}>Oké</OkButton>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
-      <DeleteButton onClick={handleDeleteClick}>X</DeleteButton>
+      <DeleteButton onClick={handleDeleteClick} />
     </ContentBox>
   )
 });

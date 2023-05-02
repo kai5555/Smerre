@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import {
   Accordion,
   AccordionItem,
@@ -9,6 +11,26 @@ import {
 import axios from 'axios'
 import '../style/weather.css'
 
+const scheduleNotification = async () => {
+  console.log("OK");
+  if (Capacitor.isPluginAvailable('LocalNotifications')) {
+    await LocalNotifications.schedule({
+      notifications: [
+        {
+          title: 'My notification',
+          body: 'This is my notification message!',
+          id: 1,
+          schedule: { at: new Date(Date.now()) },
+          sound: null,
+          attachments: null,
+          actionTypeId: '',
+          extra: null,
+        },
+      ],
+    });
+  }
+};
+scheduleNotification();
 
 function WeatherApi() {
   const [data,setData] = useState({})

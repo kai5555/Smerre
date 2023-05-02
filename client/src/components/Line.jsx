@@ -1,30 +1,35 @@
 import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
 import { PathLine } from 'react-svg-pathline';
+import COLORS from '../scripts/colors'
 
-const defaultColor = '#22b542';
-const defaultLightColor = '#cdf7d6';
-const wrongContentColor = "#ff9933";
-const wrongContentLightColor = "#f5dec6";
-const wrongConnectionColor = "#9c2828";
-const wrongConnectionLightColor = "#fccccc";
+import styled, { css, keyframes } from "styled-components";
+
+const popIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {  
+    opacity: 1;
+  }
+`;
 
 function getStartColor(wrong) {
   if (wrong === "content") {
-    return wrongContentColor;
+    return COLORS.warningColor;
   } else if (wrong === "connection") {
-    return wrongConnectionColor;
+    return COLORS.errorColor;
   } else {
-    return defaultColor;
+    return COLORS.defaultColor;
   }
 }
 
 function getEndColor(wrong){
   if (wrong === "content") {
-    return wrongContentLightColor;
+    return COLORS.warningLightColor;
   } else if (wrong === "connection") {
-    return wrongConnectionLightColor;
+    return COLORS.errorLightColor;
   } else {
-    return defaultLightColor;
+    return COLORS.defaultLightColor;
   }
 }
 

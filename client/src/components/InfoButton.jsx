@@ -1,14 +1,7 @@
 import { Button,OverlayTrigger, Tooltip } from 'react-bootstrap';
 import styled, { keyframes } from 'styled-components'
 
-const InfoCircle = styled.button.attrs({
-  className: 'btn btn-secondary',
-})`
-  rounded: 10px;
-  width: 15px;
-  heigth: 10px;
-  transform: scale(0.7);
-`
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 function InfoButton({ message }) {
   return (
@@ -16,9 +9,7 @@ function InfoButton({ message }) {
         placement="right"
         overlay={<Tooltip>{message}</Tooltip>}
     >
-        <InfoCircle className="p-0">
-          i
-        </InfoCircle>
+      <FontAwesomeIcon icon="fa-solid fa-circle-info" style={{color: "#c2c2c2",}} />
     </OverlayTrigger>
   );
 }

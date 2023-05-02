@@ -1,9 +1,29 @@
 import { memo } from 'react'
-import styled from 'styled-components'
+import COLORS from '../scripts/colors'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import styled, { css, keyframes } from "styled-components";
 
-const defaultColor = '#22b542';
-const contentWrongColor = "#ff9933";
-const connectionWrongColor = "#9c2828";
+const popIn = keyframes`
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+`;
+
+//const Box = styled.div``;
+const Box = styled.div`
+  ${({ role }) =>
+    role === "Box" &&
+    css`
+      display: inline-block;
+      animation: ${popIn} 0.25s ease-in-out;
+    `}
+`;
+
 const styles = {
   padding: '0.5rem 1rem',
   cursor: 'move',
@@ -14,11 +34,11 @@ const styles = {
 function getBackgroundColor(wrong){
   switch (wrong) {
     case 'connection':
-      return connectionWrongColor;
+      return COLORS.errorColor;
     case 'content':
-      return contentWrongColor;
+      return COLORS.warningColor;
     default:  
-      return defaultColor;
+      return COLORS.defaultColor;
   }
 }
 
@@ -27,12 +47,12 @@ const StartBox = memo(function StartBox(props) {
   const { yellow, preview, content, wrong } = props;
 
   return (
-    <div
+    <Box
       style={{ ...styles, backgroundColor:getBackgroundColor(wrong) , fontWeight: 'bold' }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <p style={{color: 'white', margin: '0 0 0 0'}}>{content.title}</p>
-    </div>
+    </Box>
   );
 });
 
@@ -42,18 +62,23 @@ const EntityBox = memo(function EntityBox(props) {
 
   const backgroundColor = yellow ? 'yellow' : 'white'
   return (
-    <div  
+    <Box  
       style={{ ...styles, backgroundColor, position: 'relative', overflow: 'hidden' }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 'calc(100% - 2.5rem)', backgroundColor:getBackgroundColor(wrong)}}></div>
       <div style={{ position: 'relative' }}>
-        <p style={{fontWeight: 'bold', color: 'white'}}>Entity</p>
+        <p style={{fontWeight: 'bold', color: 'white'}}>
+           Entity
+           <FontAwesomeIcon icon="fa-solid fa-thermometer" size="xs" style={{ color: '#ffffff', margin: "0px -5px 0 5px"}} /> 
+        </p>
       </div>
       <div>
-        <p>{content.entity_id}</p>
+        {content.entity_id && (
+          <p>{content.entity_id}</p>
+        )}
       </div>
-    </div>
+    </Box>
   )
 });
 
@@ -62,13 +87,16 @@ const BasicActionBox = memo(function BasicActionBox(props) {
 
   const backgroundColor = yellow ? 'yellow' : 'white'
   return (
-    <div  
+    <Box  
       style={{ ...styles, backgroundColor, position: 'relative', overflow: 'hidden' }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 'calc(100% - 2.5rem)', backgroundColor:getBackgroundColor(wrong) }}></div>
       <div style={{ position: 'relative' }}>
-        <p style={{fontWeight: 'bold', color: 'white'}}>Basic Action</p>
+        <p style={{fontWeight: 'bold', color: 'white'}}>
+          Action
+          <FontAwesomeIcon icon="fa-solid fa-play" size="xs" style={{ color: '#ffffff', margin: "0px -5px 0 5px"}} /> 
+        </p>
       </div>
       <div>
       {content.type && (
@@ -79,7 +107,7 @@ const BasicActionBox = memo(function BasicActionBox(props) {
         </p>
       )}
       </div>
-    </div>
+    </Box>
   );
 });
 
@@ -89,13 +117,16 @@ const AdvancedActionBox = memo(function AdvancedActionBox(props) {
 
   const backgroundColor = yellow ? 'yellow' : 'white'
   return (
-    <div  
+    <Box  
       style={{ ...styles, backgroundColor, position: 'relative', overflow: 'hidden' }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 'calc(100% - 2.5rem)', backgroundColor:getBackgroundColor(wrong) }}></div>
       <div style={{ position: 'relative' }}>
-        <p style={{fontWeight: 'bold', color: 'white'}}>Advanced Action</p>
+      <p style={{fontWeight: 'bold', color: 'white'}}>
+          Advanced Action
+          <FontAwesomeIcon icon="fa-solid fa-forward" size="xs" style={{ color: '#ffffff', margin: "0px -5px 0 5px"}} /> 
+        </p>
       </div>
       <div>
         {content.service && (
@@ -105,7 +136,7 @@ const AdvancedActionBox = memo(function AdvancedActionBox(props) {
           <p>{name}:{value}</p>
         })}
       </div>
-    </div>
+    </Box>
   );
 });
 
@@ -114,18 +145,21 @@ const CheckValueBox = memo(function CheckValueBox(props) {
 
   const backgroundColor = yellow ? 'yellow' : 'white'
   return (
-    <div  
+    <Box  
       style={{ ...styles, backgroundColor, position: 'relative', overflow: 'hidden' }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 'calc(100% - 2.5rem)', backgroundColor:getBackgroundColor(wrong) }}></div>
       <div style={{ position: 'relative' }}>
-        <p style={{fontWeight: 'bold', color: 'white'}}>Value</p>
+        <p style={{fontWeight: 'bold', color: 'white'}}>
+           Value
+           <FontAwesomeIcon icon="fa-solid fa-arrow-up-9-1" size="xs" style={{ color: '#ffffff', margin: "0px -5px 0 5px"}} /> 
+        </p>
       </div>
       <div>
         <p>{content.type} {content.value}</p>
       </div>
-    </div>
+    </Box>
   );
 });
 
@@ -135,20 +169,23 @@ const CheckStatusBox = memo(function CheckStatusBox(props) {
 
   const backgroundColor = yellow ? 'yellow' : 'white'
   return (
-    <div  
+    <Box  
       style={{ ...styles, backgroundColor, position: 'relative', overflow: 'hidden' }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 'calc(100% - 2.5rem)', backgroundColor:getBackgroundColor(wrong) }}></div>
       <div style={{ position: 'relative' }}>
-        <p style={{fontWeight: 'bold', color: 'white'}}>Status</p>
+        <p style={{fontWeight: 'bold', color: 'white'}}>
+           Status
+           <FontAwesomeIcon icon="fa-solid fa-circle-dot" size="xs" style={{ color: '#ffffff', margin: "0px -5px 0 5px"}} /> 
+        </p>
       </div>
       <div>
         {content.status && (
           <p>To {content.status}</p>
         )}
       </div>
-    </div>
+    </Box>
   );
 });
 
@@ -156,13 +193,16 @@ const AndBox = memo(function AndBox(props) {
   const { yellow, preview, content, wrong } = props;
 
   return (
-    <div
+    <Box
 
       style={{ ...styles, fontWeight: 'bold', backgroundColor:getBackgroundColor(wrong)  }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
-      <p style={{color: 'white'}}>And</p>
-    </div>
+      <p style={{fontWeight: 'bold', color: 'white'}}>
+        And
+        <FontAwesomeIcon icon="fa-solid fa-arrows-split-up-and-left" size="xs" style={{ color: '#ffffff', margin: "0px -5px 0 5px"}} /> 
+      </p>
+    </Box>
   );
 });
 
@@ -170,12 +210,15 @@ const OrBox = memo(function OrBox(props) {
   const { yellow, preview, content, wrong } = props;
 
   return (
-    <div
+    <Box
       style={{ ...styles, fontWeight: 'bold', backgroundColor:getBackgroundColor(wrong)  }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
-      <p style={{color: 'white'}}>Or</p>
-    </div>
+      <p style={{fontWeight: 'bold', color: 'white'}}>
+        Or
+        <FontAwesomeIcon icon="fa-solid fa-arrows-split-up-and-left" size="xs" style={{ color: '#ffffff', margin: "0px -5px 0 5px"}} /> 
+      </p>
+    </Box>
   );
 });
 
@@ -185,13 +228,16 @@ const TimeBox = memo(function TimeBox(props) {
 
   const backgroundColor = yellow ? 'yellow' : 'white'
   return (
-    <div  
+    <Box  
       style={{ ...styles, backgroundColor, position: 'relative', overflow: 'hidden' }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 'calc(100% - 2.5rem)', backgroundColor:getBackgroundColor(wrong) }}></div>
       <div style={{ position: 'relative' }}>
-        <p style={{fontWeight: 'bold', color: 'white'}}>Time</p>
+        <p style={{fontWeight: 'bold', color: 'white'}}>
+          Time
+          <FontAwesomeIcon icon="fa-solid fa-clock" size="xs" style={{ color: '#ffffff', margin: "0px -5px 0 5px"}} /> 
+        </p>
       </div>
       <div>
         {(content.seconds || content.minutes|| content.hours) &&(
@@ -201,7 +247,7 @@ const TimeBox = memo(function TimeBox(props) {
           <p>Repeat every {content.repeatValue} {content.repeatType}</p>
         )}
       </div>
-    </div>
+    </Box>
   );
 });
 
@@ -211,20 +257,23 @@ const DelayBox = memo(function DelayBox(props) {
 
   const backgroundColor = yellow ? 'yellow' : 'white'
   return (
-    <div  
+    <Box  
       style={{ ...styles, backgroundColor, position: 'relative', overflow: 'hidden' }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 'calc(100% - 2.5rem)', backgroundColor:getBackgroundColor(wrong) }}></div>
       <div style={{ position: 'relative' }}>
-        <p style={{fontWeight: 'bold', color: 'white'}}>Delay</p>
+        <p style={{fontWeight: 'bold', color: 'white'}}>
+          Delay
+          <FontAwesomeIcon icon="fa-solid fa-hourglass-end" size="xs" style={{ color: '#ffffff', margin: "0px -5px 0 5px"}} /> 
+        </p>
       </div>
       <div>
         {(content.time) &&(
           <p>Time {content.time}</p>
         )}
       </div>
-    </div>
+    </Box>
   );
 });
 
@@ -233,24 +282,25 @@ const WeatherBox = memo(function WeatherBox(props) {
 
   const backgroundColor = yellow ? 'yellow' : 'white'
   return (
-    <div  
+    <Box  
       style={{ ...styles, backgroundColor, position: 'relative', overflow: 'hidden' }}
       role={preview ? 'BoxPreview' : 'Box'}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 'calc(100% - 2.5rem)', backgroundColor:getBackgroundColor(wrong) }}></div>
       <div style={{ position: 'relative' }}>
-        <p style={{fontWeight: 'bold', color: 'white'}}>Weather</p>
+        <p style={{fontWeight: 'bold', color: 'white'}}>
+          Weather
+          <FontAwesomeIcon icon="fa-solid fa-cloud-sun" size="xs" style={{ color: '#ffffff', margin: "0px -5px 0 5px"}} /> 
+        </p>
       </div>
       <div>
         {(content.status) &&(
           <p>Status {content.status}</p>
         )}
       </div>
-    </div>
+    </Box>
   );
 });
-
-
 
 const componentMap = {
   StartBox,

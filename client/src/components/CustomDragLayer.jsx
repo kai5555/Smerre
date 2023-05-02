@@ -1,5 +1,6 @@
 import { useDragLayer } from 'react-dnd'
 import BoxDragPreview from './BoxDragPreview'
+import MenuBoxDragPreview from './MenuBoxDragPreview'
 import { ItemTypes } from '../scripts'
 import { snapToGrid } from '../scripts'
 
@@ -46,6 +47,8 @@ const CustomDragLayer = (props) => {
     switch (itemType) {
       case ItemTypes.BOX:
         return <BoxDragPreview content={item.content} type={item.type} wrong={item.wrong} />
+      case ItemTypes.MENUBOX:
+        return <MenuBoxDragPreview type={item.type} />
       default:
         return null
     }

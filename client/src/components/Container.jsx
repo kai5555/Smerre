@@ -2,35 +2,29 @@ import update from 'immutability-helper';
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDrop } from 'react-dnd';
 import DraggableBox from './DraggableBox';
-import { ItemTypes } from '../scripts';
+import MenuBox from './MenuBox';
+import { COLORS, ItemTypes } from '../scripts';
 //import { snapToGrid as doSnapToGrid } from '../scripts';
 import modalMap from './BoxesModals'
+import GridLines from 'react-gridlines';
 import Line from './Line.jsx'
 import styled, { keyframes } from 'styled-components'
 import api from '../api'
+
+import Tour from 'reactour'
+import tutorial from '../scripts/tutorial'
 
 const EditBar = styled.div.attrs({
   className: 'form-group',
 })`
   margin: 0 0px;
-  position: absolute;
+  position: fixed;
   width: 100%;
   bottom: 0;
   transition: opacity 0.5s ease-out;
   background: white;
   opacity: ${(props) => (props.visible ? 1 : 0)};
 `
-const ToolBar = styled.div.attrs({
-  className: 'form-group',
-})`
-  margin: 0 0px;
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  transition: opacity 0.5s ease-out;
-  opacity: ${(props) => (props.visible ? 1 : 0)};
-`
-
 const bounceAnimation = keyframes`
   0% {
     transform: translateX(0) rotate(0deg);
@@ -60,19 +54,20 @@ const StepButtonsContainer = styled.div`
   right: 20px;
 `;
 
+const MenuBoxContainer = styled.div`
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 0);  
+`;
+
 
 const Arrow = styled.span`
   display: inline-block;
   margin-left: 5px;
   animation: ${bounceAnimation} 5s infinite;
   animation-timing-function: cubic-bezier(0.25, 0.45, 0.45, 0.95);
-`;
-
-const PickButton = styled.button.attrs({
-  className: 'btn btn-primary',
-})`
-  display: inline-block;
-  margin-left: 5px;
 `;
 
 
@@ -93,6 +88,15 @@ const Button = styled.button.attrs({
   margin: 15px 15px 15px 5px;
   width: 100px;
 `
+const StartTourButton = styled.button.attrs({
+  className: `btn btn-primary`,
+})`
+  margin: 15px 15px 15px 5px;
+  width: 100px;
+  position: absolute;
+  left: 0;
+  top: 60px;
+`
 
 const ContentBox = styled.div`
   display: flex;
@@ -107,10 +111,14 @@ const ContentBox = styled.div`
 `;
 
 const DragContainer = styled.div`
+  background-color: red;
+
+`;
+
+const Grid = styled(GridLines)`
+  height: 100vh;
   width: 100vw;
-  height: 100vh;,
-  border: 1px solid black;
-  position: relative;
+  background-color: white;
 `;
 
 const Container = (props) => {
@@ -127,11 +135,16 @@ const Container = (props) => {
   const [editBarContent, setEditBarContent] = useState(null);
   const [viewStep, setViewStep] = useState(0);
   const [entities, setEntities] = useState([]);
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
   
   // Load a automation when editing
   useEffect(() => {
     if(automation){
       setLines(automation.lines);
+
+      const myComponent = document.getElementById('A');
+      myComponent.scrollIntoView({ behavior: 'smooth', block: 'center' });
       setBoxes(automation.boxes);
     }
   }, [automation]);
@@ -506,17 +519,16 @@ const Container = (props) => {
     setViewStep((prevCount) => prevCount - 1)
   }
 
-  const handleAddBox = useCallback((type, event) => {
-    const { clientX, clientY } = event;
-
+  const handleAddBox = useCallback((type, left, top) => {
+    if(type == "") return;
     setBoxes(boxes => {
       // Create a new box object with a key of 'a'
       const lastBoxKey = Object.keys(boxes).pop();
       const nextKey = String.fromCharCode(lastBoxKey.charCodeAt(0) + 1);
 
-      const newBox = { top: clientY, left: clientX, title: type, type: type, content: {}, errors: [], step: viewStep };
+      const newBox = { top: top, left: left, title: type, type: type, content: {}, errors: [], step: viewStep };
       return { ...boxes, [nextKey]: newBox };
-    });
+    }); 
   }, [viewStep]);
 
   const handleLineClick = (id) => {
@@ -549,22 +561,30 @@ const Container = (props) => {
       
   const [, drop] = useDrop(
     () => ({
-      accept: ItemTypes.BOX,
+      accept: [ItemTypes.MENUBOX, ItemTypes.BOX],
       drop(item, monitor) {
+
         const delta = monitor.getDifferenceFromInitialOffset();
         let left = Math.round(item.left + delta.x);
         let top = Math.round(item.top + delta.y);
         //;[left, top] = doSnapToGrid(left, top)
 
-        moveBox(item.id, left, top);
+        if (item?.itemType === ItemTypes.MENUBOX) handleAddBox(item.type, left + window.innerWidth/2, top + window.innerHeight - 120)
+        else moveBox(item.id, left, top);
+        
         return undefined;
       },
     }),
     [moveBox],
   );
-  
+
+
+  const heightOffset = -50;
+  const widthSpacing = 60;
+  document.body.style.overflow='hidden'; // 
   return (
     <>
+      <Tour steps={tutorial} isOpen={isTourOpen} onRequestClose={() => setIsTourOpen(false)} accentColor={COLORS.defaultColor} rounded={5}/>
       {viewStep !== 2 && (
         <>
           <DragContainer ref={drop}>
@@ -594,6 +614,57 @@ const Container = (props) => {
                   />
                 ))}
             </svg>
+            <Grid className="grid-area" cellWidth={12 } strokeWidth={1} lineColor='#f2f0f0'></Grid>
+
+            {viewStep === 0 && !editBarVisible &&(
+              <>
+                <MenuBoxContainer data-tut="picks">
+                  <MenuBox type="" rotate="-10deg" left={-210} top={heightOffset}></MenuBox>
+                  <MenuBox type="" rotate="10deg" left={200} top={heightOffset}></MenuBox>
+
+                  <MenuBox type="Entity" rotate="60deg" left={-180} top={heightOffset}></MenuBox>
+                  <MenuBox type="And" rotate="60deg" left={-120} top={heightOffset}></MenuBox>
+                  <MenuBox type="Or" rotate="60deg" left={-60} top={heightOffset}></MenuBox>
+                  <MenuBox type="Time" rotate="60deg" left={0} top={heightOffset}></MenuBox>
+                  <MenuBox type="CheckValue" rotate="60deg" left={60} top={heightOffset}></MenuBox>
+                  <MenuBox type="CheckStatus" rotate="60deg" left={120} top={heightOffset}></MenuBox>
+                  <MenuBox type="Weather" rotate="60deg" left={180} top={heightOffset}></MenuBox>
+
+                </MenuBoxContainer>
+
+                <StepButtonsContainer data-tut="steps">
+                  <StepButton onClick={() => goNextStep()}>
+                    Next 
+                  </StepButton>
+                </StepButtonsContainer>
+
+                <StartTourButton onClick={() => setIsTourOpen(true)}>Start Tour</StartTourButton>
+              </>
+            )}
+            {viewStep === 1 && !editBarVisible &&(
+              <> 
+                <MenuBoxContainer>                  
+                  <MenuBox type="" rotate="-10deg" left={-100} top={heightOffset}></MenuBox>
+                  <MenuBox type="" rotate="10deg" left={100} top={heightOffset}></MenuBox>
+
+                  <MenuBox type="Entity" rotate="60deg" left={-90} top={heightOffset}></MenuBox>
+                  <MenuBox type="BasicAction" rotate="60deg" left={-30} top={heightOffset}></MenuBox>
+                  <MenuBox type="AdvancedAction" rotate="60deg" left={30} top={heightOffset}></MenuBox>
+                  <MenuBox type="Delay" rotate="60deg" left={90} top={heightOffset}></MenuBox>
+                </MenuBoxContainer>
+
+                <StepButtonsContainer>
+                  <StepButton onClick={() => goPreviousStep()}>
+                    Previous 
+                  </StepButton>
+                  <StepButton onClick={() => goNextStep()}>
+                    Next 
+                  </StepButton>
+                </StepButtonsContainer>
+
+                <StartTourButton onClick={() => setIsTourOpen(true)}>Start Tour</StartTourButton>
+              </>
+            )}
           </DragContainer>
         </>
       )}
@@ -604,42 +675,6 @@ const Container = (props) => {
         </EditBar>
       )}
 
-      {viewStep === 0 && !editBarVisible &&(
-        <>
-          <ToolBar visible={!editBarVisible}>
-            <PickButton onClick={(event) => handleAddBox("Entity", event)}>Entity</PickButton>
-            <PickButton onClick={(event) => handleAddBox("And", event)}>And</PickButton>
-            <PickButton onClick={(event) => handleAddBox("Or", event)}>Or</PickButton>
-            <PickButton onClick={(event) => handleAddBox("Time", event)}>Time</PickButton>
-            <PickButton onClick={(event) => handleAddBox("CheckValue", event)}>CheckValue</PickButton>
-            <PickButton onClick={(event) => handleAddBox("CheckStatus", event)}>CheckStatus</PickButton>
-            <PickButton onClick={(event) => handleAddBox("Weather", event)}>Weather</PickButton>
-          </ToolBar>
-          <StepButtonsContainer>
-            <StepButton onClick={() => goNextStep()}>
-              Next 
-            </StepButton>
-          </StepButtonsContainer>
-        </>
-      )}
-      {viewStep === 1 && !editBarVisible &&(
-        <>
-          <ToolBar visible={!editBarVisible}>
-            <PickButton onClick={(event) => handleAddBox("Entity", event)}>Entity</PickButton>
-            <PickButton onClick={(event) => handleAddBox("BasicAction", event)}>BasicAction</PickButton>
-            <PickButton onClick={(event) => handleAddBox("AdvancedAction", event)}>AdvancedAction</PickButton>
-            <PickButton onClick={(event) => handleAddBox("Delay", event)}>Delay</PickButton>
-          </ToolBar>
-          <StepButtonsContainer>
-            <StepButton onClick={() => goPreviousStep()}>
-              Previous 
-            </StepButton>
-            <StepButton onClick={() => goNextStep()}>
-              Next 
-            </StepButton>
-          </StepButtonsContainer>
-        </>
-      )}
       {viewStep === 2 && (
         <>
           <Title>Ready to upload automation</Title>

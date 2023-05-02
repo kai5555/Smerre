@@ -3,6 +3,7 @@ import Container from '../components/Container.jsx';
 import CustomDragLayer from '../components/CustomDragLayer.jsx';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend'
 import styled from 'styled-components'
 import api from '../api';
 import ValidationError from './ValidationError'
@@ -187,7 +188,7 @@ const AddAutomation = () => {
     <>
       {errorMessage && <ValidationError key={errorKey} message={errorMessage} />}
       {showDndProvider ? (
-        <DndProvider backend={HTML5Backend}>
+        <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
           <div>
             <Container onSubmitCall={handleContainerSubmitCall} automation={templates[selectedTemplate]}/>
             <CustomDragLayer />

@@ -4,6 +4,7 @@ import Container from '../components/Container.jsx'
 import CustomDragLayer from '../components/CustomDragLayer.jsx'
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend'
 import { useNavigate} from 'react-router-dom';
 import api from '../api'
 
@@ -51,10 +52,9 @@ const EditAutomation = () => {
     }
 
 
-
     return (
         <>
-        <DndProvider backend={HTML5Backend}>
+        <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
             <div>
             <Container onSubmitCall={handleContainerSubmitCall} automation={automation}/>
             <CustomDragLayer />

@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { NavBar } from '../components'
 import { PlantList, Plant, AddPlant, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, WeatherApi} from '../pages'
 
+import '../scripts/icons'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App() {

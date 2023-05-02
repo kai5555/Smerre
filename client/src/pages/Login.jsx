@@ -122,11 +122,18 @@ function Login() {
 
             // Store the new token and go back to the previous page
             localStorage.setItem('token', data.token);
-            navigate(-1);
+            await new Promise(resolve => window.location.reload(resolve));
+
         } catch (err) {
             setErrorMessage(err.message);
         }
     }
+
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            navigate(-1);
+        }
+    }, []);
 
     return (
         <div className="d-flex justify-content-center align-items-start vh-100">

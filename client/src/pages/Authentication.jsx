@@ -24,6 +24,7 @@ const withAuth = (Component, renderAnyway=false) => {
             });
         }
 
+
         render() {
             const { loading, authenticated } = this.state;
 

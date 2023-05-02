@@ -1,10 +1,19 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import {useEffect, useState } from 'react';
 import logo from '../logo.svg';
 import { withAuth } from '../pages/Authentication';
 
 function Navbar({ user }) {
+
     const [collapsed, setCollapsed] = useState(true);
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
+        console.log(user);
+        if(!user)setLoggedIn(false);
+        else setLoggedIn(true);
+
+    }, [user]);
 
     const toggleNavbar = () => {
         setCollapsed(!collapsed);
@@ -50,7 +59,7 @@ function Navbar({ user }) {
                             </Link>
                         </li>
                     </ul>
-                    {!user ? (
+                    {!loggedIn ? (
                         <ul className="navbar-nav mb-2 mb-lg-0">
                             <li className="nav-item my-1">
                                 <Link to="/login" className="btn btn-outline-light me-2">

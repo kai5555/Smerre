@@ -1,8 +1,8 @@
 const { Router } = require("express"); // import router from express
-const User = require("../modals/UserModal"); // import user model
+const User = require("../modals/userModal"); // import user model
 const bcrypt = require("bcryptjs"); // import bcrypt to hash passwords
 const jwt = require("jsonwebtoken"); // import jwt to sign tokens
-const Token = require("../modals/TokenModal");
+const Token = require("../modals/tokenModal");
 const crypto = require("crypto");
 const sendEmail = require("../utils/emails/sendEmail");
 const {registrationValidation, loginValidation }  = require("../utils/validation");
@@ -276,7 +276,7 @@ exports.resend = async (req, res) => {
   }
 
   // Get the users token for mail verification
-  const token = await Token.findOne({
+  let token = await Token.findOne({
     userId: user._id,
   });
   if(!token){

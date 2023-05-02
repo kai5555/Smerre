@@ -13,7 +13,7 @@ function Navbar({ user }) {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
-                <Link to="/" className="navbar-brand">
+                <Link to="/" className="navbar-brand me-5 pe-4">
                     <img src={logo} alt="Smerre Logo" height="30" />
                     Smerre
                 </Link>
@@ -34,7 +34,7 @@ function Navbar({ user }) {
                     id="navbarNav"
                 >
                     <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
-                        <li className="nav-item">
+                        <li className="nav-item ">
                             <Link to="/plant" className="nav-link">
                                 Plants
                             </Link>

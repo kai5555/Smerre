@@ -60,7 +60,7 @@ const SnapshotDate = styled.p`
 
 const Plant = () => {
   const navigate = useNavigate();
-  const { name } = useParams(); 
+  const { name } = useParams();
   const [errorMessage, setErrorMessage] = useState("");
   const [data, setData] = useState([]);
   const [sensors, setSensors] = useState([]);
@@ -83,7 +83,7 @@ const Plant = () => {
 
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 14);
-  
+
     const filteredProps = (prop || []).filter((p) => {
       const timestamp = new Date(p.timestamp);
       return timestamp >= oneWeekAgo && (typeof p.value === 'number');
@@ -94,17 +94,17 @@ const Plant = () => {
     let prevTimestamp = null;
     for (let i = 0; i < filteredProps.length; i++) {
       const currTimestamp = new Date(filteredProps[i].timestamp);
-      
+
       if (prevTimestamp !== null && (currTimestamp - prevTimestamp) > 70000) {
         // add null values for missing minutes
         result.push({ timestamp: new Date(prevTimestamp.getTime() + 1000).toISOString(), value: null });
         result.push({ timestamp: new Date(currTimestamp.getTime() - 1000).toISOString(), value: null });
       }
-      
+
       result.push(filteredProps[i]);
       prevTimestamp = currTimestamp;
     }
-    
+
     // Add the current time to the graph
     result.push({
       timestamp: new Date(),
@@ -142,7 +142,7 @@ console.log(graphData);
           enabled: false,
         },
         toolbar: {
-          show: false, 
+          show: false,
         },
         animations: {
           enabled: false
@@ -200,7 +200,7 @@ console.log(graphData);
             formatter: function (val) {
               if(val == undefined || val == null) return "Geen waarde";
               return val.toFixed(2) + " c°"
-            },  
+            },
           },
           {
             formatter: function (val) {
@@ -256,4 +256,5 @@ console.log(graphData);
   );
 };
 
+export default withAuth(Plant);
 export default withAuth(Plant);

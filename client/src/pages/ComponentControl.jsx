@@ -116,7 +116,7 @@ class ComponentControl extends React.Component {
 
                                 <div className="col-md-1 py-3 d-flex justify-content-center">
                                     <i className="bi bi-power"
-                                       style={{fontSize: "2rem", color: value ? "MediumSeaGreen" : "LightGrey"}}
+                                       style={{fontSize: "2rem", color: value ? "MediumSeaGreen" : "LightGrey", cursor: "pointer"}}
                                        id={key}
                                        onClick={() => this.toggleActor(key)}
                                     ></i>

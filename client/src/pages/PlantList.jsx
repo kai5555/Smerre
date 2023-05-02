@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useState } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
-import DeletePlantPopup from './DeletePlantPopup';
+import DeletePopup from './DeletePopup';
 import { withAuth } from './Authentication';
 
 const PlantList = () => {
@@ -51,7 +51,7 @@ const PlantList = () => {
 
     return (
         <div className="container my-3">
-            <div className="row"><h1 className="h2 mb-4">Plant List</h1></div>
+            <div className="row"><h1 className="h2 mb-4">Plants</h1></div>
             {plants.length === 0 && <p>No plants found.</p>}
             <div className="row">
                 {plants.map(({ name, description }) => (
@@ -65,9 +65,9 @@ const PlantList = () => {
                                 <button className="btn btn-outline-secondary" onClick={() => handlePlantClick(name)}>
                                     Details
                                 </button>
-                                <button className="btn btn-danger" onClick={() => handleDeletePlant(name)}>
-                                    <i className="bi bi-trash"></i>
-                                </button>
+                                {/*<button className="btn btn-danger" onClick={() => handleDeletePlant(name)}>*/}
+                                    <i className="bi bi-trash text-danger" style={{fontSize:"1.4rem", cursor:"pointer"}} onClick={() => handleDeletePlant(name)}></i>
+                                {/*</button>*/}
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@ const PlantList = () => {
                 </div>
             </div>
             {showDeletePopup && (
-                <DeletePlantPopup plantName={plantToDelete} onDelete={handleConfirmDelete} onCancel={handleCancelDelete} />
+                <DeletePopup plantName={plantToDelete} onDelete={handleConfirmDelete} onCancel={handleCancelDelete} />
             )}
         </div>
 

@@ -130,7 +130,8 @@ function Login() {
     }
 
     useEffect(() => {
-        if (localStorage.getItem('token')) {
+        const token = localStorage.getItem('token');
+        if (token) {
             navigate(-1);
         }
     }, []);

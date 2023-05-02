@@ -13,9 +13,13 @@ const withAuth = (Component, renderAnyway=false) => {
         }
 
         async componentDidMount() {
-            const res = await api.isUserAuth({ token: localStorage.getItem("token") });
+            const token = localStorage.getItem("token");
+            const res = await api.isUserAuth({ token:token });
             let isAuthenticated = res.data.isLoggedIn;
             let user = res.data.username;
+
+            if(!isAuthenticated && token)
+                localStorage.removeItem("token");
 
             this.setState({
                 loading: false,

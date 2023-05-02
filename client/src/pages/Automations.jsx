@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import api from '../api';
 import { useNavigate} from 'react-router-dom';
 import { withAuth } from './Authentication';
+import DeletePopup from "./DeletePopup";
 
 const AutomationsContainer = styled.div`
   display: flex;
@@ -76,6 +77,8 @@ const ToggleBox = styled.div`
 const Automations = () => {
   const navigate = useNavigate();
   const [automations, setAutomations] = useState([]);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [automationToDelete, setAutomationToDelete] = useState(null);
 
   const handleAutomationClick = useCallback((name) => {
     window.location.href = `/automation/${name}/edit`;
@@ -86,24 +89,40 @@ const Automations = () => {
   }, []);
 
   const handleToggleAutomation = useCallback(async (name, enabled) => {
-    await api.toggleAutomation({automationName: name});
- 
     setAutomations((prev) =>
-      prev.map((automation) =>
-        automation.name === name
-          ? { ...automation, enabled}
-          : automation
-      )
+        prev.map((automation) =>
+            automation.name === name
+                ? { ...automation, enabled}
+                : automation
+        )
     );
+
+    await api.toggleAutomation({automationName: name});
+
+
   }, []);
 
+
   const handleDeleteAutomation = useCallback(async (name) => {
+    setAutomationToDelete(name);
+    setShowDeletePopup(true);
+  }, []);
+
+  const handleConfirmDelete = useCallback(async (name) => {
     await api.deleteAutomation({automationName: name});
 
     setAutomations((prevAutomations) =>
       prevAutomations.filter((automation) => automation.name !== name)
     );
+
+    setAutomationToDelete(null);
+    setShowDeletePopup(false);
   }, []);
+
+  const handleCancelDelete = () => {
+    setAutomationToDelete(null);
+    setShowDeletePopup(false);
+  };
 
   // Get all the automations
   const setup = async () => {
@@ -117,27 +136,71 @@ const Automations = () => {
   useEffect( () => {
     setup();
 }, []);
-  
 
-  return (
-    <AutomationsContainer>
-    {automations.map(({ name, alias, enabled }) => (
-      <AutomationWrapper key={name}>
-        <div onClick={() => handleAutomationClick(name)}>
-          <AutomationAlias>{alias}</AutomationAlias>
-          <AutomationName>{name}</AutomationName>
+
+//  return (
+//    <AutomationsContainer>
+//    {automations.map(({ name, alias, enabled }) => (
+//      <AutomationWrapper key={name}>
+//        <div onClick={() => handleAutomationClick(name)}>
+//          <AutomationAlias>{alias}</AutomationAlias>
+//          <AutomationName>{name}</AutomationName>
+//        </div>
+//        <ButtonBox>
+//          <DeleteButton onClick={() => handleDeleteAutomation(name)}>x</DeleteButton>
+//          <ToggleBox enabled={enabled || false} onClick={() => handleToggleAutomation(name, !enabled)} />
+//        </ButtonBox>
+//      </AutomationWrapper>
+//    ))}
+//    <AutomationWrapper style={{background: "#22b542"}} onClick={() => handleNewAutomationClick()}>
+//      <AutomationAlias>+ New automation</AutomationAlias>
+//    </AutomationWrapper>
+//    </AutomationsContainer>
+//  );
+
+  return(
+      <div className="container my-3 ">
+        <div className="row"><h1 className="h2 mb-4">Automations</h1></div>
+        {automations.length === 0 && <p>No plants found.</p>}
+        <div className="row">
+          {automations.map(({ name, alias, enabled }) => (
+              <div className="col-md-12 col-lg-12" key={name}>
+                <div className="card shadow-sm mb-5 " style={{minHeight: "150px"}}>
+                  <div className="card-body pt-0">
+
+                    <div className="row">
+                      <div className="col-6 pt-3 pe-0">
+                        <h5 className="card-title">{name}</h5>
+                        <p className="card-text">{alias}</p>
+                      </div>
+
+
+                    <div className="col-6 text-end ps-0 pe-2 pt-2">
+                      <i className="bi bi-power" style={{fontSize: "2rem", cursor: "pointer",
+                        color: enabled ? "MediumSeaGreen" : "LightGrey"}}
+                        onClick={() => handleToggleAutomation(name, !enabled)}
+                    ></i>
+                    </div>
+                  </div>
+
+                </div>
+                  <div className="card-footer d-flex justify-content-between align-items-center">
+                    <button className="btn btn-outline-secondary" onClick={() => handleAutomationClick(name)}>
+                      Details
+                    </button>
+                    <i className="bi bi-trash text-danger" style={{fontSize:"1.4rem", cursor:"pointer"}} onClick={() => handleDeleteAutomation(name)}></i>
+                  </div>
+                </div>
+              </div>
+          ))}
         </div>
-        <ButtonBox>
-          <DeleteButton onClick={() => handleDeleteAutomation(name)}>x</DeleteButton>
-          <ToggleBox enabled={enabled || false} onClick={() => handleToggleAutomation(name, !enabled)} />
-        </ButtonBox>
-      </AutomationWrapper>
-    ))}
-    <AutomationWrapper style={{background: "#22b542"}} onClick={() => handleNewAutomationClick()}>
-      <AutomationAlias>+ New automation</AutomationAlias>
-    </AutomationWrapper>
-    </AutomationsContainer>
+        {showDeletePopup && (
+            <DeletePopup plantName={automationToDelete} onDelete={handleConfirmDelete} onCancel={handleCancelDelete} />
+        )}
+      </div>
   );
 };
+
+
 
 export default withAuth(Automations);

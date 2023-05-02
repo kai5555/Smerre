@@ -75,7 +75,7 @@ function Navbar({ user }) {
                     ):(
                         <ul className="navbar-nav mb-2 mb-lg-0">
                             <li className="nav-item my-1">
-                                <Link to="/" className="btn btn-outline-light me-2" onClick={() => {localStorage.removeItem('token'); this.forceUpdate();}}>
+                                <Link to="/" className="btn btn-outline-light me-2" onClick={() => {localStorage.removeItem('token'); setLoggedIn(false)}}>
                                     Logout
                                 </Link>
                             </li>

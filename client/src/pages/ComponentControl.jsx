@@ -96,7 +96,7 @@ class ComponentControl extends React.Component {
 
                 if(image != null) {
                     return (
-                        <div className="card mt-5" key={key}>
+                        <div className="card mb-5 shadow-sm" key={key}>
                             <div className="row g-0">
                                 <div className="col-md-2">
                                     <img src={image} className="img-fluid rounded-start"></img>
@@ -129,8 +129,10 @@ class ComponentControl extends React.Component {
 
         return (
             <>
-                <div className="container ">
-                    <div >{actorCards}</div>
+                <div className="container my-3">
+                    <div className="row"><h1 className="h2 mb-4">Components</h1></div>
+                    {actorCards.length === 0 && <p>No actors found.</p>}
+                        <div >{actorCards}</div>
                 </div>
             </>
             );

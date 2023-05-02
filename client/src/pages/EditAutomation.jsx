@@ -1,4 +1,4 @@
-import { useCallback, useState, useLayoutEffect } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import Container from '../components/Container.jsx'
 import CustomDragLayer from '../components/CustomDragLayer.jsx'
@@ -7,6 +7,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend'
 import { useNavigate} from 'react-router-dom';
 import api from '../api'
+import { withAuth } from './Authentication';
 
 const EditAutomation = () => {
     const { name } = useParams(); 
@@ -18,31 +19,11 @@ const EditAutomation = () => {
         navigate('/automation');
     }, [name]);
 
-    useLayoutEffect(() => {
-        async function checkUserAuth() {
-            try {
-                const res = await api.isUserAuth({token: localStorage.getItem("token")});
-                if(res.data.isLoggedIn) {
-                  console.log("Logged in");
-                  setup();
-                }
-                else{
-                  console.log("Not logged in");
-                  navigate('/login');
-                }
-            } catch (err) {
-              console.log(err);
-            }
-        }
-        checkUserAuth();
-      }, [navigate]);
-
     const setup = async () => {
         try {
             var newAutomation = [];
             var res = await api.getAutomationByName({name});
             newAutomation = res.data.data;
-            console.log(newAutomation);
 
             setAutomation(newAutomation);
 
@@ -50,6 +31,9 @@ const EditAutomation = () => {
 
         }
     }
+    useEffect( () => {
+        setup();
+    }, []);
 
 
     return (
@@ -64,4 +48,4 @@ const EditAutomation = () => {
     )
 }
 
-export default EditAutomation;
+export default withAuth(EditAutomation);

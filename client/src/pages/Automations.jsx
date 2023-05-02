@@ -1,7 +1,8 @@
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import api from '../api';
 import { useNavigate} from 'react-router-dom';
+import { withAuth } from './Authentication';
 
 const AutomationsContainer = styled.div`
   display: flex;
@@ -104,26 +105,6 @@ const Automations = () => {
     );
   }, []);
 
-
-  useLayoutEffect(() => {
-    async function checkUserAuth() {
-        try {
-            const res = await api.isUserAuth({token: localStorage.getItem("token")});
-            if(res.data.isLoggedIn) {
-              console.log("Logged in");
-              setup();
-            }
-            else{
-              console.log("Not logged in");
-              navigate('/login');
-            }
-        } catch (err) {
-          console.log(err);
-        }
-    }
-    checkUserAuth();
-  }, [navigate]);
-
   // Get all the automations
   const setup = async () => {
     try {
@@ -133,6 +114,9 @@ const Automations = () => {
       console.log("Something went wrong while fetching automations!");
     }
   }
+  useEffect( () => {
+    setup();
+}, []);
   
 
   return (
@@ -156,4 +140,4 @@ const Automations = () => {
   );
 };
 
-export default Automations;
+export default withAuth(Automations);

@@ -2,6 +2,7 @@
 const Component = require('../modals/ComponentModal');
 const Data = require('../modals/DataModal')
 const Plant = require('../modals/PlantModal')
+const Snapshot = require('../modals/SnapshotModal')
 
 getDataOfPlant = async (req, res) => {
     const body = req.body
@@ -49,12 +50,19 @@ getDataOfPlant = async (req, res) => {
 
         sensorData[subtype].push(d);
     });
-    console.log(sensorData);
+
+    // Get the snapshots from this plant
+    let snapshots = await Snapshot.find({camera: { $in: sensorIds }});
+    if(snapshots.length == 0){
+        console.log("No snapshots found");
+        snapshots = [];
+    }   
 
     return res.json({
         success: true,
         data: sensorData,
         sensors: sensors,
+        snapshots: snapshots,
     })
 }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import api, {toggleLed} from "../api";
 import { Navigate  } from 'react-router-dom';
-const withAuth = (Component) => {
+const withAuth = (Component, renderAnyway=false) => {
     class AuthenticatedComponent extends React.Component {
         constructor(props) {
             super(props);
@@ -15,9 +15,11 @@ const withAuth = (Component) => {
         async componentDidMount() {
             const res = await api.isUserAuth({ token: localStorage.getItem("token") });
             let isAuthenticated = res.data.isLoggedIn;
+            let user = res.data.username;
 
             this.setState({
                 loading: false,
+                user: user,
                 authenticated: isAuthenticated,
             });
         }
@@ -29,8 +31,8 @@ const withAuth = (Component) => {
                 return <div>Loading...</div>;
             }
 
-            if (authenticated) {
-                return <Component {...this.props} />;
+            if (authenticated || renderAnyway) {
+                return <Component {...this.props} user={this.state.user} />;
             }
 
             return <Navigate to="/login" />;

@@ -68,7 +68,7 @@ exports.createAutomation = async (req, res) => {
 
     // Create automation in homeassitant
      try {
-        await fetch(`http://${process.env.HOMEASSISTANT_IP}/api/config/automation/config/${automationName}`, {
+        await fetch(`http://${process.env.HOMEASSISTANT_IP}:8123/api/config/automation/config/${automationName}`, {
             method: 'POST',
             body: JSON.stringify(body.automation),
             headers: {
@@ -116,7 +116,7 @@ exports.updateAutomation = async (req, res) => {
     body.automation.alias = automation.name;
     console.log(body.automation);
      try {
-        await fetch(`http://${process.env.HOMEASSISTANT_IP}/api/config/automation/config/${automation.name}`, {
+        await fetch(`http://${process.env.HOMEASSISTANT_IP}:8123/api/config/automation/config/${automation.name}`, {
             method: 'POST',
             body: JSON.stringify(body.automation),
             headers: {
@@ -142,7 +142,7 @@ exports.deleteAutomation = async (req, res) => {
         
     // Delete automation in homeassitant
     try {
-        await fetch(`http://${process.env.HOMEASSISTANT_IP}/api/config/automation/config/${body.automationName}`, {
+        await fetch(`http://${process.env.HOMEASSISTANT_IP}:8123/api/config/automation/config/${body.automationName}`, {
           method: 'DELETE',
           headers: {
             "Authorization": `Bearer ${process.env.HOMEASSISTANT_TOKEN}`,
@@ -160,7 +160,7 @@ exports.deleteAutomation = async (req, res) => {
 
 exports.toggleAutomation = async (req, res) => {
     const body = req.body
-
+  
     const automation = await Automation.findOne({ name: body.automationName })
     if(automation == null) return res.status(404).json({message: "Automation not found"});
     const enabled = !automation.enabled;
@@ -171,7 +171,7 @@ exports.toggleAutomation = async (req, res) => {
         
     // Toggle in homeassitant
     try {
-        await fetch(`http://${process.env.HOMEASSISTANT_IP}/api/services/automation/toggle`, {
+        await fetch(`http://${process.env.HOMEASSISTANT_IP}:8123/api/services/automation/toggle`, {
             method: 'POST',
             body: JSON.stringify({
                 "entity_id": `automation.${body.automationName}`,

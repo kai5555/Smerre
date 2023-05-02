@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import api from '../api';
 import ValidationError from './ValidationError'
 import { useNavigate} from 'react-router-dom';
+import { withAuth } from './Authentication';
 
 const Title = styled.h1.attrs({
   className: 'h1',
@@ -132,24 +133,6 @@ const AddPlant = () => {
     }
 }
 
-  useLayoutEffect(() => {
-    async function checkUserAuth() {
-        try {
-            const res = await api.isUserAuth({token: localStorage.getItem("token")});
-            if(res.data.isLoggedIn) {
-              console.log("Logged in");
-            }
-            else{
-              console.log("Not logged in");
-              navigate('/login');
-            }
-        } catch (err) {
-          console.log(err);
-        }
-    }
-    checkUserAuth();
-  }, [navigate]);
- 
   return (
     <>
       <Wrapper>
@@ -170,4 +153,4 @@ const AddPlant = () => {
   );
 };
 
-export default AddPlant;
+export default withAuth(AddPlant);

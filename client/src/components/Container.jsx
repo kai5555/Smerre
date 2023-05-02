@@ -9,7 +9,7 @@ import modalMap from './BoxesModals'
 import GridLines from 'react-gridlines';
 import Line from './Line.jsx'
 import styled, { keyframes } from 'styled-components'
-import api from '../api'
+import api from '../api' 
 
 import Tour from 'reactour'
 import tutorial from '../scripts/tutorial'
@@ -343,9 +343,6 @@ const Container = (props) => {
         else if(content.type === "<"){
           cond_obj.below = content.value;
         }
-        else{
-          cond_obj.idk = content.value;
-        }
 
         return cond_obj;
       },
@@ -386,19 +383,36 @@ const Container = (props) => {
           return cond_obj;
       },
       "Weather": function(content, cond_obj){
+
+        // Add or condition 
+        if(content.type == 0){
+          cond_obj.push({
+            condition: "state",
+            entity_id: "weather.openweathermap",
+            state: content.status,
+          });
+        }
+        else if(content.type == 1){
+          var condition = {
+            condition: "numeric_state",
+            entity_id: "weather.openweathermap",
+            attribute: content.valueType,
+          };
+
+          if(content.condition === ">"){
+            condition.above = content.value;
+          }
+          else if(content.condition === "<"){
+            condition.below = content.value;
+          }
+          cond_obj.push(condition);
+        }
+
         // Add the trigger to triggers
         trigger.push({
           platform: "state",
           entity_id: "weather.openweathermap"
         });
-
-        // Add or condition 
-        cond_obj.push({
-          condition: "state",
-          entity_id: "weather.openweathermap",
-          state: content.status,
-        });
-        
         return cond_obj;
       },
     },
@@ -905,9 +919,18 @@ const Container = (props) => {
       "Weather": function validate(key) {
         let box = boxes[key];
         let content = box.content;
-        if(!content) return "'Time' doesn't have any content";
+        if(!content) return "'Weather' doesn't have any content";
 
-        if(!isKeyValid(content, "status" )) return "'Weather' doesn't have a status";
+        if(!isKeyValid(content, "type")) return "'Weather' doesn't have selected type";
+
+        if(content.type === "0"){
+          if(!isKeyValid(content, "status" )) return "'Weather' doesn't have a status";
+        }
+        else if(content.type === "1"  ){
+          if(!isKeyValid(content, "value" )) return "'Weather' doesn't have a value";
+          if(!isKeyValid(content, "condition" )) return "'Weather' doesn't have a condition";
+          if(!isKeyValid(content, "valueType" )) return "'Weather' doesn't have a valueType";
+        }
 
         return 'success';
       },

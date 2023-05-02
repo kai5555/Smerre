@@ -9,6 +9,5 @@ router.post('/getPlantByName', PlantCtrl.getPlantByName);
 router.post('/createPlant', PlantCtrl.createPlant);
 router.post('/updatePlant', PlantCtrl.updatePlant);
 router.post('/deletePlant', PlantCtrl.deletePlant);
-router.post('/getPlantImages', PlantCtrl.getPlantImages);
 
 module.exports = router;

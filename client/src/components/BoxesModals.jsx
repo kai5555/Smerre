@@ -263,7 +263,6 @@ const CheckValueBoxModal = memo(function CheckValueBoxModal(props) {
         <InputSelect onChange={handleInputChange} name="type" value={updatedContent.type || "none" } >
           <option value="none" disabled>Select an option</option>
           <option value=">">{">"}</option>
-          <option value="=">{"="}</option>
           <option value="<">{"<"}</option>
         </InputSelect>
         <InputText value={updatedContent.value} onChange={handleInputChange} type="text" name="value"/>
@@ -575,7 +574,13 @@ const WeatherBoxModal = memo(function WeatherBoxModal(props) {
   var { content, errors, onOk, onCancel, onDelete } = props;
   content =  {
     status: content?.status || "",
+    valueType: content?.valueType || "",
+    condition: content?.condition || "",
+    value: content?.value || "",
+    type: content?.type || "0",
   }
+
+  const [selectedView, setSelectedView] = useState(content.type);
 
   const {
     updatedContent,
@@ -586,16 +591,25 @@ const WeatherBoxModal = memo(function WeatherBoxModal(props) {
     setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
+  const clickViewButton = (step) => {
+    updatedContent.type = `${step}`;
+    setSelectedView(step)
+  }
+
   return (
     <ContentBox>
       <ErrorList errors={errors} />
       <h1>Weather</h1>
 
+      <SmallButton onClick={() => clickViewButton(0)} selected={selectedView == 0}>Status</SmallButton>
+      <SmallButton onClick={() => clickViewButton(1)} selected={selectedView == 1}>Value</SmallButton>
+      <br></br>
+
       <Label>Fill in the weather</Label>
       <InfoButton message="Choose one of the available conditions" />
 
-      {console.log(updatedContent.status)}
-      <InputSelect onChange={handleInputChange} name="status" value={updatedContent.status || "none" } >
+      {selectedView == 0 && (
+        <InputSelect onChange={handleInputChange} name="status" value={updatedContent.status || "none" } >
           <option value="none" disabled>Select an condition</option>
           <option value="clear,night">{"Clear or night"}</option>
           <option value="cloudy">{"Cloudy"}</option>
@@ -603,7 +617,7 @@ const WeatherBoxModal = memo(function WeatherBoxModal(props) {
           <option value="hail">{"Hail"}</option>
           <option value="lightning,rainy">{"Lightning and rainy"}</option>
           <option value="lightning">{"Lightning"}</option>
-          <option value="partly clouded">{"Partly clouded"}</option>
+          <option value="partlycloudy">{"Partly cloudy"}</option>
           <option value="pouring">{"Pouring"}</option>
           <option value="rainy">{"Rainy"}</option>
           <option value="sneeuw-,regenachtig">{"Snowy and rainy"}</option>
@@ -611,6 +625,30 @@ const WeatherBoxModal = memo(function WeatherBoxModal(props) {
           <option value="sunny">{"Sunny"}</option>
           <option value="windy">{"Windy"}</option>
         </InputSelect>
+      )}
+      
+     {selectedView == 1 && (
+      <>
+        <InputSelect onChange={handleInputChange} name="valueType" value={updatedContent.valueType || "none" } >
+          <option value="none" disabled>Select an condition</option>
+          <option value="temperature">{"Temperature"}</option>
+          <option value="humidity">{"Air Humidity"}</option>
+          <option value="pressure">{"Air Pressure"}</option>
+          <option value="windspeed">{"Wind Speed"}</option>
+          <option value="winddirection">{"Wind Direction"}</option>
+          <option value="visibleunit">{"Visibility"}</option>
+        </InputSelect>
+
+        <InputGroup>
+          <InputSelect onChange={handleInputChange} name="condition" value={updatedContent.condition || "none" } >
+            <option value="none" disabled>Select an option</option>
+            <option value=">">{">"}</option>
+            <option value="<">{"<"}</option>
+          </InputSelect>
+          <InputText value={updatedContent.value} onChange={handleInputChange} type="text" name="value"/>
+        </InputGroup>
+      </>
+     )}
 
       <OkButton onClick={handleOkClick}>Oké</OkButton>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>

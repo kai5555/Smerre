@@ -1,10 +1,12 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import api from '../api';
 import ReactApexChart from 'react-apexcharts';
 import moment from 'moment';
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 import { useNavigate} from 'react-router-dom';
+import { COLORS } from '../scripts';
+import { withAuth } from './Authentication';
 
 const Button = styled.button.attrs({
   className: `btn btn-primary`,
@@ -13,38 +15,67 @@ const Button = styled.button.attrs({
   width: 100px;
 `
 
+const SnapshotContainer = styled.div`
+  display: inline-block;
+  justifyContent: center;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%,0);
+`
+
+const Snapshot = styled.img`
+  clip-path: inset(60px 80px);
+`
+
+const Dot = styled.span`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: gray;
+  margin: 0 5px;
+  cursor: pointer;
+
+  &.active {
+    background-color: ${COLORS.defaultColor};
+  }
+`
+
+const SnapshotHolder = styled.div`
+  opacity: 0; 
+  display: none;
+  transition: opacity 0.2s ease;
+
+  &.active {
+    opacity: 1;
+    display: block;
+    transition: opacity 0.2s ease;
+  }
+`
+const SnapshotDate = styled.p`
+  text-align: center;
+  transform: translateY(60px);
+  font-size: 20px;
+  font-weight: bold;
+`
+
 const Plant = () => {
   const navigate = useNavigate();
   const { name } = useParams(); 
   const [errorMessage, setErrorMessage] = useState("");
   const [data, setData] = useState([]);
   const [sensors, setSensors] = useState([]);
-
-  useLayoutEffect(() => {
-    async function checkUserAuth() {
-        try {
-            const res = await api.isUserAuth({token: localStorage.getItem("token")});
-            if(res.data.isLoggedIn) {
-                console.log("Logged in");
-                setup();
-            }
-            else{
-                console.log("Not logged in");
-                navigate('/login');
-            }
-        } catch (err) {
-            setErrorMessage(err)
-        }
-    }
-    checkUserAuth();
-  }, [navigate])
+  const [snapshots, setSnapshots] = useState([]);
+  const [selectedSnapshot, setSelectedSnapshot] = useState(0);
 
   const setup = async () => {
     const resData = await api.getDataOfPlant({name: name});
-    console.log(resData);
     setData(resData.data.data);
     setSensors(resData.data.sensors);
+    setSnapshots(resData.data.snapshots);
   }
+  useEffect( () => {
+    setup();
+}, []);
 
   var graphData = { temperature: [], humidity: [] };
   Object.keys(data).forEach((key) => {
@@ -202,8 +233,27 @@ console.log(graphData);
           </React.Fragment>
         ))}
       </div>
+      <SnapshotContainer>
+        <div>
+          {snapshots.map((snapshot, index) => (
+            <SnapshotHolder  className={`dot ${index === selectedSnapshot ? "active" : ""}`}>
+              <SnapshotDate>{new Date(snapshot.timestamp).toLocaleString('be')}</SnapshotDate>
+              <Snapshot key={index} src={`data:image/jpeg;base64,${snapshot.image}`} />
+            </SnapshotHolder>
+          ))}
+        </div>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "50px" }}>
+          {snapshots.map((snapshot, index) => (
+            <Dot
+              key={index}
+              className={`dot ${index === selectedSnapshot ? "active" : ""}`}
+              onClick={() => setSelectedSnapshot(index)}  
+            />
+          )).slice(Math.max(selectedSnapshot - 5, 0), Math.min(selectedSnapshot + 5, snapshots.length))}
+        </div>
+      </SnapshotContainer>
     </>
   );
 };
 
-export default Plant;
+export default withAuth(Plant);

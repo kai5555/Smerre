@@ -1,6 +1,5 @@
 const Plant = require('../modals/PlantModal');
 const Component = require('../modals/ComponentModal')
-const Snapshot = require('../modals/SnapshotModal')
 const {plantValidation }  = require("../utils/validation");
 
 exports.getAllPlants = async (req, res) => {
@@ -121,15 +120,4 @@ exports.deletePlant = async (req, res) => {
         
     console.log("Plant deleted");
     return res.json({success: true});
-}
-
-exports.getPlantImages = async (req, res) => {
-    const body = req.body
-
-    //const camera = await Component.findOne({ name: body.name. });
-    const snapshots = await SnapShot.find({plant: plant._id});
-
-    if(snapshots.length == 0) return res.status(404).json({success: false, message: "Snapshots not found"});
-
-    return res.json({success: true, data: snapshots});
 }

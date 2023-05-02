@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import api from '../api';
 import ValidationError from './ValidationError'
 import { useNavigate} from 'react-router-dom';
+import { withAuth } from './Authentication';
 
 const Title = styled.p`
   font-size: 20px;
@@ -164,26 +165,6 @@ const AddAutomation = () => {
       boxes: {"A":{"top":20,"left":380,"type":"Start","content":{"title":"Als"},"errors":[],"step":0,"wrong":""},"B":{"top":49,"left":480,"type":"Start","content":{"title":"Dan"},"errors":[],"step":1,"wrong":""},"C":{"top":96,"left":302,"title":"Entity","type":"Entity","content":{"entity_id":"sensor.esp2_temperature"},"errors":[],"step":0,"wrong":""},"D":{"top":226,"left":368,"title":"CheckValue","type":"CheckValue","content":{"type":">","value":"30"},"errors":[],"step":0,"wrong":""},"F":{"top":135,"left":398,"title":"Entity","type":"Entity","content":{"entity_id":"input_number.servo_control"},"errors":[],"step":1,"wrong":""},"G":{"top":307,"left":435,"title":"AdvancedAction","type":"AdvancedAction","content":{"service":"esphome.espkainielswout_control_servo","data":{"level":100}},"errors":[],"step":1,"wrong":""},"H":{"top":465,"left":488,"title":"Delay","type":"Delay","content":{"time":"00:00:10:00"},"errors":[],"step":1,"wrong":""},"I":{"top":604,"left":480,"title":"Entity","type":"Entity","content":{"entity_id":"input_number.servo_control"},"errors":[],"step":1,"wrong":""},"J":{"top":721,"left":455,"title":"AdvancedAction","type":"AdvancedAction","content":{"service":"esphome.espkainielswout_control_servo","data":{"level":"-100"}},"errors":[],"step":1,"wrong":""}}
     },
   ]
-
-  useLayoutEffect(() => {
-    async function checkUserAuth() {
-        try {
-            const res = await api.isUserAuth({token: localStorage.getItem("token")});
-            if(res.data.isLoggedIn) {
-              console.log("Logged in");
-            }
-            else{
-              console.log("Not logged in");
-              navigate('/login');
-            }
-        } catch (err) {
-          console.log(err);
-        }
-    }
-    checkUserAuth();
-  }, [navigate]);
-
-
   return (
     <>
       {errorMessage && <ValidationError key={errorKey} message={errorMessage} />}
@@ -230,4 +211,4 @@ const AddAutomation = () => {
   );
 };
 
-export default AddAutomation;
+export default withAuth(AddAutomation);

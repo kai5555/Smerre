@@ -5,6 +5,7 @@ import moment from 'moment';
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 import { useNavigate} from 'react-router-dom';
+import { withAuth } from './Authentication';
 
 const Button = styled.button.attrs({
   className: `btn btn-primary`,
@@ -15,29 +16,11 @@ const Button = styled.button.attrs({
 
 const Plant = () => {
   const navigate = useNavigate();
-  const { name } = useParams(); 
+  const { name } = useParams();
   const [errorMessage, setErrorMessage] = useState("");
   const [data, setData] = useState([]);
   const [sensors, setSensors] = useState([]);
 
-  useLayoutEffect(() => {
-    async function checkUserAuth() {
-        try {
-            const res = await api.isUserAuth({token: localStorage.getItem("token")});
-            if(res.data.isLoggedIn) {
-                console.log("Logged in");
-                setup();
-            }
-            else{
-                console.log("Not logged in");
-                navigate('/login');
-            }
-        } catch (err) {
-            setErrorMessage(err)
-        }
-    }
-    checkUserAuth();
-  }, [navigate])
 
   const setup = async () => {
     const resData = await api.getDataOfPlant({name: name});
@@ -45,6 +28,7 @@ const Plant = () => {
     setData(resData.data.data);
     setSensors(resData.data.sensors);
   }
+  setup();
 
   var graphData = { temperature: [], humidity: [] };
   Object.keys(data).forEach((key) => {
@@ -52,7 +36,7 @@ const Plant = () => {
 
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 14);
-  
+
     const filteredProps = (prop || []).filter((p) => {
       const timestamp = new Date(p.timestamp);
       return timestamp >= oneWeekAgo && (typeof p.value === 'number');
@@ -63,17 +47,17 @@ const Plant = () => {
     let prevTimestamp = null;
     for (let i = 0; i < filteredProps.length; i++) {
       const currTimestamp = new Date(filteredProps[i].timestamp);
-      
+
       if (prevTimestamp !== null && (currTimestamp - prevTimestamp) > 70000) {
         // add null values for missing minutes
         result.push({ timestamp: new Date(prevTimestamp.getTime() + 1000).toISOString(), value: null });
         result.push({ timestamp: new Date(currTimestamp.getTime() - 1000).toISOString(), value: null });
       }
-      
+
       result.push(filteredProps[i]);
       prevTimestamp = currTimestamp;
     }
-    
+
     // Add the current time to the graph
     result.push({
       timestamp: new Date(),
@@ -111,7 +95,7 @@ console.log(graphData);
           enabled: false,
         },
         toolbar: {
-          show: false, 
+          show: false,
         },
         animations: {
           enabled: false
@@ -169,7 +153,7 @@ console.log(graphData);
             formatter: function (val) {
               if(val == undefined || val == null) return "Geen waarde";
               return val.toFixed(2) + " c°"
-            },  
+            },
           },
           {
             formatter: function (val) {
@@ -206,4 +190,4 @@ console.log(graphData);
   );
 };
 
-export default Plant;
+export default withAuth(Plant);

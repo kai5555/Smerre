@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useState } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
-import DeletePopup from './DeletePopup';
+import DeletePopup from '../components/DeletePopup';
 import { withAuth } from './Authentication';
 
 const PlantList = () => {
@@ -73,9 +73,9 @@ const PlantList = () => {
                     </div>
                 ))}
                 <div className="col-md-6 col-lg-4">
-                    <div className="card shadow-sm mb-4 d-flex align-items-center text-center" style={{minHeight: "150px"}}>
+                    <div className="card shadow-sm mb-4 d-flex align-items-center text-center" style={{minHeight: "150px", cursor: "pointer"}} onClick={() => handleNewPlantClick()}>
                         <div className="card-body d-flex flex-column justify-content-center">
-                            <i className="bi bi-plus-lg pb-2" style={{fontSize: "3rem", color:"MediumSeaGreen", cursor: "pointer" }} onClick={() => handleNewPlantClick()}></i>
+                            <i className="bi bi-plus-lg pb-2" style={{fontSize: "3rem", color:"MediumSeaGreen" }} ></i>
                         </div>
                     </div>
                 </div>

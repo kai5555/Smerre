@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import api from '../api';
 import { useNavigate} from 'react-router-dom';
 import { withAuth } from './Authentication';
-import DeletePopup from "./DeletePopup";
+import DeletePopup from "../components/DeletePopup";
 
 const AutomationsContainer = styled.div`
   display: flex;
@@ -160,8 +160,16 @@ const Automations = () => {
 
   return(
       <div className="container my-3 ">
-        <div className="row"><h1 className="h2 mb-4">Automations</h1></div>
-        {automations.length === 0 && <p>No plants found.</p>}
+        <div className="row mb-1">
+          <div className="col-6"><h1 className="h2 mb-4">Automations</h1></div>
+          <div className="col-6 text-end">
+            <button type="button" className="btn mt-2 pt-1 "
+                    style={{color:"white", backgroundColor:"MediumSeaGreen"}}
+                    onClick={() => handleNewAutomationClick()}
+            >Add automation</button>
+          </div>
+        </div>
+        {automations.length === 0 && <p>No automations found.</p>}
         <div className="row">
           {automations.map(({ name, alias, enabled }) => (
               <div className="col-md-12 col-lg-12" key={name}>

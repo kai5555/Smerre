@@ -1,5 +1,6 @@
 import React from 'react';
 import api, {toggleLed} from "../api";
+import  LoadingSpinner  from "../components/LoadingSpinner";
 import { Navigate  } from 'react-router-dom';
 const withAuth = (Component, renderAnyway=false) => {
     class AuthenticatedComponent extends React.Component {
@@ -32,8 +33,8 @@ const withAuth = (Component, renderAnyway=false) => {
         render() {
             const { loading, authenticated } = this.state;
 
-            if (loading) {
-                return <div>Loading...</div>;
+            if (loading && !renderAnyway) {
+                return <LoadingSpinner/>;
             }
 
             if (authenticated || renderAnyway) {

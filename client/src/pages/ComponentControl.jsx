@@ -8,6 +8,7 @@ import io from 'socket.io-client';
 import { Navigate  } from 'react-router-dom';
 import { withAuth } from './Authentication';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 class ComponentControl extends React.Component {
 
@@ -82,7 +83,7 @@ class ComponentControl extends React.Component {
         console.log(this.state);
 
         if(this.state.loading){
-            return (<><h1>loading</h1></>);
+            return (<LoadingSpinner/>);
         }
         else{
             const actorCards = Object.entries(this.state.actors).map(([key, value]) => {

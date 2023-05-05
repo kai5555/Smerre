@@ -21,6 +21,7 @@ class ComponentControl extends React.Component {
         this.state = {
             components:{},
             actors: {},
+            plants: {},
             lastUpdated: {}, // new state variable
             loading: true
         };
@@ -44,7 +45,14 @@ class ComponentControl extends React.Component {
     async componentDidMount() {
         try {
             const res = await api.getAllActors(); // make API call
-            this.setState({ components: res.data.data, loading: false }); // update state with response data
+            this.setState({ components: res.data.data}); // update state with response data
+        } catch (error) {
+            console.error(error);
+        }
+
+        try {
+            const res = await api.getAllPlants(); // make API call
+            this.setState({ plants: res.data.data, loading: false }); // update state with response data
         } catch (error) {
             console.error(error);
         }
@@ -92,8 +100,8 @@ class ComponentControl extends React.Component {
                 const name = component ? component.name : null;
                 const image = this.getImageForSubType(subType);
 
-                const lastUpdated = this.state.lastUpdated[key];
-                const timeSinceUpdated = lastUpdated ? Math.floor((new Date() - new Date(lastUpdated)) / 60000) : 0; // calculate time since last update in minutes
+                const plant = this.state.plants.find((c) => c.block === component.block);
+                const blockName = plant ? plant.name : "serre";
 
                 if(image != null) {
                     return (
@@ -108,8 +116,7 @@ class ComponentControl extends React.Component {
                                         <p className="card-text"></p>
                                         <p className="card-text">
                                             <small className="text-muted">
-                                                Last updated 3 minute ago.
-                                                {/*{lastUpdated ? `Last updated ${timeSinceUpdated} minute${timeSinceUpdated > 1 ? 's' : ''} ago` : ''}*/}
+                                                Actor is connected to {blockName}.
                                             </small>
                                         </p>
                                     </div>

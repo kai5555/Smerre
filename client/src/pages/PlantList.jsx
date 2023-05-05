@@ -1,14 +1,16 @@
-import { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import DeletePopup from '../components/DeletePopup';
 import { withAuth } from './Authentication';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const PlantList = () => {
     const navigate = useNavigate();
     const [plants, setPlants] = useState([]);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [plantToDelete, setPlantToDelete] = useState(null);
+    const[loading, setLoading] = useState(true);
 
     const handlePlantClick = useCallback((name) => {
         window.location.href = `/plant/${name}`;
@@ -43,13 +45,18 @@ const PlantList = () => {
             const res = await api.getAllPlants();
             console.log(res);
             setPlants(res.data.data);
+            setLoading(false);
         } catch (err) {
             console.log('Something went wrong while fetching plants!');
         }
     };
     setup();
 
+    if(loading){
+        return (<LoadingSpinner/>)
+    }
     return (
+
         <div className="container my-3">
             <div className="row"><h1 className="h2 mb-4">Plants</h1></div>
             {plants.length === 0 && <p>No plants found.</p>}

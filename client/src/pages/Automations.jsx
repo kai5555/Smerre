@@ -4,6 +4,7 @@ import api from '../api';
 import { useNavigate} from 'react-router-dom';
 import { withAuth } from './Authentication';
 import DeletePopup from "../components/DeletePopup";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const AutomationsContainer = styled.div`
   display: flex;
@@ -79,6 +80,8 @@ const Automations = () => {
   const [automations, setAutomations] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [automationToDelete, setAutomationToDelete] = useState(null);
+  const[loading, setLoading] = useState(true);
+
 
   const handleAutomationClick = useCallback((name) => {
     window.location.href = `/automation/${name}/edit`;
@@ -129,6 +132,7 @@ const Automations = () => {
     try {
       const res = await api.getAllAutomations();
       setAutomations(res.data.data);
+      setLoading(false);
     } catch (err) {
       console.log("Something went wrong while fetching automations!");
     }
@@ -158,6 +162,9 @@ const Automations = () => {
 //    </AutomationsContainer>
 //  );
 
+  if(loading){
+    return (<LoadingSpinner/>)
+  }
   return(
       <div className="container my-3 ">
         <div className="row mb-1">

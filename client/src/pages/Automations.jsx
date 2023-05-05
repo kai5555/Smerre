@@ -163,7 +163,7 @@ const Automations = () => {
         <div className="row mb-1">
           <div className="col-6"><h1 className="h2 mb-4">Automations</h1></div>
           <div className="col-6 text-end">
-            <button type="button" className="btn mt-2 pt-1 "
+            <button type="button" className="btn mt-md-2 pt-1 "
                     style={{color:"white", backgroundColor:"MediumSeaGreen"}}
                     onClick={() => handleNewAutomationClick()}
             >Add automation</button>

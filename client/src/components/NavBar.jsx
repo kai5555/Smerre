@@ -20,6 +20,7 @@ function Navbar({ user }) {
     };
 
     return (
+
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
                 <Link to="/" className="navbar-brand me-5 pe-4">
@@ -74,8 +75,8 @@ function Navbar({ user }) {
                         </ul>
                     ):(
                         <ul className="navbar-nav mb-2 mb-lg-0">
-                            <li className="nav-item my-1">
-                                <Link to="/" className="btn btn-outline-light me-2" onClick={() => {localStorage.removeItem('token'); setLoggedIn(false)}}>
+                            <li className="nav-item my-1 ms-4">
+                                <Link to="/" className="btn btn-outline-light  ms-5" onClick={() => {localStorage.removeItem('token'); setLoggedIn(false)}}>
                                     Logout
                                 </Link>
                             </li>

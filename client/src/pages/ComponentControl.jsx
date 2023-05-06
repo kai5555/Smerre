@@ -8,6 +8,7 @@ import io from 'socket.io-client';
 import { Navigate  } from 'react-router-dom';
 import { withAuth } from './Authentication';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 class ComponentControl extends React.Component {
 
@@ -20,6 +21,7 @@ class ComponentControl extends React.Component {
         this.state = {
             components:{},
             actors: {},
+            plants: {},
             lastUpdated: {}, // new state variable
             loading: true
         };
@@ -49,7 +51,14 @@ class ComponentControl extends React.Component {
                 return;
             }
             const res = await api.getAllActors(); // make API call
-            this.setState({ components: res.data.data, loading: false }); // update state with response data
+            this.setState({ components: res.data.data}); // update state with response data
+        } catch (error) {
+            console.error(error);
+        }
+
+        try {
+            const res = await api.getAllPlants(); // make API call
+            this.setState({ plants: res.data.data, loading: false }); // update state with response data
         } catch (error) {
             console.error(error);
         }
@@ -88,7 +97,7 @@ class ComponentControl extends React.Component {
         console.log(this.state);
 
         if(this.state.loading){
-            return (<><h1>loading</h1></>);
+            return (<LoadingSpinner/>);
         }
         else{
             const actorCards = Object.entries(this.state.actors).map(([key, value]) => {
@@ -97,12 +106,12 @@ class ComponentControl extends React.Component {
                 const name = component ? component.name : null;
                 const image = this.getImageForSubType(subType);
 
-                const lastUpdated = this.state.lastUpdated[key];
-                const timeSinceUpdated = lastUpdated ? Math.floor((new Date() - new Date(lastUpdated)) / 60000) : 0; // calculate time since last update in minutes
+                const plant = this.state.plants.find((c) => c.block === component.block);
+                const blockName = plant ? plant.name : "serre";
 
                 if(image != null) {
                     return (
-                        <div className="card mt-5" key={key}>
+                        <div className="card mb-5 shadow-sm" key={key}>
                             <div className="row g-0">
                                 <div className="col-md-2">
                                     <img src={image} className="img-fluid rounded-start"></img>
@@ -113,8 +122,7 @@ class ComponentControl extends React.Component {
                                         <p className="card-text"></p>
                                         <p className="card-text">
                                             <small className="text-muted">
-                                                Last updated 3 minute ago.
-                                                {/*{lastUpdated ? `Last updated ${timeSinceUpdated} minute${timeSinceUpdated > 1 ? 's' : ''} ago` : ''}*/}
+                                                Actor is connected to {blockName}.
                                             </small>
                                         </p>
                                     </div>
@@ -135,8 +143,10 @@ class ComponentControl extends React.Component {
 
         return (
             <>
-                <div className="container ">
-                    <div >{actorCards}</div>
+                <div className="container my-3">
+                    <div className="row"><h1 className="h2 mb-4">Components</h1></div>
+                    {actorCards.length === 0 && <p>No actors found.</p>}
+                        <div >{actorCards}</div>
                 </div>
             </>
             );

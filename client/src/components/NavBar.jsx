@@ -1,16 +1,26 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import {useEffect, useState } from 'react';
 import logo from '../logo.svg';
 import { withAuth } from '../pages/Authentication';
 
 function Navbar({ user }) {
+
     const [collapsed, setCollapsed] = useState(true);
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
+        console.log(user);
+        if(!user)setLoggedIn(false);
+        else setLoggedIn(true);
+
+    }, [user]);
 
     const toggleNavbar = () => {
         setCollapsed(!collapsed);
     };
 
     return (
+
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
                 <Link to="/" className="navbar-brand me-5 pe-4">
@@ -50,7 +60,7 @@ function Navbar({ user }) {
                             </Link>
                         </li>
                     </ul>
-                    {!user ? (
+                    {!loggedIn ? (
                         <ul className="navbar-nav mb-2 mb-lg-0">
                             <li className="nav-item my-1">
                                 <Link to="/login" className="btn btn-outline-light me-2">
@@ -65,8 +75,8 @@ function Navbar({ user }) {
                         </ul>
                     ):(
                         <ul className="navbar-nav mb-2 mb-lg-0">
-                            <li className="nav-item my-1">
-                                <Link to="/" className="btn btn-outline-light me-2" onClick={() => {localStorage.removeItem('token'); this.forceUpdate();}}>
+                            <li className="nav-item my-1 ms-4">
+                                <Link to="/" className="btn btn-outline-light  ms-5" onClick={() => {localStorage.removeItem('token'); setLoggedIn(false)}}>
                                     Logout
                                 </Link>
                             </li>

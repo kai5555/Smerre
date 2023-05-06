@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-const DeletePlantPopup = ({ plantName, onDelete, onCancel }) => {
+const DeletePopup = ({ plantName, onDelete, onCancel }) => {
     return (
         <Modal show={true} onHide={onCancel} centered>
             <Modal.Header closeButton>
@@ -22,4 +22,4 @@ const DeletePlantPopup = ({ plantName, onDelete, onCancel }) => {
     );
 };
 
-export default DeletePlantPopup;
+export default DeletePopup;

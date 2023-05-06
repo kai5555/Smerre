@@ -10,6 +10,7 @@ import {
 } from "react-accessible-accordion";
 import axios from 'axios'
 import '../style/weather.css'
+import {withAuth} from "./Authentication";
 
 const scheduleNotification = async () => {
   console.log("OK");
@@ -153,7 +154,7 @@ function WeatherApi() {
   );
 
 }
-export default WeatherApi;
+export default withAuth(WeatherApi, true);
 
 
 

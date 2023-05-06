@@ -249,3 +249,4 @@ console.log(graphData);
 };
 
 export default withAuth(Plant);
+

@@ -1,5 +1,6 @@
 import React from 'react';
 import api, {toggleLed} from "../api";
+import  LoadingSpinner  from "../components/LoadingSpinner";
 import { Navigate  } from 'react-router-dom';
 const withAuth = (Component, renderAnyway=false) => {
     class AuthenticatedComponent extends React.Component {
@@ -13,9 +14,13 @@ const withAuth = (Component, renderAnyway=false) => {
         }
 
         async componentDidMount() {
-            const res = await api.isUserAuth({ token: localStorage.getItem("token") });
+            const token = localStorage.getItem("token");
+            const res = await api.isUserAuth({ token:token });
             let isAuthenticated = res.data.isLoggedIn;
             let user = res.data.username;
+
+            if(!isAuthenticated && token)
+                localStorage.removeItem("token");
 
             this.setState({
                 loading: false,
@@ -24,11 +29,12 @@ const withAuth = (Component, renderAnyway=false) => {
             });
         }
 
+
         render() {
             const { loading, authenticated } = this.state;
 
-            if (loading) {
-                return <div>Loading...</div>;
+            if (loading && !renderAnyway) {
+                return <LoadingSpinner/>;
             }
 
             if (authenticated || renderAnyway) {

@@ -1,14 +1,16 @@
-import { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
-import DeletePlantPopup from './DeletePlantPopup';
+import DeletePopup from '../components/DeletePopup';
 import { withAuth } from './Authentication';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const PlantList = () => {
     const navigate = useNavigate();
     const [plants, setPlants] = useState([]);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [plantToDelete, setPlantToDelete] = useState(null);
+    const[loading, setLoading] = useState(true);
 
     const handlePlantClick = useCallback((name) => {
         window.location.href = `/plant/${name}`;
@@ -43,15 +45,20 @@ const PlantList = () => {
             const res = await api.getAllPlants();
             console.log(res);
             setPlants(res.data.data);
+            setLoading(false);
         } catch (err) {
             console.log('Something went wrong while fetching plants!');
         }
     };
     setup();
 
+    if(loading){
+        return (<LoadingSpinner/>)
+    }
     return (
+
         <div className="container my-3">
-            <div className="row"><h1 className="h2 mb-4">Plant List</h1></div>
+            <div className="row"><h1 className="h2 mb-4">Plants</h1></div>
             {plants.length === 0 && <p>No plants found.</p>}
             <div className="row">
                 {plants.map(({ name, description }) => (
@@ -65,23 +72,23 @@ const PlantList = () => {
                                 <button className="btn btn-outline-secondary" onClick={() => handlePlantClick(name)}>
                                     Details
                                 </button>
-                                <button className="btn btn-danger" onClick={() => handleDeletePlant(name)}>
-                                    <i className="bi bi-trash"></i>
-                                </button>
+                                {/*<button className="btn btn-danger" onClick={() => handleDeletePlant(name)}>*/}
+                                    <i className="bi bi-trash text-danger" style={{fontSize:"1.4rem", cursor:"pointer"}} onClick={() => handleDeletePlant(name)}></i>
+                                {/*</button>*/}
                             </div>
                         </div>
                     </div>
                 ))}
                 <div className="col-md-6 col-lg-4">
-                    <div className="card shadow-sm mb-4 d-flex align-items-center text-center" style={{minHeight: "150px"}}>
+                    <div className="card shadow-sm mb-4 d-flex align-items-center text-center" style={{minHeight: "150px", cursor: "pointer"}} onClick={() => handleNewPlantClick()}>
                         <div className="card-body d-flex flex-column justify-content-center">
-                            <i className="bi bi-plus-lg pb-2" style={{fontSize: "3rem", color:"MediumSeaGreen", cursor: "pointer" }} onClick={() => handleNewPlantClick()}></i>
+                            <i className="bi bi-plus-lg pb-2" style={{fontSize: "3rem", color:"MediumSeaGreen" }} ></i>
                         </div>
                     </div>
                 </div>
             </div>
             {showDeletePopup && (
-                <DeletePlantPopup plantName={plantToDelete} onDelete={handleConfirmDelete} onCancel={handleCancelDelete} />
+                <DeletePopup plantName={plantToDelete} onDelete={handleConfirmDelete} onCancel={handleCancelDelete} />
             )}
         </div>
 

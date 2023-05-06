@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom'
 import { useNavigate} from 'react-router-dom';
 import { COLORS } from '../scripts';
 import { withAuth } from './Authentication';
+import ComponentControl from './ComponentControl';
 
 const Button = styled.button.attrs({
   className: `btn btn-primary`,
@@ -222,17 +223,8 @@ console.log(graphData);
       <div>
         <h1>Sensors</h1>
         {console.log(sensors)}
-        {sensors.map((sensor) => (
-          <React.Fragment key={sensor.name}>
-            {sensor.sub_type === 'led' && (
-              <Button onClick={() => console.log("Clicked Led")}>Led</Button>
-            )}
-            {sensor.sub_type === 'ventiel' && (
-              <Button onClick={() => console.log("Clicked Ventiel")}>Ventiel</Button>
-            )}
-          </React.Fragment>
-        ))}
       </div>
+      <ComponentControl sensors={sensors}></ComponentControl>
       <SnapshotContainer>
         <div>
           {snapshots.map((snapshot, index) => (
@@ -256,5 +248,4 @@ console.log(graphData);
   );
 };
 
-export default withAuth(Plant);
 export default withAuth(Plant);

@@ -47,7 +47,7 @@ class ComponentControl extends React.Component {
             const { sensors } = this.props;
             console.log(sensors);
             if(sensors){
-                this.setState({ components: sensors, loading: false }); 
+                this.setState({ components: sensors});
                 return;
             }
             const res = await api.getAllActors(); // make API call

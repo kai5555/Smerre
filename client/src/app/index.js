@@ -1,11 +1,24 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-
-import { NavBar } from '../components'
-import { PlantList, Plant, AddPlant, ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, WeatherApi} from '../pages'
-
 import '../scripts/icons'
 import 'bootstrap/dist/css/bootstrap.min.css'
+
+import { NavBar } from '../components'
+import { PlantList, 
+        Plant, 
+        AddPlant, 
+        ComponentControl, 
+        Login, 
+        Register, 
+        EmailVerify, 
+        PasswordRecovery, 
+        PasswordRecoveryVerify, 
+        AddAutomation, 
+        EditAutomation, 
+        Automations, 
+        WeatherApi, 
+        TutorialAutomation} from '../pages'
+
 
 function App() {
     return (
@@ -23,10 +36,11 @@ function App() {
                 <Route path="/verify/:id/:token" element={< EmailVerify />} />
                 <Route path="/recovery" element={< PasswordRecovery />} />
                 <Route path="/recovery/:id/:token" element={< PasswordRecoveryVerify />} />
+                <Route path="/automation" element={< Automations />} />
+                <Route path="/automation/tutorial" element={< TutorialAutomation />} />
                 <Route path="/automation/add" element={< AddAutomation />} />
                 <Route path="/automation/:name/edit" element={< EditAutomation />} />
                 <Route path="/weather" element={< WeatherApi />}></Route>
-                <Route path="/automation" element={< Automations />} />
             </Routes>
         </Router>
         </>

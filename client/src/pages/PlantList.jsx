@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import DeletePopup from '../components/DeletePopup';
@@ -50,7 +50,10 @@ const PlantList = () => {
             console.log('Something went wrong while fetching plants!');
         }
     };
-    setup();
+
+    useEffect( () => {
+        setup();
+    })
 
     if(loading){
         return (<LoadingSpinner/>)

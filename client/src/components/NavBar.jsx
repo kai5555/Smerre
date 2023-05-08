@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import {useEffect, useState } from 'react';
 import logo from '../logo.svg';
 import { withAuth } from '../pages/Authentication';
+import COLORS from '../scripts/colors'
 
 function Navbar({ user }) {
 
@@ -9,7 +10,6 @@ function Navbar({ user }) {
     const [loggedIn, setLoggedIn] = useState(false);
 
     useEffect(() => {
-        console.log(user);
         if(!user)setLoggedIn(false);
         else setLoggedIn(true);
 
@@ -21,7 +21,7 @@ function Navbar({ user }) {
 
     return (
 
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark" style={{backgroundColor: COLORS.defaultColor}}>
             <div className="container-fluid">
                 <Link to="/" className="navbar-brand me-5 pe-4">
                     <img src={logo} alt="Smerre Logo" height="30" />

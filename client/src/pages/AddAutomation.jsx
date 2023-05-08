@@ -7,8 +7,9 @@ import { TouchBackend } from 'react-dnd-touch-backend'
 import styled from 'styled-components'
 import api from '../api';
 import ValidationError from './ValidationError'
-import { useNavigate} from 'react-router-dom';
+import { useNavigate, Link} from 'react-router-dom';
 import { withAuth } from './Authentication';
+
 
 const Title = styled.p`
   font-size: 20px;
@@ -204,6 +205,7 @@ const AddAutomation = () => {
               </RadioButton>
             </RadioButtonContainer>
             <Button onClick={handleNextButtonClick}>Next</Button>
+            <p>Don't know how it works, here you can follow the <Link to="/automation/tutorial">tutorial</Link></p>
           </ContentBox>
         </>
       )}

@@ -11,9 +11,6 @@ import Line from './Line.jsx'
 import styled, { keyframes } from 'styled-components'
 import api from '../api' 
 
-import Tour from 'reactour'
-import tutorial from '../scripts/tutorial'
-
 const EditBar = styled.div.attrs({
   className: 'form-group',
 })`
@@ -88,15 +85,6 @@ const Button = styled.button.attrs({
   margin: 15px 15px 15px 5px;
   width: 100px;
 `
-const StartTourButton = styled.button.attrs({
-  className: `btn btn-primary`,
-})`
-  margin: 15px 15px 15px 5px;
-  width: 100px;
-  position: absolute;
-  left: 0;
-  top: 60px;
-`
 
 const ContentBox = styled.div`
   display: flex;
@@ -121,12 +109,17 @@ const Grid = styled(GridLines)`
   background-color: white;
 `;
 
+const TutorialBox = styled.div`
+  position: absolute;
+  z-index: -1;
+`;
+
 const Container = (props) => {
-  const {automation, onSubmitCall} = props;
+  const {automation, onSubmitCall, tutorialStep} = props;
 
   const [boxes, setBoxes] = useState({
-    A: { top: 20, left: window.innerWidth / 2 - 25, type:'Start', content: { title: "Als"}, errors: [], step: 0 },
-    B: { top: 20, left: window.innerWidth / 2 - 25, type:'Start', content: { title: "Dan"}, errors: [], step: 1 },
+    A: { top: 20, left: window.innerWidth / 2 - 25, type:'Start', content: { title: "If"}, errors: [], step: 0 },
+    B: { top: 20, left: window.innerWidth / 2 - 25, type:'Start', content: { title: "Then"}, errors: [], step: 1 },
   });
 
   const [selectedBox, setSelectedBox] = useState(null);
@@ -135,7 +128,6 @@ const Container = (props) => {
   const [editBarContent, setEditBarContent] = useState(null);
   const [viewStep, setViewStep] = useState(0);
   const [entities, setEntities] = useState([]);
-  const [isTourOpen, setIsTourOpen] = useState(false);
 
   
   // Load a automation when editing
@@ -180,6 +172,72 @@ const Container = (props) => {
       return updatedLines;
     });
   }, [boxes, viewStep])
+
+  // Tutorial logic
+  const tutorialSteps = [
+    function(){
+      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1}});
+      document.querySelector("#nextBtn").disabled = true;
+    },
+    function(){
+      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1}});
+    },
+    function(){
+      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
+    },
+    function(){
+      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
+      setLines({"AC0":{"step":0}})
+    },
+    function(){
+      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
+      setLines({"AC0":{"step":0}})
+      if(document.querySelector("#C")){
+        handleBoxDoubleClick("C");
+      }
+    },
+    function(){
+      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
+      setLines({"AC0":{"step":0}});
+      activateNextButtonTutorial();
+    },
+    function(){
+      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
+      setLines({"AC0":{"step":0}})
+      document.querySelector("#nextBtn").click();
+      document.querySelector("#nextBtn").disabled = true;
+    },
+    function(){
+      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
+      setLines({"AC0":{"step":0}})
+      if(document.querySelector("#C")){
+        handleBoxDoubleClick("C");
+      }
+    },
+    function(){
+      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
+      setLines({"AC0":{"step":0}})
+      activateNextButtonTutorial();
+    },
+    function(){
+      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
+      setLines({"AC0":{"step":0}})
+      document.querySelector("#nextBtn").disabled = true;
+      setViewStep(1);
+    },  
+  ]
+  useEffect(() => {
+    if(tutorialSteps[tutorialStep-1]){
+      tutorialSteps[tutorialStep-1]();
+    }
+  }, [tutorialStep]);
+
+  const activateNextButtonTutorial = useCallback(() => {
+    setEditBarVisible(false);
+    document.querySelector("#nextBtn").disabled = false;
+  }, []);
+  
+
   
   const moveBox = useCallback(
     (id, left, top) => {
@@ -598,10 +656,9 @@ const Container = (props) => {
   document.body.style.overflow='hidden'; // 
   return (
     <>
-      <Tour steps={tutorial} isOpen={isTourOpen} onRequestClose={() => setIsTourOpen(false)} accentColor={COLORS.defaultColor} rounded={5}/>
       {viewStep !== 2 && (
         <>
-          <DragContainer ref={drop}>
+          <DragContainer ref={drop} data-tut="container">
             {Object.keys(boxes)
               .filter((key) => boxes[key].step === viewStep)
               .map((key) => (
@@ -630,9 +687,9 @@ const Container = (props) => {
             </svg>
             <Grid className="grid-area" cellWidth={12 } strokeWidth={1} lineColor='#f2f0f0'></Grid>
 
-            {viewStep === 0 && !editBarVisible &&(
+            {viewStep === 0 &&(
               <>
-                <MenuBoxContainer data-tut="picks">
+                <MenuBoxContainer>
                   <MenuBox type="" rotate="-10deg" left={-210} top={heightOffset}></MenuBox>
                   <MenuBox type="" rotate="10deg" left={200} top={heightOffset}></MenuBox>
 
@@ -644,18 +701,17 @@ const Container = (props) => {
                   <MenuBox type="CheckStatus" rotate="60deg" left={120} top={heightOffset}></MenuBox>
                   <MenuBox type="Weather" rotate="60deg" left={180} top={heightOffset}></MenuBox>
 
+                  <TutorialBox data-tut="picks" style={{width: '530px', height:'500px', left:"-210px", top:"-100px"}}></TutorialBox>
                 </MenuBoxContainer>
 
-                <StepButtonsContainer data-tut="steps">
-                  <StepButton onClick={() => goNextStep()}>
+                <StepButtonsContainer data-tut="steps" >
+                  <StepButton id="nextBtn" onClick={() => goNextStep()}>
                     Next 
                   </StepButton>
                 </StepButtonsContainer>
-
-                <StartTourButton onClick={() => setIsTourOpen(true)}>Start Tour</StartTourButton>
               </>
             )}
-            {viewStep === 1 && !editBarVisible &&(
+            {viewStep === 1 &&(
               <> 
                 <MenuBoxContainer>                  
                   <MenuBox type="" rotate="-10deg" left={-100} top={heightOffset}></MenuBox>
@@ -668,25 +724,25 @@ const Container = (props) => {
                 </MenuBoxContainer>
 
                 <StepButtonsContainer>
-                  <StepButton onClick={() => goPreviousStep()}>
+                  <StepButton id="prevBtn" onClick={() => goPreviousStep()}>
                     Previous 
                   </StepButton>
-                  <StepButton onClick={() => goNextStep()}>
+                  <StepButton id="nextBtn" onClick={() => goNextStep()}>
                     Next 
                   </StepButton>
                 </StepButtonsContainer>
-
-                <StartTourButton onClick={() => setIsTourOpen(true)}>Start Tour</StartTourButton>
               </>
             )}
           </DragContainer>
         </>
       )}
 
-      {viewStep !== 2 && editBarVisible &&(
-        <EditBar visible={editBarVisible}>
-          {editBarContent}
-        </EditBar>
+      {viewStep !== 2 &&(
+        <>
+          <EditBar data-tut="editbar" visible={editBarVisible} style={{zIndex: editBarVisible ? 2 : -1}}>
+            {editBarContent}
+          </EditBar>
+        </>
       )}
 
       {viewStep === 2 && (
@@ -694,12 +750,12 @@ const Container = (props) => {
           <Title>Ready to upload automation</Title>
           <ContentBox>
             <Info>Your automation has been verified, to upload it to homeassitant and mongodb press the button below</Info>
-            <Button onClick={() => submitAutomation()}>
+            <Button id="submitBtn" onClick={() => submitAutomation()}>
               Done
               <Arrow>&#10148;</Arrow>
             </Button>
             
-            <Button onClick={() => goPreviousStep()}>
+            <Button id="prevBtn" onClick={() => goPreviousStep()}>
               Go Back 
             </Button>
           </ContentBox>
@@ -743,7 +799,7 @@ const Container = (props) => {
         "min_children": 1,
         "max_children": 2,
         "possible_parents": regexPresets.only(["Start", "And", "Or"]),
-        "parent_warning": "'Entity' can only have the 'Als', 'And', 'Or' as parent",
+        "parent_warning": "'Entity' can only have the 'If', 'And', 'Or' as parent",
         "child_warning": "'Entity' can have 1 to 2 children",
       },
       "CheckValue": {
@@ -764,28 +820,28 @@ const Container = (props) => {
         "min_children": 2,
         "max_children": Infinity,
         "possible_parents": regexPresets.only(["Start", "And", "Or"]),
-        "parent_warning": "'And' can only have the 'Als', 'And', 'Or' as parents",
+        "parent_warning": "'And' can only have the 'If', 'And', 'Or' as parents",
         "child_warning": "'And' must have more then 2 children",
       },
       "Or": {
         "min_children": 2,
         "max_children": Infinity,
         "possible_parents": regexPresets.only(["Start", "And", "Or"]),
-        "parent_warning": "'Or' can only have the 'Als', 'And', 'Or' as parents",
+        "parent_warning": "'Or' can only have the 'If', 'And', 'Or' as parents",
         "child_warning": "'Or' must have more then 2 children",
       },
       "Time": {
         "min_children": 0,
         "max_children": 0,
         "possible_parents": regexPresets.only(["Start", "And", "Or"]),
-        "parent_warning": "'Time' can only have the 'Als', 'And', 'Or' as parents",
+        "parent_warning": "'Time' can only have the 'If', 'And', 'Or' as parents",
         "child_warning": "'Time' can't have any children",
       },
       "Weather": {
         "min_children": 0,
         "max_children": 0,
         "possible_parents": regexPresets.only(["Start", "And", "Or"]),
-        "parent_warning": "'Weather' can only have the 'Als', 'And', 'Or' as parents",
+        "parent_warning": "'Weather' can only have the 'If', 'And', 'Or' as parents",
         "child_warning": "'Weather' can't have any children",
       },
     },
@@ -801,7 +857,7 @@ const Container = (props) => {
         "min_children": 1,
         "max_children": 1,
         "possible_parents": regexPresets.only(["Start","Delay"]),
-        "parent_warning": "'Entity' can only have the 'Dan' and 'Delay' as parent",
+        "parent_warning": "'Entity' can only have the 'Then' and 'Delay' as parent",
         "child_warning": "'Entity' can only have 1 child",
       },
       "BasicAction": {

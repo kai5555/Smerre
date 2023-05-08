@@ -12,27 +12,6 @@ import axios from 'axios'
 import '../style/weather.css'
 import {withAuth} from "./Authentication";
 
-const scheduleNotification = async () => {
-  console.log("OK");
-  if (Capacitor.isPluginAvailable('LocalNotifications')) {
-    await LocalNotifications.schedule({
-      notifications: [
-        {
-          title: 'My notification',
-          body: 'This is my notification message!',
-          id: 1,
-          schedule: { at: new Date(Date.now()) },
-          sound: null,
-          attachments: null,
-          actionTypeId: '',
-          extra: null,
-        },
-      ],
-    });
-  }
-};
-scheduleNotification();
-
 function WeatherApi() {
   const [data,setData] = useState({})
   const [forecastData,setforecastData] = useState({})

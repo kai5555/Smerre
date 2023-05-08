@@ -11,5 +11,7 @@ import Automations from './Automations'
 import PlantList from './PlantList'
 import Plant from './Plant'
 import AddPlant from './AddPlant'
+import TutorialAutomation from './TutorialAutomation'
 
-export { ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, WeatherApi, PlantList, Plant, AddPlant}
+
+export { ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, WeatherApi, PlantList, Plant, AddPlant, TutorialAutomation}

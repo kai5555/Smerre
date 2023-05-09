@@ -1,4 +1,4 @@
-import {  useLayoutEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
 import api from '../api';
 import { useNavigate} from 'react-router-dom';
 import {
@@ -9,53 +9,40 @@ import {
   AccordionItemPanel,
 } from "react-accessible-accordion";
 import axios from 'axios'
+import { withAuth } from './Authentication';
+import LoadingSpinner from "../components/LoadingSpinner";
 import '../style/forecast.css'
 
-function Forecast() {
-    const navigate = useNavigate();
-    useLayoutEffect(() => {
-      async function checkUserAuth() {
-          try {
-              const res = await api.isUserAuth({token: localStorage.getItem("token")});
-              if(res.data.isLoggedIn) {
-                console.log("Logged in");
-                setup(res.data.username);
-              }
-              else{
-                console.log("Not logged in");
-                navigate('/login');
-              }
-          } catch (err) {
-            console.log(err);
-          }
-      }
-      checkUserAuth();
-    }, [navigate]);
-    const setup = async (username) => {
-      console.log("homo")
-      const user = await api.getUser({username: username})
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${user.data.user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
-      const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${user.data.user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
-      axios.get(url).then((response) => {
-        setData(response.data)
-        console.log(response.data)
-      })
-      axios.get(forecast).then((response) => {
-        setforecastData(response.data)
-        console.log(response.data)
-      })
-    }
-
-
+function Forecast({user}) {
     const [data,setData] = useState({})
     const [forecastData,setforecastData] = useState({})
     const [location, setLocation] = useState('')
+    const[loading, setLoading] = useState(true);
 
     const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const dayInAWeek = new Date().getDay();
     const forecastDays = WEEK_DAYS.slice(dayInAWeek, WEEK_DAYS.length).concat(WEEK_DAYS.slice(0, dayInAWeek));
+    const navigate = useNavigate();
 
+    useEffect( () => {
+      setup();
+    },[])
 
+    const setup = async () => {
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
+      const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
+      axios.get(url).then((response) => {
+        setData(response.data)
+      })
+      axios.get(forecast).then((response) => {
+        setforecastData(response.data)
+        setLoading(false);
+      })
+    }
+
+    if(loading){
+      return (<LoadingSpinner/>)
+    }
     return (
         <div className="forecastContainer">
             <div className="forecast">
@@ -113,4 +100,4 @@ function Forecast() {
 
     )
 }
-export default Forecast;
+export default withAuth(Forecast);

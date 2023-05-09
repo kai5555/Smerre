@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import api from '../api';
-import { useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import styled from 'styled-components';
 import { withAuth } from './Authentication';
@@ -13,89 +13,20 @@ const Home = styled.div`
 `;
 
 const Plants = styled.div`
-  position:relative;
-  right:-100px;
-`;
-
-
-const PlantWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  width: 250px;
-  text-align: center;
-  position: relative;
-
-`;
-
-const PlantName = styled.div`
-  font-size: 12px;
-`;
-
-const PlantAlias = styled.div`
-  font-weight: bold;
-  margin-bottom: 5px;
 `;
 
 const Weather = styled.div`
-  position: absolute;
-  right:0;
-  top:70px;
-`;
-
-const TitlePlants = styled.div`
-  position:relative;
-  right:-75px;
-  font-size: 20px;
-  font-weight: bold;
-`;
-
-const TitleAuto = styled.div`
-  position:relative;
-  right:-45px;
-  font-size: 20px;
-  font-weight: bold;
 `;
 
 const ContainerWeather = styled.div`
   position:relative;
   display: flex;
   gap: 10px;
-  right:10px;
+  right:10%;
 `;
 
 const Automations = styled.div`
 
-`;
-
-const AutomationWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  width: 250px;
-  text-align: center;
-  position: relative;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-`;
-
-const AutomationName = styled.div`
-  font-size: 12px;
-`;
-
-const AutomationAlias = styled.div`
-  font-weight: bold;
-  margin-bottom: 5px;
 `;
 
 const Today = styled.div`
@@ -106,14 +37,14 @@ const Tomorrow = styled.div`
 
 const Location = styled.div`
   position:relative;
-  right:10px;
+  right:8%;
   font-size: 30px;
   font-weight: bold;
 `;
 
 const ForecastButton = styled.div`
   position:relative;
-  right:-10px;
+  right:-8%;
 `;
 
 const StyledButton = styled.button`
@@ -122,7 +53,6 @@ const StyledButton = styled.button`
 `;
 
 function WeatherApi({user}) {
-  console.log(user);
   const navigate = useNavigate();
   const [plants, setPlants] = useState([]);
   const [automations, setAutomations] = useState([]);
@@ -172,30 +102,57 @@ function WeatherApi({user}) {
   return (
     <Home>
       <Automations>
-        <TitleAuto>
-          Your automations:
-        </TitleAuto>
-      {automations.map(({ name, alias, enabled }) => (
-      <AutomationWrapper key={name}>
-        <div onClick={() => handleAutomationClick(name)}>
-          <AutomationAlias>{alias}</AutomationAlias>
-          <AutomationName>{name}</AutomationName>
-        </div>
-      </AutomationWrapper>
-    ))}
+        <div className="container my-3 ">
+          <div className="row mb-1">
+            <div className="col-6"><h1 className="h2 mb-4">Automations</h1></div>
+            </div>
+            {automations.length === 0 && <p>No automations found.</p>}
+              <div className="row">
+                {automations.map(({ name, alias, enabled }) => (
+                  <div className="col-md-12 col-lg-12" key={name}>
+                    <div className="card shadow-sm mb-5 " style={{minHeight: "150px"}}>
+                      <div className="card-body pt-0">
+
+                        <div className="row">
+                          <div className="col-6 pt-3 pe-0">
+                            <h5 className="card-title">{name}</h5>
+                            <p className="card-text">{alias}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="card-footer d-flex justify-content-between align-items-center">
+                        <button className="btn btn-outline-secondary" onClick={() => handleAutomationClick(name)}>
+                          Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+              ))}
+            </div>
+          </div>
       </Automations>
       <Plants>
-        <TitlePlants>
-          Your plants:
-        </TitlePlants>
-        {plants.map(({ name }) => (
-        <PlantWrapper key={name}>
-          <div onClick={() => handlePlantClick(name)}>
-            <PlantAlias>{name}</PlantAlias>
-            <PlantName>{name}</PlantName>
-          </div>
-        </PlantWrapper>
-      ))}
+        <div className="container my-3">
+            <div className="row"><h1 className="h2 mb-4">Plants</h1></div>
+            {plants.length === 0 && <p>No plants found.</p>}
+            <div className="row">
+                {plants.map(({ name, description }) => (
+                    <div className="col-md-6 col-lg-4" key={name}>
+                        <div className="card shadow-sm mb-4" style={{minHeight: "150px"}}>
+                            <div className="card-body">
+                                <h5 className="card-title">{name}</h5>
+                                <p className="card-text">{description}</p>
+                            </div>
+                            <div className="card-footer d-flex justify-content-between align-items-center">
+                                <button className="btn btn-outline-secondary" onClick={() => handlePlantClick(name)}>
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
       </Plants>
       {forecastData.list !== undefined &&
       <Weather>

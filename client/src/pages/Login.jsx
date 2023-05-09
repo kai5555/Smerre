@@ -90,16 +90,25 @@ function Login() {
     }, []);
 
     return (
-        <div className="d-flex justify-content-center align-items-start vh-100">
-            <div className="p-5 rounded shadow-lg bg-white my-5 d-flex" style={{ width: '800px', height: '400px', overflow: "hidden" }}>
-                <div className="flex-grow-1" style={{ margin: "-100px 50px -50px -100px", width: "400px", height: "500px",  overflow: "hidden", transform: "rotate(8deg)", position: "relative"}}>
-                    <img src={leaves1} style={{width: "800px", height: "600px", objectFit: "contain", transform: "rotate(-8deg)"}}/>
+        <div className="row d-flex justify-content-center align-items-start vh-100">
+            <div className=" p-0 rounded shadow-lg bg-white my-5 d-sm-flex overflow-hidden col-xl-6 col-md-8 col-10" style={{ minHeight: '400px', maxHeight:"450px"}}>
+                <div className="flex-grow-1 overflow-hidden  bg-black position-relative me-4 col-1 d-none d-sm-block" style={{clipPath: "polygon(0 0, 100% 0, 92% 100%, 0% 100%)"}} >
+                    <img src={leaves1} style={{ objectFit: "contain"}}/>
                     <div style={{ position: "absolute", top: "50%", left: "55%", transform: "translate(-50%, -50%)",  width: "40%", height: "40%"  }}>
-                        <img src={logo} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", position: "absolute", top: "50%", left: "55%", transform: "translate(-50%, -50%) rotate(-8deg)"}}/>
+                        <img src={logo} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", position: "absolute", top: "50%", left: "55%", transform: "translate(-50%, -50%)"}}/>
                     </div>
                 </div>
-                <div>
-                    <h2 className="mb-4">Login</h2>
+
+                <div className="d-sm-none bg-black position-relative" style={{ height: "100px", width: "100%" }}>
+                    <img src={leaves1} style={{ height: "100%", width: "100%", objectFit: "none" }} />
+                    <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "80%", height: "80%" }}>
+                        <img src={logo} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
+                    </div>
+                </div>
+
+                <div className="d-flex text-center text-sm-start">
+                <div className="my-sm-5 my-3 mx-auto pe-3">
+                    <h2 className="mb-sm-4 mb-2 ">Login</h2>
                     <form onSubmit={(e) => handleLogin(e)}>
                         <div className="form-group mb-3">
                             <label htmlFor="username">Username</label>
@@ -127,9 +136,53 @@ function Login() {
                         </div>
                     )}
                 </div>
+                </div>
             </div>
         </div>
     );
+
+    // return (
+    //     <div className="d-flex justify-content-center align-items-start vh-100">
+    //         <div className="p-5 rounded shadow-lg bg-white my-5 d-flex" style={{ width: '800px', height: '400px', overflow: "hidden" }}>
+    //             <div className="flex-grow-1" style={{ margin: "-100px 50px -50px -100px", width: "400px", height: "500px",  overflow: "hidden", transform: "rotate(8deg)", position: "relative"}}>
+    //                 <img src={leaves1} style={{width: "800px", height: "600px", objectFit: "contain", transform: "rotate(-8deg)"}}/>
+    //                 <div style={{ position: "absolute", top: "50%", left: "55%", transform: "translate(-50%, -50%)",  width: "40%", height: "40%"  }}>
+    //                     <img src={logo} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", position: "absolute", top: "50%", left: "55%", transform: "translate(-50%, -50%) rotate(-8deg)"}}/>
+    //                 </div>
+    //             </div>
+    //             <div>
+    //                 <h2 className="mb-4">Login</h2>
+    //                 <form onSubmit={(e) => handleLogin(e)}>
+    //                     <div className="form-group mb-3">
+    //                         <label htmlFor="username">Username</label>
+    //                         <input type="text" className="form-control" name="username" required />
+    //                     </div>
+    //
+    //                     <div className="form-group mb-3">
+    //                         <label htmlFor="password">Password</label>
+    //                         <input type="password" className="form-control" name="password" required />
+    //                     </div>
+    //
+    //                     <Button type="submit" className="btn btn-primary my-3">
+    //                         Login
+    //                     </Button>
+    //
+    //                     <div className="d-flex flex-column">
+    //                         <a href="/recovery">Forgot password?</a>
+    //                         <a href="/register">Don't have an account yet?</a>
+    //                     </div>
+    //                 </form>
+    //
+    //                 {errorMessage && (
+    //                     <div className="alert alert-danger mt-3" role="alert">
+    //                         {errorMessage}
+    //                     </div>
+    //                 )}
+    //             </div>
+    //         </div>
+    //     </div>
+    // );
+
 }
 
 export default Login;

@@ -53,7 +53,7 @@ const PlantList = () => {
 
     useEffect( () => {
         setup();
-    })
+    },[])
 
     if(loading){
         return (<LoadingSpinner/>)
@@ -65,7 +65,7 @@ const PlantList = () => {
             {plants.length === 0 && <p>No plants found.</p>}
             <div className="row">
                 {plants.map(({ name, description }) => (
-                    <div className="col-md-6 col-lg-4">
+                    <div className="col-md-6 col-lg-4" key={name}>
                         <div className="card shadow-sm mb-4" style={{minHeight: "150px"}}>
                             <div className="card-body">
                                 <h5 className="card-title">{name}</h5>

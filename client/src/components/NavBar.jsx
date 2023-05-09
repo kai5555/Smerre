@@ -25,7 +25,7 @@ function Navbar({ user }) {
             <div className="container-fluid">
                 <Link to="/" className="navbar-brand me-5 pe-4">
                     <img src={logo} alt="Smerre Logo" height="30" />
-                    Smerre
+                    merre
                 </Link>
                 <button
                     className="navbar-toggler"

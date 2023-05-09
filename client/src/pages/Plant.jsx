@@ -83,7 +83,7 @@ const Plant = () => {
     const prop = data[key];
 
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 14);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     const filteredProps = (prop || []).filter((p) => {
       const timestamp = new Date(p.timestamp);

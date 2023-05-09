@@ -15,6 +15,8 @@ import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import { faForward } from '@fortawesome/free-solid-svg-icons';
 
+import { faUser, faEnvelope, faLock, faEye, faEyeSlash, faSignature } from '@fortawesome/free-solid-svg-icons';
+
 library.add(
   faCircleInfo,
   faTrash,
@@ -30,4 +32,11 @@ library.add(
   faCircleDot,
   faPlay,
   faForward,
+
+  faUser,
+  faEnvelope,
+  faLock,
+  faEye,
+  faEyeSlash,
+  faSignature,
 );

@@ -26,9 +26,8 @@ class ComponentControl extends React.Component {
             loading: true
         };
 
-        this.socket = io('http://laptop_van_wout:5000');
-        if(!this.socket.connected)
-            this.socket = io('http://'+ this.ip + ':5000');
+        
+        this.socket = io('http://'+ this.ip + ':5000');
 
         this.socket.on('initial', (value) => {
             this.setState({ actors:  value });

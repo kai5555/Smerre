@@ -17,7 +17,7 @@ const withAuth = (Component, renderAnyway=false) => {
             const token = localStorage.getItem("token");
             const res = await api.isUserAuth({ token:token });
             let isAuthenticated = res.data.isLoggedIn;
-            let user = res.data.username;
+            let user = res.data.user;
 
             if(!isAuthenticated && token)
                 localStorage.removeItem("token");
@@ -34,7 +34,7 @@ const withAuth = (Component, renderAnyway=false) => {
             const { loading, authenticated } = this.state;
 
             if (loading && !renderAnyway) {
-                return <LoadingSpinner/>;
+                return <LoadingSpinner/>;   
             }
 
             if (authenticated || renderAnyway) {

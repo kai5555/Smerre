@@ -145,7 +145,7 @@ function Register () {
                     Location
                 </Label>
                 <InputGroup>
-                    <InputIcon><FontAwesomeIcon icon="fa-solid fa-location-dot" size="xs" style={{ color: 'grey'}} /></InputIcon>
+                    <InputIcon><FontAwesomeIcon icon="fa-solid fa-earth" size="xs" style={{ color: 'grey'}} /></InputIcon>
                     <InputText type="text"name="location" id="location" placeholder="Ghent"  required />
                 </InputGroup>
               </div>

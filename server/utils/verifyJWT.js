@@ -1,17 +1,18 @@
 const jwt = require("jsonwebtoken")
+const User = require("../modals/userModal"); // import user model
 
 function verifyJWT(req, res, next) {
     // removes 'Bearer` from token
     const token = req.body.token?.split(' ')[1]
 
     if(token){
-        jwt.verify(token, process.env.PASSWORDSECRET, (err, decoded) => {
+        jwt.verify(token, process.env.PASSWORDSECRET, async (err, decoded) => {
             if (err){
                 console.log("Error with verifyJWT: "+err);
                 return res.json({isLoggedIn: false, message: "Failed To Authenticate"})
             }
             req.user = {};
-            req.user.username = decoded.username
+            req.user = await User.findOne({ username: decoded.username});
             next()
         })
     } else {

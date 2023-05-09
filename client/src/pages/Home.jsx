@@ -1,8 +1,10 @@
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import api from '../api';
 import { useNavigate} from 'react-router-dom';
 import axios from 'axios'
 import styled from 'styled-components';
+import { withAuth } from './Authentication';
+import LoadingSpinner from "../components/LoadingSpinner";
 import '../style/body.css'
 
 const Home = styled.div`
@@ -119,11 +121,14 @@ const StyledButton = styled.button`
   width:100px;
 `;
 
-function WeatherApi() {
-
+function WeatherApi({user}) {
+  console.log(user);
   const navigate = useNavigate();
   const [plants, setPlants] = useState([]);
+  const [automations, setAutomations] = useState([]);
   const[loading, setLoading] = useState(true);
+  const [data,setData] = useState({})
+  const [forecastData,setforecastData] = useState({})
 
   const handlePlantClick = useCallback((name) => {
     window.location.href = `/plant/${name}`;
@@ -133,60 +138,37 @@ function WeatherApi() {
     window.location.href = `/automation/${name}/edit`;
   }, []);
 
-  const [automations, setAutomations] = useState([]);
-
-
-  useLayoutEffect(() => {
-    async function checkUserAuth() {
-        try {
-            const res = await api.isUserAuth({token: localStorage.getItem("token")});
-            if(res.data.isLoggedIn) {
-              console.log("Logged in");
-              setup(res.data.username);
-            }
-            else{
-              console.log("Not logged in");
-              navigate('/login');
-            }
-        } catch (err) {
-          console.log(err);
-        }
-    }
-    checkUserAuth();
-  }, [navigate]);
-
-  const setup = async (username) => {
-    const user = await api.getUser({username: username})
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${user.data.user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
-    const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${user.data.user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
+  useEffect( () => {
+    setup();
+  },[])
+ 
+  const setup = async () => {
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
+    const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
     axios.get(url).then((response) => {
       setData(response.data)
-      console.log(response.data)
     })
     axios.get(forecast).then((response) => {
       setforecastData(response.data)
-      console.log(response.data)
     })
     try {
         const res = await api.getAllPlants();
-        console.log(res);
         setPlants(res.data.data);
-        setLoading(false);
     } catch (err) {
         console.log('Something went wrong while fetching plants!');
     }
     try {
       const res = await api.getAllAutomations();
       setAutomations(res.data.data);
+      setLoading(false);
     } catch (err) {
       console.log("Something went wrong while fetching automations!");
     }
   }
-  
-  const [data,setData] = useState({})
-  const [forecastData,setforecastData] = useState({})
 
-
+  if(loading){
+    return (<LoadingSpinner/>)
+  }
   return (
     <Home>
       <Automations>
@@ -215,6 +197,7 @@ function WeatherApi() {
         </PlantWrapper>
       ))}
       </Plants>
+      {forecastData.list !== undefined &&
       <Weather>
         <Location>
           <p>{data.name}</p>
@@ -251,9 +234,10 @@ function WeatherApi() {
             </form>
           </ForecastButton>
       </Weather>
+      }
     </Home>
   );
 
 }
-export default WeatherApi;
+export default withAuth(WeatherApi);
 

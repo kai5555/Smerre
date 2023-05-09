@@ -6,12 +6,14 @@ import PasswordRecovery from './PasswordRecovery'
 import PasswordRecoveryVerify from './PasswordRecoveryVerify'
 import AddAutomation from './AddAutomation'
 import EditAutomation from './EditAutomation'
-import WeatherApi from './WeatherApi'
 import Automations from './Automations'
 import PlantList from './PlantList'
 import Plant from './Plant'
 import AddPlant from './AddPlant'
 import TutorialAutomation from './TutorialAutomation'
+import Home from './Home'
+import Forecast from './Forecast'
 
 
-export { ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, WeatherApi, PlantList, Plant, AddPlant, TutorialAutomation}
+
+export { ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, Home, Forecast, PlantList, Plant, AddPlant, TutorialAutomation}

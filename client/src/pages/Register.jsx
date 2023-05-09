@@ -85,9 +85,10 @@ function Register () {
             username: form[0].value,
             firstName: form[1].value,
             lastName: form[2].value,
-            email: form[3].value,
-            password: form[4].value,
-            confirmPassword: form[5].value
+            location: form[3].value,
+            email: form[4].value,
+            password: form[5].value,
+            confirmPassword: form[6].value
         }
 
         try {
@@ -138,7 +139,16 @@ function Register () {
                     <InputText type="text" name="firstName" id="firstName" placeholder="Ludwigh"  required />
                     <InputText type="text"name="lastName" id="lastName" placeholder="Smerre"  required />
                 </InputGroup>
-                </div>
+              </div>
+              <div className="mb-3">
+                <Label htmlFor="location">
+                    Location
+                </Label>
+                <InputGroup>
+                    <InputIcon><FontAwesomeIcon icon="fa-solid fa-location-dot" size="xs" style={{ color: 'grey'}} /></InputIcon>
+                    <InputText type="text"name="location" id="location" placeholder="Ghent"  required />
+                </InputGroup>
+              </div>
               <div className="mb-3">
                 <Label htmlFor="email">
                     Email

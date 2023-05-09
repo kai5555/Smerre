@@ -18,6 +18,7 @@ export const verifyEmailUser = payload => api.post(`/verifyEmailUser`, payload);
 export const sendPasswordRecovery = payload => api.post(`/sendPasswordRecovery`, payload);
 export const verifyPasswordRecovery = payload => api.post(`/verifyPasswordRecovery`, payload);
 export const passwordRecovery = payload => api.post(`/passwordRecovery`, payload);
+export const getUser = payload => api.post('/getUser', payload);
 
 // Component routes
 export const getAllActors = () => api.get(`/getAllActors`);
@@ -50,6 +51,7 @@ const apis = {
     sendPasswordRecovery,
     verifyPasswordRecovery,
     passwordRecovery,
+    getUser,
     
     getAllActors,
     getAllSensors,

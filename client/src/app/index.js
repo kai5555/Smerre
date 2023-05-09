@@ -16,7 +16,8 @@ import { PlantList,
         AddAutomation, 
         EditAutomation, 
         Automations, 
-        WeatherApi, 
+        Home,
+        Forecast, 
         TutorialAutomation} from '../pages'
 
 
@@ -26,7 +27,7 @@ function App() {
         <Router>
             <NavBar />
             <Routes>
-                <Route path="/" element={<WeatherApi />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/plant" element={<PlantList />} />
                 <Route path="/plant/:name" element={<Plant />} />
                 <Route path="/plant/add" element={<AddPlant />} />
@@ -40,7 +41,7 @@ function App() {
                 <Route path="/automation/tutorial" element={< TutorialAutomation />} />
                 <Route path="/automation/add" element={< AddAutomation />} />
                 <Route path="/automation/:name/edit" element={< EditAutomation />} />
-                <Route path="/weather" element={< WeatherApi />}></Route>
+                <Route path="/forecast" element={< Forecast />} >/</Route>
             </Routes>
         </Router>
         </>

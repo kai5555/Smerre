@@ -9,7 +9,7 @@ const {registrationValidation, loginValidation }  = require("../utils/validation
 
 // Check if user is currently logged in
 exports.isUserAuth = (req, res) => {
-  return res.json({ isLoggedIn: true, username: req.user.username });
+  return res.json({ isLoggedIn: true, user: req.user });
 };
 
 // Post the login form

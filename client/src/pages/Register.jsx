@@ -111,8 +111,8 @@ function Register () {
     }
 
     return (
-        <div className="d-flex justify-content-center align-items-start vh-100">
-        <div className="p-5 rounded shadow-lg bg-white my-5 d-flex flex-column" style={{ width: '600px', height: '750px', overflow: "hidden" }}>
+        <div className="d-flex justify-content-center align-items-start">
+        <div className="p-5 rounded shadow-lg bg-white my-5 d-flex flex-column col-10 col-sm-8 col-md-7 col-lg-6 col-xl-5 overflow-hidden" style={{  maxHeight: '750px'}}>
           <div className="flex-grow-1" style={{ margin: "-100px 50px 0px -100px", width: "700px", height: "400px",  overflow: "hidden", transform: "rotate(8deg)", position: "relative"}}>
             <img src={leaves1} style={{width: "800px", height: "600px", objectFit: "contain", transform: "rotate(-8deg)"}}/>
           </div>

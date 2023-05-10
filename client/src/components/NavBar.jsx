@@ -63,12 +63,12 @@ function Navbar({ user }) {
                     {!loggedIn ? (
                         <ul className="navbar-nav mb-2 mb-lg-0">
                             <li className="nav-item my-1">
-                                <Link to="/login" className="btn btn-outline-light me-2">
+                                <Link to="/login" className="btn btn-outline-light me-2" onClick={toggleNavbar}>
                                     Login
                                 </Link>
                             </li>
                             <li className="nav-item my-1">
-                                <Link to="/register" className="btn btn-light">
+                                <Link to="/register" className="btn btn-light" onClick={toggleNavbar}>
                                     Register
                                 </Link>
                             </li>

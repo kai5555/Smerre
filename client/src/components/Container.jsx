@@ -1,15 +1,15 @@
 import update from 'immutability-helper';
-import React, { useCallback, useState, useEffect } from 'react';
-import { useDrop } from 'react-dnd';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useDrop} from 'react-dnd';
 import DraggableBox from './DraggableBox';
 import MenuBox from './MenuBox';
-import { COLORS, ItemTypes } from '../scripts';
+import {ItemTypes} from '../scripts';
 //import { snapToGrid as doSnapToGrid } from '../scripts';
 import modalMap from './BoxesModals'
 import GridLines from 'react-gridlines';
 import Line from './Line.jsx'
-import styled, { keyframes } from 'styled-components'
-import api from '../api' 
+import styled, {keyframes} from 'styled-components'
+import api from '../api'
 
 const EditBar = styled.div.attrs({
   className: 'form-group',
@@ -130,7 +130,7 @@ const Container = (props) => {
   const [entities, setEntities] = useState([]);
 
   
-  // Load a automation when editing
+  // Load an automation when editing
   useEffect(() => {
     if(automation){
       setLines(automation.lines);
@@ -146,8 +146,8 @@ const Container = (props) => {
   useEffect(() => {
     async function getAllEntities() {
         try {
-          var newEntities = [];
-          var res = await api.getAllSensors();
+          let newEntities = [];
+          let res = await api.getAllSensors();
           newEntities = res.data.data;
   
           res = await api.getAllActors();
@@ -174,6 +174,7 @@ const Container = (props) => {
   }, [boxes, viewStep])
 
   // Tutorial logic
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const tutorialSteps = [
     function(){
       setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1}});
@@ -188,13 +189,6 @@ const Container = (props) => {
     function(){
       setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
       setLines({"AC0":{"step":0}})
-    },
-    function(){
-      setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
-      setLines({"AC0":{"step":0}})
-      if(document.querySelector("#C")){
-        handleBoxDoubleClick("C");
-      }
     },
     function(){
       setBoxes({"A":{"top":20,"left":935,"type":"Start","content":{"title":"If"},"errors":[],"step":0},"B":{"top":20,"left":935,"type":"Start","content":{"title":"Then"},"errors":[],"step":1},"C":{"top":141,"left":914,"title":"Entity","type":"Entity","content":{},"errors":[],"step":0}})
@@ -230,7 +224,7 @@ const Container = (props) => {
     if(tutorialSteps[tutorialStep-1]){
       tutorialSteps[tutorialStep-1]();
     }
-  }, [tutorialStep]);
+  }, [tutorialStep, tutorialSteps]);
 
   const activateNextButtonTutorial = useCallback(() => {
     setEditBarVisible(false);
@@ -272,12 +266,10 @@ const Container = (props) => {
       const newLine = { step: viewStep};
       
       setLines((prevLines) => {
-        const updatedLines = {
+        return {
           ...prevLines,
-          [selectedBox + id + 0] : newLine,
+          [selectedBox + id + 0]: newLine,
         };
-        
-        return updatedLines;
       });
 
       setSelectedBox(null);
@@ -313,7 +305,7 @@ const Container = (props) => {
           if (key[0] === id || key[1] === id) {
             delete newLines[key];
           } 
-        };
+        }
         return newLines;
       });
 
@@ -351,14 +343,14 @@ const Container = (props) => {
 
   const getParentConnectionData = (childId) => {
     // Get the line where this is second, meaning the line to the parent (Can only have one parent)
-    let parentLine = Object.keys(lines).filter((id) => id.charAt(1) == childId);
+    let parentLine = Object.keys(lines).filter((id) => id.charAt(1) === childId);
     if(!parentLine[0]) return [];
     let parentId = parentLine[0].charAt(0);
 
     const childBox = boxes[childId];
     const parentBox = boxes[parentId];
 
-    if(parentBox.type == "Entity" && childBox.type == "AdvancedAction"){
+    if(parentBox.type === "Entity" && childBox.type === "AdvancedAction"){
       if(!parentBox.content.entity_id) return []; 
 
       const service = entities.find(obj => obj.entity_id === parentBox.content.entity_id);
@@ -406,7 +398,7 @@ const Container = (props) => {
       },
       "CheckStatus": function(content, cond_obj){
         cond_obj.condition = "state";
-        cond_obj.state = content.status == "active" ? "Aan" : "Uit";
+        cond_obj.state = content.status === "active" ? "Aan" : "Uit";
 
         return cond_obj;
       },
@@ -443,15 +435,15 @@ const Container = (props) => {
       "Weather": function(content, cond_obj){
 
         // Add or condition 
-        if(content.type == 0){
+        if(content.type === 0){
           cond_obj.push({
             condition: "state",
             entity_id: "weather.openweathermap",
             state: content.status,
           });
         }
-        else if(content.type == 1){
-          var condition = {
+        else if(content.type === 1){
+          let condition = {
             condition: "numeric_state",
             entity_id: "weather.openweathermap",
             attribute: content.valueType,
@@ -564,8 +556,8 @@ const Container = (props) => {
   }
 
   function createGraph(){
-    // Setup the graph
-    var graph = {};
+    // Set up the graph
+    let graph = {};
     for(let box in boxes){
       graph[box] = {parent: null, children: []}
     }
@@ -592,7 +584,7 @@ const Container = (props) => {
   }
 
   const handleAddBox = useCallback((type, left, top) => {
-    if(type == "") return;
+    if(type === "") return;
     setBoxes(boxes => {
       // Create a new box object with a key of 'a'
       const lastBoxKey = Object.keys(boxes).pop();
@@ -652,7 +644,6 @@ const Container = (props) => {
 
 
   const heightOffset = -50;
-  const widthSpacing = 60;
   document.body.style.overflow='hidden'; // 
   return (
     <>
@@ -749,7 +740,7 @@ const Container = (props) => {
         <>
           <Title>Ready to upload automation</Title>
           <ContentBox>
-            <Info>Your automation has been verified, to upload it to homeassitant and mongodb press the button below</Info>
+            <Info>Your automation has been verified, to upload it to home-assistent and mongodb press the button below</Info>
             <Button id="submitBtn" onClick={() => submitAutomation()}>
               Done
               <Arrow>&#10148;</Arrow>
@@ -772,12 +763,10 @@ const Container = (props) => {
       everything_or_none: /^.*$/,
       none: /^$/,
       everything_except: function(exceptions) {
-        const regex = new RegExp(`^(?!(${exceptions.join("|")})).*$`);
-        return regex;
+        return new RegExp(`^(?!(${exceptions.join("|")})).*$`);
       },
       only: function(allowed) {
-        const regex = new RegExp(`^(${allowed.join("|")})$`);
-        return regex;
+        return new RegExp(`^(${allowed.join("|")})$`);
       },
       or: (expressions) => new RegExp(`(${expressions.join("|")})`),
       and: (expressions) => new RegExp(`^${expressions.join("")}$`)
@@ -1057,9 +1046,9 @@ const Container = (props) => {
           return "'Entity' can't have a advanced action, try a basic action instead";
         }
 
-        var service = obj.services.find(s => s.service === content.service);
+        let service = obj.services.find(s => s.service === content.service);
         if(!service){
-          return "'Entity' doesn't have a serivce called " + content.service;
+          return "'Entity' doesn't have a service called " + content.service;
         }
         
         // Check the data
@@ -1080,13 +1069,13 @@ const Container = (props) => {
 
         if(!isKeyValid(content, "time" )) return "'Delay' doesn't have a time";
         
-        var time = content.time;
-        if(time.length != 11){
+        let time = content.time;
+        if(time.length !== 11){
           return "'Delay' isn't of a good format, try hh:mm:ss:ms";
         }
 
         let times = time.split(":");
-        if(times.length != 4){
+        if(times.length !== 4){
           return "'Delay' isn't of a good format, try hh:mm:ss:ms";
         }
 
@@ -1106,13 +1095,13 @@ const Container = (props) => {
     // Start initial node of the current step
     dfs(Object.keys(boxes)[viewStep]);
 
-    // Finnally set wrong boxes and lines and errors
+    // Finally set wrong boxes and lines and errors
     setBoxes(updatedBoxes);
     
-    // If not errors have occured return that
+    // If not errors have occurred return that
     return valid;
 
-    // Do a depth first search on the tree to travese all nodes and check the order and content
+    // Do a depth first search on the tree to traverse all nodes and check the order and content
     function dfs(key) {
       let box = updatedBoxes[key];
 
@@ -1156,7 +1145,7 @@ const Container = (props) => {
         let children = node.children.length;
         if(validation.min_children > children || children > validation.max_children) return validation.child_warning;
         return 'success';
-      };
+      }
 
       let parentType = boxes[node.parent].type; 
 
@@ -1172,7 +1161,7 @@ const Container = (props) => {
       return 'success';
     }
 
-    // Check if the content if valid of a given node
+    // Check if the content is valid of a given node
     function validateContent(key){
       let box = boxes[key];
       let type = box.type;

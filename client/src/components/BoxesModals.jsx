@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import styled from 'styled-components'
 import React, { useState, useEffect } from 'react'
-import { DropdownButton, Dropdown, InputGroup, FormControl } from 'react-bootstrap';
+import { InputGroup } from 'react-bootstrap';
 import InfoButton from './InfoButton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import COLORS from '../scripts/colors'
@@ -163,12 +163,8 @@ const LineModal = memo(function StartBoxModal(props) {
   const { content, errors, onOk, onCancel, onDelete } = props;
 
   const {
-    updatedContent,
-    handleInputChange,
-    handleOkClick,
     handleCancelClick,
     handleDeleteClick,
-    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -187,19 +183,14 @@ const StartBoxModal = memo(function StartBoxModal(props) {
   const { content, errors, onOk, onCancel, onDelete, entities } = props;
 
   const {
-    updatedContent,
-    handleInputChange,
-    handleOkClick,
     handleCancelClick,
-    handleDeleteClick,
-    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
     <ContentBox>
       <ErrorList errors={errors} />
       <h1>Start</h1>
-      <p>Conenct blocks to this intial block to trigger an automation, first put a entity and after it a condition</p>
+      <p>Connect blocks to this initial block to trigger an automation, first put a entity and after it a condition</p>
       <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
     </ContentBox>
   );
@@ -214,7 +205,6 @@ const EntityBoxModal = memo(function EntityBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
-    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -238,7 +228,7 @@ const EntityBoxModal = memo(function EntityBoxModal(props) {
 });
 
 const CheckValueBoxModal = memo(function CheckValueBoxModal(props) {
-  var { content, errors, onOk, onCancel, onDelete } = props;
+  let { content, errors, onOk, onCancel, onDelete } = props;
   content =  {
     type: content?.type || "none",
     value: content?.value || "",
@@ -250,7 +240,6 @@ const CheckValueBoxModal = memo(function CheckValueBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
-    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -285,7 +274,6 @@ const CheckStatusBoxModal = memo(function CheckStatusBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
-    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -296,9 +284,9 @@ const CheckStatusBoxModal = memo(function CheckStatusBoxModal(props) {
       <Label>Set your condition</Label>
       
       <br></br>
-      <input type="radio" name="status" value="active" checked={updatedContent.status=="active"} onChange={handleInputChange} />  Active
+      <input type="radio" name="status" value="active" checked={updatedContent.status==="active"} onChange={handleInputChange} />  Active
       <br></br>
-      <input type="radio" name="status" value="inactive" checked={updatedContent.status=="inactive"} onChange={handleInputChange} />  Inactive
+      <input type="radio" name="status" value="inactive" checked={updatedContent.status==="inactive"} onChange={handleInputChange} />  Inactive
 
       <br></br>
       <OkButton onClick={handleOkClick}>Oké</OkButton>
@@ -318,7 +306,6 @@ const BasicActionBoxModal = memo(function BasicActionBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
-    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -342,7 +329,7 @@ const BasicActionBoxModal = memo(function BasicActionBoxModal(props) {
 });
 
 const AdvancedActionBoxModal = memo(function AdvancedActionBoxModal(props) {
-  var { content, errors, onOk, onCancel, onDelete, connectionData } = props;
+  let { content, errors, onOk, onCancel, onDelete, connectionData } = props;
   content =  {
     service: content?.service || "",
     data: content?.data || "",
@@ -395,18 +382,18 @@ const AdvancedActionBoxModal = memo(function AdvancedActionBoxModal(props) {
       <Label>Set your action</Label>
       
       <InputSelect onChange={changeService} name="service" value={updatedContent.service || "none" }>
-        {connectionData.length == 0 ? (
+        {connectionData.length === 0 ? (
           <option value="none" disabled>No services available for the entity</option>
         ) : (
           <option value="none" disabled>Select a service</option>
         )};
         
-        {connectionData.length > 0 && connectionData.map((service, index) => (
+        {connectionData.length > 0 && connectionData.map((service) => (
           <option key={service.service} value={service.service}>{service.name}</option>
         ))}
       </InputSelect>
       
-        {serviceData.length > 0 && serviceData.map((value, index) => (
+        {serviceData.length > 0 && serviceData.map((value) => (
           <div key={value} >
             <Label>{value.charAt(0).toUpperCase() + value.slice(1)}</Label>
             <InputText name={value} value={updatedContent.data[value]} onChange={changeServiceData} />
@@ -426,12 +413,7 @@ const AndBoxModal = memo(function AndBoxModal(props) {
   const { content, errors, onOk, onCancel, onDelete } = props;
 
   const {
-    updatedContent,
-    handleInputChange,
-    handleOkClick,
-    handleCancelClick,
-    handleDeleteClick,
-    setUpdatedContent,
+    handleDeleteClick
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -449,12 +431,7 @@ const OrBoxModal = memo(function OrBoxModal(props) {
   const { content, errors, onOk, onCancel, onDelete } = props;
 
   const {
-    updatedContent,
-    handleInputChange,
-    handleOkClick,
-    handleCancelClick,
-    handleDeleteClick,
-    setUpdatedContent,
+    handleDeleteClick
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -469,7 +446,7 @@ const OrBoxModal = memo(function OrBoxModal(props) {
 });
 
 const TimeBoxModal = memo(function TimeBoxModal(props) {
-  var { content, errors, onOk, onCancel, onDelete } = props;
+  let { content, errors, onOk, onCancel, onDelete } = props;
   content =  {
     seconds: content?.seconds || "",
     minutes: content?.minutes || "",
@@ -486,7 +463,6 @@ const TimeBoxModal = memo(function TimeBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
-    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   const clickViewButton = (step) => {
@@ -540,7 +516,7 @@ const TimeBoxModal = memo(function TimeBoxModal(props) {
 
 
 const DelayBoxModal = memo(function DelayBoxModal(props) {
-  var { content, errors, onOk, onCancel, onDelete } = props;
+  let { content, errors, onOk, onCancel, onDelete } = props;
   content =  {
     time: content?.time || "",
   }
@@ -551,7 +527,6 @@ const DelayBoxModal = memo(function DelayBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
-    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   return (
@@ -571,7 +546,7 @@ const DelayBoxModal = memo(function DelayBoxModal(props) {
 });
 
 const WeatherBoxModal = memo(function WeatherBoxModal(props) {
-  var { content, errors, onOk, onCancel, onDelete } = props;
+  let { content, errors, onOk, onCancel, onDelete } = props;
   content =  {
     status: content?.status || "",
     valueType: content?.valueType || "",
@@ -588,7 +563,6 @@ const WeatherBoxModal = memo(function WeatherBoxModal(props) {
     handleOkClick,
     handleCancelClick,
     handleDeleteClick,
-    setUpdatedContent,
   } = useModalMethods(content, onOk, onCancel, onDelete);
 
   const clickViewButton = (step) => {

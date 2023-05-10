@@ -2,12 +2,12 @@ import {  useEffect, useState } from 'react';
 import api from '../api';
 import { useNavigate} from 'react-router-dom';
 import {
-  Accordion,
-  AccordionItem,
-  AccordionItemHeading,
-  AccordionItemButton,
-  AccordionItemPanel,
-} from "react-accessible-accordion";
+    Accordion,
+    AccordionItem,
+    AccordionItemHeading,
+    AccordionItemButton,
+    AccordionItemPanel,
+} from 'react-accessible-accordion';
 import axios from 'axios'
 import { withAuth } from './Authentication';
 import LoadingSpinner from "../components/LoadingSpinner";

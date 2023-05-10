@@ -294,10 +294,10 @@ const WeatherBox = memo(function WeatherBox(props) {
         </p>
       </div>
       <div>
-        {(content.type) == 0 && (content.status) &&(
+        {(content.type) === 0 && (content.status) &&(
           <p>Status {content.status}</p>
         )}
-         {(content.type) == 1 && (content.valueType) &&(
+         {(content.type) === 1 && (content.valueType) &&(
           <p>When {content.valueType} {content.condition} {content.value}</p>
         )}
       </div>

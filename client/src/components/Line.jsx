@@ -41,21 +41,21 @@ function getCenterPoint(box){
   const centerX = box.box.left + (boxRect.width / 2);
   const centerY = box.box.top + (boxRect.height / 2);
   return { x: centerX, y: centerY };
-}; 
+}
 
 function getWidth(box){
   const boxElement = document.getElementById(box.key);
   if(!boxElement) return 0
   
   return boxElement.offsetWidth;
-}; 
+}
 
 function getHeight(box){
   const boxElement = document.getElementById(box.key);
   if(!boxElement) return 0
   
   return boxElement.offsetHeight;
-}; 
+}
 
 function Line({ boxes, onClick}) {
   // Setup points

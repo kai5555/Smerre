@@ -112,7 +112,7 @@ function Register () {
 
     return (
         <div className="d-flex justify-content-center align-items-start">
-        <div className="p-5 rounded shadow-lg bg-white my-5 d-flex flex-column col-10 col-sm-8 col-md-7 col-lg-6 col-xl-5 overflow-hidden" style={{  maxHeight: '750px'}}>
+        <div className="p-5 rounded shadow-lg bg-white my-5 d-flex flex-column col-10 col-sm-8 col-md-7 col-lg-6 col-xl-4 overflow-hidden" style={{  maxHeight: '750px'}}>
           <div className="flex-grow-1" style={{ margin: "-100px 50px 0px -100px", width: "700px", height: "400px",  overflow: "hidden", transform: "rotate(8deg)", position: "relative"}}>
             <img src={leaves1} style={{width: "800px", height: "600px", objectFit: "contain", transform: "rotate(-8deg)"}}/>
           </div>
@@ -145,7 +145,7 @@ function Register () {
                     Location
                 </Label>
                 <InputGroup>
-                    <InputIcon><FontAwesomeIcon icon="fa-solid fa-earth" size="xs" style={{ color: 'grey'}} /></InputIcon>
+                    <InputIcon><FontAwesomeIcon icon="fa-solid fa-location-dot" size="xs" style={{ color: 'grey'}} /></InputIcon>
                     <InputText type="text"name="location" id="location" placeholder="Ghent"  required />
                 </InputGroup>
               </div>

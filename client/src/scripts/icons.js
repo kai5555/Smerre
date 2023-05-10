@@ -14,6 +14,7 @@ import { faCloudSun } from '@fortawesome/free-solid-svg-icons';
 import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import { faForward } from '@fortawesome/free-solid-svg-icons';
+import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 import { faUser, faEnvelope, faLock, faEye, faEyeSlash, faSignature } from '@fortawesome/free-solid-svg-icons';
 
@@ -32,6 +33,7 @@ library.add(
   faCircleDot,
   faPlay,
   faForward,
+  faLocationDot,
 
   faUser,
   faEnvelope,

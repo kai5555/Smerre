@@ -14,6 +14,7 @@ import TutorialAutomation from './TutorialAutomation'
 import Home from './Home'
 import Forecast from './Forecast'
 
+import LandingPage from './LandingPage'
 
 
-export { ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, Home, Forecast, PlantList, Plant, AddPlant, TutorialAutomation}
+export { LandingPage,ComponentControl, Login, Register, EmailVerify, PasswordRecovery, PasswordRecoveryVerify, AddAutomation, EditAutomation, Automations, Home, Forecast, PlantList, Plant, AddPlant, TutorialAutomation}

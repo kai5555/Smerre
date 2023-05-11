@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import api from '../api';
-import { useNavigate } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import styled from 'styled-components';
 import { withAuth } from './Authentication';
 import LoadingSpinner from "../components/LoadingSpinner";
 import '../style/body.css'
+import LandingPage from "./LandingPage"
 
 const Home = styled.div`
   display:flex;
@@ -71,6 +72,11 @@ function WeatherApi({user}) {
   useEffect( () => {
     setup();
   },[])
+
+  useEffect(() => {
+    if(!user) window.location = "/landing";
+
+  }, [user]);
  
   const setup = async () => {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
@@ -196,5 +202,5 @@ function WeatherApi({user}) {
   );
 
 }
-export default withAuth(WeatherApi);
+export default withAuth(WeatherApi, false, "/landing");
 

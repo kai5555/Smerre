@@ -32,7 +32,7 @@ const Button = styled.button.attrs({
 })`
     width: 100px;
     height: 40px;
-    margin: 15px 15px 15px 5px;
+    margin: 15px 15px 15px 0px;
     font-size: 14px;
     font-weight: 800;
     line-height: 1;
@@ -112,7 +112,7 @@ function Register () {
 
     return (
         <div className="d-flex justify-content-center align-items-start">
-        <div className="p-5 rounded shadow-lg bg-white my-5 d-flex flex-column col-10 col-sm-8 col-md-7 col-lg-6 col-xl-4 overflow-hidden" style={{  maxHeight: '750px'}}>
+        <div className="p-5 rounded shadow-lg bg-white my-5 d-flex flex-column col-10 col-sm-8 col-md-7 col-lg-6 col-xl-4 overflow-hidden" style={{  maxHeight: '800px'}}>
           <div className="flex-grow-1" style={{ margin: "-100px 50px 0px -100px", width: "700px", height: "400px",  overflow: "hidden", transform: "rotate(8deg)", position: "relative"}}>
             <img src={leaves1} style={{width: "800px", height: "600px", objectFit: "contain", transform: "rotate(-8deg)"}}/>
           </div>
@@ -181,7 +181,10 @@ function Register () {
                     <InputIcon><FontAwesomeIcon icon={showConfirmPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"} onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{ color: 'grey' }}/></InputIcon>
                 </InputGroup>
               </div>
-              <Button type="submit" className="btn btn-primary">Register</Button>
+                <div className="d-flex flex-column">
+                    <Button type="submit" className="btn btn-primary">Register</Button>
+                    <a href="/login">Already have an account?</a>
+                </div>
             </form>
             {errorMessage && (
               <div className="alert alert-danger mt-3" role="alert">

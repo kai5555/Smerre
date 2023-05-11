@@ -4,38 +4,52 @@ import ValidationError from './ValidationError'
 import { useNavigate, useParams} from 'react-router-dom';
 
 import styled from 'styled-components'
-
-const Title = styled.h1.attrs({
-    className: 'h1',
-})``
-
-const Wrapper = styled.div.attrs({
-    className: 'form-group',
-})`
-    margin: 0 30px;
-`
-
-const Label = styled.label`
-    margin: 5px;
-`
-
-const InputText = styled.input.attrs({
-    className: 'form-control',
-})`
-    margin: 5px;
-`
+import COLORS from '../scripts/colors'
 
 const Button = styled.button.attrs({
     className: `btn btn-primary`,
 })`
-    margin: 15px 15px 15px 5px;
     width: 100px;
-`
+    height: 40px;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,roboto,Helvetica Neue,helvetica,arial,sans-serif;
+    color: #fff;
+    box-shadow: 0px 10px 20px -10px  ${COLORS.defaultColor};
+    transition: transform 0.2s ease-in-out;
 
-const Link = styled.a.attrs({
-    className: ``,
+    &:hover {
+        color: #fff;
+        animation: bop 0.5s ease-out;
+    }
+
+    &:active {
+        color: #fff !important;
+    }
+    
+    @keyframes bop {
+        0% {
+            transform: translateY(0px);
+        }
+        25% {
+            transform: translateY(-8px);
+        }
+        50% {
+            transform: translateY(0px);
+        }
+        75% {
+            transform: translateY(-4px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+    }
+`
+const Wrapper = styled.div.attrs({
+    className: 'form-group',
 })`
-    margin: 5px 15px 0px 5px;
+    margin: 0 30px;
 `
 
 function PasswordRecovery() {
@@ -111,9 +125,9 @@ function PasswordRecovery() {
                                     <input  className="form-control" type="password" name="password" id="confirmpassword" />
                                 </div>
 
-                                <button type="submit" className="btn btn-primary mt-3">
+                                <Button type="submit" className="btn btn-primary mt-3">
                                     Reset Password
-                                </button>
+                                </Button>
                             </form>
                         </div>
                     </div>

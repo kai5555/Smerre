@@ -10,7 +10,9 @@ function Navbar({ user }) {
     const [loggedIn, setLoggedIn] = useState(false);
 
     useEffect(() => {
-        if(!user)setLoggedIn(false);
+        if(!user){
+            setLoggedIn(false);
+        }
         else setLoggedIn(true);
 
     }, [user]);
@@ -21,11 +23,11 @@ function Navbar({ user }) {
 
     return (
 
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark" style={{backgroundColor: COLORS.defaultColor}}>
+        <nav className="navbar navbar-expand-lg" style={{backgroundColor: "#469168", boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.1)"}}>
             <div className="container-fluid">
                 <Link to="/" className="navbar-brand me-5 pe-4">
-                    <img src={logo} alt="Smerre Logo" height="30" />
-                    merre
+                    <img src={logo} alt="Smerre Logo" height="20" style={{marginRight: "0px", marginBottom: "2px"}}/>
+                    <span style={{color: "white"}}>merre</span>
                 </Link>
                 <button
                     className="navbar-toggler"

@@ -4,6 +4,7 @@ import ValidationError from './ValidationError'
 import { useNavigate} from 'react-router-dom';
 import styled from 'styled-components'
 
+
 import logo from '../style/smerre_logo.png'
 import leaves1 from '../style/leaves1.jpg'
 import leaves2 from '../style/leaves2.jpg'

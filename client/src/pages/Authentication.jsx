@@ -2,7 +2,8 @@ import React from 'react';
 import api, {toggleLed} from "../api";
 import  LoadingSpinner  from "../components/LoadingSpinner";
 import { Navigate  } from 'react-router-dom';
-const withAuth = (Component, renderAnyway=false) => {
+
+const withAuth = (Component, renderAnyway=false, redirect="/login") => {
     class AuthenticatedComponent extends React.Component {
         constructor(props) {
             super(props);
@@ -41,7 +42,7 @@ const withAuth = (Component, renderAnyway=false) => {
                 return <Component {...this.props} user={this.state.user} />;
             }
 
-            return <Navigate to="/login" />;
+            return <Navigate to={redirect} />;
         }
     }
 

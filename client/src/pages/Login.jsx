@@ -1,13 +1,12 @@
-import React, { Component, useLayoutEffect, useState, useEffect } from 'react'
+import React, {  useState, useEffect } from 'react'
 import api from '../api'
-import ValidationError from './ValidationError'
+
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components'
 
 
-import logo from '../style/smerre_logo.png'
-import leaves1 from '../style/leaves1.jpg'
-import leaves2 from '../style/leaves2.jpg'
+import logo from '../images/smerre_logo.png'
+import leaves1 from '../images/leaves1.jpg'
 import COLORS from '../scripts/colors'
 
 const Button = styled.button.attrs({
@@ -53,7 +52,6 @@ const Button = styled.button.attrs({
 
 function Login() {
     const navigate = useNavigate();
-    const location = useLocation();
     const [errorMessage, setErrorMessage] = useState('');
 
     async function handleLogin(e) {
@@ -145,48 +143,6 @@ function Login() {
             </div>
         </div>
     );
-
-    // return (
-    //     <div className="d-flex justify-content-center align-items-start vh-100">
-    //         <div className="p-5 rounded shadow-lg bg-white my-5 d-flex" style={{ width: '800px', height: '400px', overflow: "hidden" }}>
-    //             <div className="flex-grow-1" style={{ margin: "-100px 50px -50px -100px", width: "400px", height: "500px",  overflow: "hidden", transform: "rotate(8deg)", position: "relative"}}>
-    //                 <img src={leaves1} style={{width: "800px", height: "600px", objectFit: "contain", transform: "rotate(-8deg)"}}/>
-    //                 <div style={{ position: "absolute", top: "50%", left: "55%", transform: "translate(-50%, -50%)",  width: "40%", height: "40%"  }}>
-    //                     <img src={logo} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", position: "absolute", top: "50%", left: "55%", transform: "translate(-50%, -50%) rotate(-8deg)"}}/>
-    //                 </div>
-    //             </div>
-    //             <div>
-    //                 <h2 className="mb-4">Login</h2>
-    //                 <form onSubmit={(e) => handleLogin(e)}>
-    //                     <div className="form-group mb-3">
-    //                         <label htmlFor="username">Username</label>
-    //                         <input type="text" className="form-control" name="username" required />
-    //                     </div>
-    //
-    //                     <div className="form-group mb-3">
-    //                         <label htmlFor="password">Password</label>
-    //                         <input type="password" className="form-control" name="password" required />
-    //                     </div>
-    //
-    //                     <Button type="submit" className="btn btn-primary my-3">
-    //                         Login
-    //                     </Button>
-    //
-    //                     <div className="d-flex flex-column">
-    //                         <a href="/recovery">Forgot password?</a>
-    //                         <a href="/register">Don't have an account yet?</a>
-    //                     </div>
-    //                 </form>
-    //
-    //                 {errorMessage && (
-    //                     <div className="alert alert-danger mt-3" role="alert">
-    //                         {errorMessage}
-    //                     </div>
-    //                 )}
-    //             </div>
-    //         </div>
-    //     </div>
-    // );
 
 }
 

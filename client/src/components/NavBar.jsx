@@ -23,7 +23,7 @@ function Navbar({ user }) {
 
     return (
 
-        <nav className="navbar navbar-expand-lg" style={{backgroundColor: "#469168", boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.1)"}}>
+        <nav className="navbar navbar-expand-lg " style={{backgroundColor: "#469168", boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.1)"}}>
             <div className="container-fluid">
                 <Link to="/" className="navbar-brand me-5 pe-4">
                     <img src={logo} alt="Smerre Logo" height="20" style={{marginRight: "0px", marginBottom: "2px"}}/>

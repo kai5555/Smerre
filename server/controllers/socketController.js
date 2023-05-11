@@ -1,10 +1,16 @@
 const Component = require('../modals/ComponentModal')
 const WebSocket = require('ws');
+const axios = require('axios')
 
 function initSocket(server){
 
+    const api = axios.create({
+        baseURL: `http://localhost:5000/api`,
+    })
+
     let tel = 2;
     let actors = {};
+    let automations = {};
     const socket = new WebSocket(`ws://${process.env.HOMEASSISTANT_IP}:8123/api/websocket`);
 
     const heartbeatInterval = 60000; // 30 seconds
@@ -33,6 +39,14 @@ function initSocket(server){
         }
         console.log(actors)
     })();
+
+    let getAutomations = async () => {
+        const res = await api.get("/getAllAutomations");
+        if(res) {
+            automations = res.data.data;
+        }
+        console.log(automations);
+    };
 
     socket.addEventListener('open', (event) => {
         const auth = {
@@ -64,7 +78,7 @@ function initSocket(server){
             console.log('Received message:', message);
 
         else if(message.type ==="result" && message.result !== null){
-            console.log(message);
+            //console.log(message);
             if(message.success === "true") {
                 setActorsValues(message);
             }
@@ -101,28 +115,58 @@ function initSocket(server){
 
             actors[actor] =  state === "on" || state >= 0;
             console.log(actors);
-            io.emit('toggle', actor, actors[actor]);
+            io.emit('toggleActors', actor, actors[actor]);
         }
 
     };
 
-    io.on('connection', (socket) => {
-        console.log('a user connected');
+    io.on('connection', async (socket) => {
 
+        socket.on('initialAutomations',async () => {
+            console.log('a user connected to automations');
+            await getAutomations();
+            // Stuur de huidige status van alle automations naar de nieuwe client
+            socket.emit('initialAutomations', automations);
+        });
 
-        // Stuur de huidige status van alle LED's naar de nieuwe client
-        socket.emit('initial', actors);
+        socket.on('initialActors', () =>{
+            console.log('a user connected to Components');
+            // Stuur de huidige status van alle LED's naar de nieuwe client
+            socket.emit('initialActors', actors);
+
+        });
 
         // Luister naar wijzigingen in de LED-status van de client
-        socket.on('toggle', (actor) => {
+        socket.on('toggleActors', (actor) => {
             actors[actor] = !actors[actor];
             // Stuur de nieuwe LED-status naar alle clients, behalve degene die de wijziging heeft aangebracht
-            socket.broadcast.emit('toggle', actor, actors[actor]);
+            socket.broadcast.emit('toggleActors', actor, actors[actor]);
 
-
-            if(actor.includes('switch')) handleSwitch(actor);
+            if (actor.includes('switch')) handleSwitch(actor);
             else if (actor.includes('input_number')) handleInputNumber(actor);
             else console.log("no handler found.");
+        });
+
+        // Luister naar wijzigingen in de automation-status van de client
+        socket.on('toggleAutomations', async (name) => {
+            const automation = automations.find(item => item.name === name);
+            if (automation) {
+                automation.enabled = !automation.enabled;
+                socket.broadcast.emit('toggleAutomations', automation.name, automation.enabled);
+                await api.post(`/toggleAutomation`, {automationName: automation.name});
+            }
+        });
+
+        socket.on('deleteAutomations', async (name) => {
+            const automation = automations.find(item => item.name === name);
+            const targetIndex = automations.findIndex(item => item.name === name);
+            if (targetIndex !== -1) {
+                automations.splice(targetIndex, 1);
+                socket.broadcast.emit('deleteAutomations', automation.name);
+                console.log("trying to delete" + automation.name);
+                await api.post(`/deleteAutomation`, {automationName: automation.name});
+                console.log("automation deleted");
+            }
         });
 
         handleSwitch = async (actor) => {

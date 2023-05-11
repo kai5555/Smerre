@@ -1,5 +1,5 @@
 const Automation = require('../modals/AutomationModal')
-const fetch = require('node-fetch');
+const fetch = require('node-fetch');;
 
 exports.getAllAutomations = async (req, res) => {
     await Automation.find({})

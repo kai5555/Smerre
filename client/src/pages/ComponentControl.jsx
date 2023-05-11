@@ -26,15 +26,15 @@ class ComponentControl extends React.Component {
             loading: true
         };
 
-        
         this.socket = io('http://'+ this.ip + ':5000');
 
-        this.socket.on('initial', (value) => {
+        this.socket.emit('initialActors');
+
+        this.socket.on('initialActors', (value) => {
             this.setState({ actors:  value });
         });
 
-
-        this.socket.on('toggle', (actor, value) => {
+        this.socket.on('toggleActors', (actor, value) => {
             this.setState({ actors: { ...this.state.actors, [actor]: value } });
 
         });
@@ -66,7 +66,7 @@ class ComponentControl extends React.Component {
     toggleActor(actor) {
         const button = document.getElementById(`${actor}`);
         const currentStatus = this.state.actors[actor];
-        this.socket.emit('toggle', actor);
+        this.socket.emit('toggleActors', actor);
         this.setState({
             actors: { ...this.state.actors, [actor]: !currentStatus } ,
             lastUpdated: { ...this.state.lastUpdated, [actor]: new Date() } // update the last updated time for the actor

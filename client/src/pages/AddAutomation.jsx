@@ -112,6 +112,7 @@ const AddAutomation = () => {
     console.log(automation);
     console.log(boxes);
     console.log(lines);
+    
     navigate('/automation');
   }, [automationName]);
 

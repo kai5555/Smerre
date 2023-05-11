@@ -6,7 +6,7 @@ import leaves2 from '../style/leaves_cut.png'
 import COLORS from '../scripts/colors'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
-import { Parallax } from 'react-parallax';
+
 import { Link } from 'react-router-dom';
 import { withAuth } from '../pages/Authentication';
 

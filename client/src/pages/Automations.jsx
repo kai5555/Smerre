@@ -5,6 +5,7 @@ import { useNavigate} from 'react-router-dom';
 import { withAuth } from './Authentication';
 import DeletePopup from "../components/DeletePopup";
 import LoadingSpinner from "../components/LoadingSpinner";
+import io from "socket.io-client";
 
 const AutomationsContainer = styled.div`
   display: flex;
@@ -75,7 +76,11 @@ const ToggleBox = styled.div`
   }
 `;
 
+
+
 const Automations = () => {
+  let socket = io('http://'+ process.env.REACT_APP_MY_IP + ':5000');
+
   const navigate = useNavigate();
   const [automations, setAutomations] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
@@ -91,36 +96,32 @@ const Automations = () => {
     window.location.href = `/automation/add`;
   }, []);
 
-  const handleToggleAutomation = useCallback(async (name, enabled) => {
-    setAutomations((prev) =>
-        prev.map((automation) =>
-            automation.name === name
-                ? { ...automation, enabled}
-                : automation
-        )
-    );
+  // const handleToggleAutomation = useCallback(async (name, enabled) => {
+  //   setAutomations((prev) =>
+  //       prev.map((automation) =>
+  //           automation.name === name
+  //               ? { ...automation, enabled}
+  //               : automation
+  //       )
+  //   );
+  //
+  //   await api.toggleAutomation({automationName: name});
+  //
+  //
+  // }, []);
 
-    await api.toggleAutomation({automationName: name});
 
-
-  }, []);
-
-
-  const handleDeleteAutomation = useCallback(async (name) => {
+  const handleDeleteAutomation = (name) => {
     setAutomationToDelete(name);
     setShowDeletePopup(true);
-  }, []);
+  };
 
-  const handleConfirmDelete = useCallback(async (name) => {
-    await api.deleteAutomation({automationName: name});
-
-    setAutomations((prevAutomations) =>
-      prevAutomations.filter((automation) => automation.name !== name)
-    );
+  const handleConfirmDelete =  ()  => {
+    socket.emit('deleteAutomations', automationToDelete);
 
     setAutomationToDelete(null);
     setShowDeletePopup(false);
-  }, []);
+  };
 
   const handleCancelDelete = () => {
     setAutomationToDelete(null);
@@ -128,39 +129,48 @@ const Automations = () => {
   };
 
   // Get all the automations
-  const setup = async () => {
-    try {
-      const res = await api.getAllAutomations();
-      setAutomations(res.data.data);
-      setLoading(false);
-    } catch (err) {
-      console.log("Something went wrong while fetching automations!");
-    }
-  }
-  useEffect( () => {
-    setup();
-}, []);
+//   const setup = async () => {
+//     try {
+//       const res = await api.getAllAutomations();
+//       setAutomations(res.data.data);
+//       setLoading(false);
+//     } catch (err) {
+//       console.log("Something went wrong while fetching automations!");
+//     }
+//   }
+//   useEffect( () => {
+//     setup();
+// }, []);
 
+  
+  useEffect(()=> {
+    socket.emit('initialAutomations');
 
-//  return (
-//    <AutomationsContainer>
-//    {automations.map(({ name, alias, enabled }) => (
-//      <AutomationWrapper key={name}>
-//        <div onClick={() => handleAutomationClick(name)}>
-//          <AutomationAlias>{alias}</AutomationAlias>
-//          <AutomationName>{name}</AutomationName>
-//        </div>
-//        <ButtonBox>
-//          <DeleteButton onClick={() => handleDeleteAutomation(name)}>x</DeleteButton>
-//          <ToggleBox enabled={enabled || false} onClick={() => handleToggleAutomation(name, !enabled)} />
-//        </ButtonBox>
-//      </AutomationWrapper>
-//    ))}
-//    <AutomationWrapper style={{background: "#22b542"}} onClick={() => handleNewAutomationClick()}>
-//      <AutomationAlias>+ New automation</AutomationAlias>
-//    </AutomationWrapper>
-//    </AutomationsContainer>
-//  );
+    socket.on('initialAutomations', (value) => {
+      if(value) {
+        setAutomations(value);
+        setLoading(false);
+      }
+    });
+
+    socket.on('toggleAutomations', (name, enabled) => {
+      setAutomations((prev) =>
+          prev.map((automation) =>
+              automation.name === name
+                  ? { ...automation, enabled}
+                  : automation
+          )
+      );
+    });
+
+    socket.on('deleteAutomations', (name) => {
+      setAutomations((prevAutomations) =>
+          prevAutomations.filter((automation) => automation.name !== name)
+      );
+    });
+
+  }, []);
+
 
   if(loading){
     return (<LoadingSpinner/>)
@@ -193,7 +203,7 @@ const Automations = () => {
                     <div className="col-6 text-end ps-0 pe-2 pt-2">
                       <i className="bi bi-power" style={{fontSize: "2rem", cursor: "pointer",
                         color: enabled ? "MediumSeaGreen" : "LightGrey"}}
-                        onClick={() => handleToggleAutomation(name, !enabled)}
+                        onClick={() => socket.emit('toggleAutomations', name)}
                     ></i>
                     </div>
                   </div>

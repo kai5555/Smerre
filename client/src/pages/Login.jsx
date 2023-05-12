@@ -91,7 +91,7 @@ function Login() {
 
     return (
         <div className="row d-flex justify-content-center align-items-start vh-100">
-            <div className=" p-0 rounded shadow-lg bg-white my-5 d-sm-flex overflow-hidden col-xl-6 col-md-8 col-10" style={{ minHeight:"400px"}}>
+            <div className=" p-0 rounded shadow-lg bg-white my-5 d-sm-flex overflow-hidden col-xl-6 col-xxl-5 col-md-8 col-10" style={{ minHeight:"400px"}}>
                 <div className="flex-grow-1 overflow-hidden  bg-black position-relative me-4 col-1 d-none d-sm-block" style={{clipPath: "polygon(0 0, 100% 0, 92% 100%, 0% 100%)"}} >
                     <img src={leaves1} style={{ position: "absolute", top: 0, left: 0, height: "100%", objectFit: "contain"}}/>
                     <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",  width: "40%", height: "40%"  }}>

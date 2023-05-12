@@ -193,7 +193,7 @@ function initSocket(server){
                 await fetch(`http://${process.env.HOMEASSISTANT_IP}:8123/api/services/input_number/set_value`, {
                     method: 'POST',
                     body: JSON.stringify({
-                        "entity_id": "input_number.servo_control",
+                        "entity_id": actor,
                         "value": actors[actor] ? 100 : -100,
                     }),
                     headers: {

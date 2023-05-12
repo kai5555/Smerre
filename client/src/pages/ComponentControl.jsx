@@ -43,14 +43,15 @@ class ComponentControl extends React.Component {
 
     async componentDidMount() {
         try {
-            const { sensors } = this.props;
-            console.log(sensors);
-            if(sensors){
-                this.setState({ components: sensors});
-                return;
+            const { actors } = this.props;
+            console.log(actors);
+            if(actors){
+                this.setState({ components: actors});
             }
-            const res = await api.getAllActors(); // make API call
-            this.setState({ components: res.data.data}); // update state with response data
+            else{
+                const res = await api.getAllActors(); // make API call
+                this.setState({ components: res.data.data}); // update state with response data
+            }
         } catch (error) {
             console.error(error);
         }
@@ -105,10 +106,10 @@ class ComponentControl extends React.Component {
                 const name = component ? component.name : null;
                 const image = this.getImageForSubType(subType);
 
-                const plant = this.state.plants.find((c) => c.block === component.block);
-                const blockName = plant ? plant.name : "serre";
-
                 if(image != null) {
+                    const plant = this.state.plants.find((c) => c.block === component.block);
+                    const blockName = plant ? plant.name : "serre";
+
                     return (
                         <div className="card mb-5 shadow-sm" key={key}>
                             <div className="row g-0">

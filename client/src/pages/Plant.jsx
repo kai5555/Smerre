@@ -8,6 +8,7 @@ import { useNavigate} from 'react-router-dom';
 import { COLORS } from '../scripts';
 import { withAuth } from './Authentication';
 import ComponentControl from './ComponentControl';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Button = styled.button.attrs({
   className: `btn btn-primary`,
@@ -65,13 +66,16 @@ const Plant = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [data, setData] = useState([]);
   const [sensors, setSensors] = useState([]);
+  const [actors, setActors] = useState([]);
   const [snapshots, setSnapshots] = useState([]);
   const [selectedSnapshot, setSelectedSnapshot] = useState(0);
 
   const setup = async () => {
     const resData = await api.getDataOfPlant({name: name});
+    console.log(resData);
     setData(resData.data.data);
     setSensors(resData.data.sensors);
+    setActors(resData.data.actors);
     setSnapshots(resData.data.snapshots);
   }
   useEffect( () => {
@@ -215,16 +219,24 @@ console.log(graphData);
   };
 
 
+  const actorsList = () => {
+    if (actors.length > 0) {
+      return (
+          <div className="container">
+            <ComponentControl actors={actors}></ComponentControl>
+          </div>
+      );
+    } else {
+      return <LoadingSpinner />;
+    }
+  };
+
   return (
     <>
       <div id='chart'>
         <ReactApexChart options={graph.options} series={graph.series} type='line' height={350} />
       </div>
-      <div>
-        <h1>Sensors</h1>
-        {console.log(sensors)}
-      </div>
-      <ComponentControl sensors={sensors}></ComponentControl>
+      <div>{actorsList()}</div>
       <SnapshotContainer>
         <div>
           {snapshots.map((snapshot, index) => (

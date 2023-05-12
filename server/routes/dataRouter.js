@@ -1,6 +1,6 @@
 const express = require('express')
 
-const DataCtrl = require('../controllers/dataController')
+const DataCtrl = require('../controllers/dataController.js')
 
 const router = express.Router()
 

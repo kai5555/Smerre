@@ -4,7 +4,7 @@ const Data = require('../modals/DataModal')
 const Plant = require('../modals/PlantModal')
 const Snapshot = require('../modals/SnapshotModal')
 
-getDataOfPlant = async (req, res) => {
+exports.getDataOfPlant = async (req, res) => {
     const body = req.body
     if (!body) {
         return res.status(400).json({
@@ -28,14 +28,17 @@ getDataOfPlant = async (req, res) => {
             error: 'No sensors for this plant',
         })
     }
+
+    const actors = sensors.filter((c) => c.type === "actor");
+
     const sensorIds = sensors.map(sensor => sensor.entity_id);
 
     const data = await Data.find({ sensor: { $in: sensorIds }  });
     if (data.length <= 0) {
-        return res.status(400).json({
-            success: false,
-            error: 'No data found for this plant',
-        })
+        // return res.status(400).json({
+        //     success: false,
+        //     error: 'No data found for this plant',
+        // })
     }
 
     // Create a structured list
@@ -62,11 +65,12 @@ getDataOfPlant = async (req, res) => {
         success: true,
         data: sensorData,
         sensors: sensors,
+        actors: actors,
         snapshots: snapshots,
     })
 }
 
-getDataOfSensor = async (req, res) => {
+exports.getDataOfSensor = async (req, res) => {
     const body = req.body
     if (!body) {
         return res.status(400).json({
@@ -89,15 +93,9 @@ getDataOfSensor = async (req, res) => {
     })
 }
 
-clearData = async (req, res) => {
+exports.clearData = async (req, res) => {
     await Data.deleteMany({});
     return res.status(400).json({
         success: true,
     })
-}
-
-module.exports = {
-    getDataOfPlant,
-    getDataOfSensor,
-    clearData,
 }

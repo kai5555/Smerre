@@ -4,11 +4,6 @@ const fetch = require('node-fetch');;
 exports.getAllAutomations = async (req, res) => {
     await Automation.find({})
         .then(automations => {
-            if (!automations.length) {
-                return res
-                    .status(404)
-                    .json({ success: false, error: `Automations list empty` })
-            }
             return res.status(200).json({ success: true, data: automations })
         })
         .catch(err => console.log(err))

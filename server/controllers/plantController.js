@@ -5,11 +5,6 @@ const {plantValidation }  = require("../utils/validation");
 exports.getAllPlants = async (req, res) => {
     await Plant.find({})
         .then(plants => {
-            if (!plants.length) {
-                return res
-                    .status(404)
-                    .json({ success: false, error: `Plants list empty` })
-            }
             return res.status(200).json({ success: true, data: plants })
         })
         .catch(err => console.log(err))
@@ -18,11 +13,6 @@ exports.getAllPlants = async (req, res) => {
 exports.getPlantByName = async (req, res) => {
     await Plant.findOne({name: req.body.name})
         .then(plant => {
-            if (!plant) {
-                return res
-                    .status(404)
-                    .json({ success: false, error: `Plant not found` })
-            }
             return res.status(200).json({ success: true, data: plant })
         })
         .catch(err => console.log(err))

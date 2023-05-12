@@ -62,7 +62,6 @@ const PlantList = () => {
 
         <div className="container my-3">
             <div className="row"><h1 className="h2 mb-4">Plants</h1></div>
-            {plants.length === 0 && <p>No plants found.</p>}
             <div className="row">
                 {plants.map(({ name, description }) => (
                     <div className="col-md-6 col-lg-4" key={name}>

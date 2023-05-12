@@ -173,7 +173,7 @@ const Automations = () => {
 
 
   if(loading){
-    return (<LoadingSpinner/>)
+    return (<LoadingSpinner/>);
   }
   return(
       <div className="container my-3 ">
@@ -186,7 +186,6 @@ const Automations = () => {
             >Add automation</button>
           </div>
         </div>
-        {automations.length === 0 && <p>No automations found.</p>}
         <div className="row">
           {automations.map(({ name, alias, enabled }) => (
               <div className="col-md-12 col-lg-12" key={name}>
@@ -224,6 +223,7 @@ const Automations = () => {
         )}
       </div>
   );
+
 };
 
 

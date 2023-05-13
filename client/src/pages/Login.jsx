@@ -99,9 +99,6 @@ function Login() {
                     </div>
                 </div>
 
-
-
-
                 <div className="d-sm-none bg-black position-relative" style={{ height: "100px", width: "100%" }}>
                     <img src={leaves1} style={{ height: "100%", width: "100%", objectFit: "none" }} />
                     <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "80%", height: "80%" }}>

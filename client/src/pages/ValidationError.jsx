@@ -24,13 +24,13 @@ function ValidationError({ message }) {
   return (
     <>
       {visible ? (
-        <div className="position-fixed top-0 start-0 m-3">
+        <div className="position-fixed top-0 start-40 m-3">
           <div className="animate__animated animate__bounceIn d-flex align-items-center justify-content-center bg-danger text-white rounded py-3 px-4 animate__faster">
             {message}
           </div>
         </div>
       ) : (
-        <div className="position-fixed top-0 start-0 m-3">
+        <div className="position-fixed top-0 start-40 m-3">
           <div className="animate__animated animate__bounceOut d-flex align-items-center justify-content-center bg-danger text-white rounded py-3 px-4 animate__faster">
             {message}
           </div>

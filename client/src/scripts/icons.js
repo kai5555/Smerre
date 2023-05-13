@@ -16,9 +16,11 @@ import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import { faForward } from '@fortawesome/free-solid-svg-icons';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
-import { faUser, faEnvelope, faLock, faEye, faEyeSlash, faSignature } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faEnvelope, faLock, faEye, faEyeSlash, faSignature, faFileLines, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
+    faNetworkWired,
+    faFileLines,
   faCircleInfo,
   faTrash,
   faCircleQuestion,

@@ -7,10 +7,52 @@ import { TouchBackend } from 'react-dnd-touch-backend'
 import styled from 'styled-components'
 import api from '../api';
 import ValidationError from './ValidationError'
-import { useNavigate} from 'react-router-dom';
+import { useNavigate, Link} from 'react-router-dom';
 import { withAuth } from './Authentication';
-import { COLORS } from '../scripts';
 import Tour from 'reactour'
+import COLORS from '../scripts/colors'
+
+const Button = styled.button.attrs({
+    className: `btn btn-primary`,
+})`
+    width: 100px;
+    height: 40px;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,roboto,Helvetica Neue,helvetica,arial,sans-serif;
+    color: #fff;
+    box-shadow: 0px 10px 20px -10px  ${COLORS.defaultColor};
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+        color: #fff;
+        animation: bop 0.5s ease-out;
+    }
+
+    &:active {
+        color: #fff !important;
+    }
+    
+    @keyframes bop {
+        0% {
+            transform: translateY(0px);
+        }
+        25% {
+            transform: translateY(-8px);
+        }
+        50% {
+            transform: translateY(0px);
+        }
+        75% {
+            transform: translateY(-4px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+    }
+`
+
 
 const TutorialAutomation = () => {
   const [selectedExample, setSelectedExample] = useState(0);
@@ -145,7 +187,13 @@ const TutorialAutomation = () => {
     {
       selector: '[data-tut="container"]',
       content: () => (
-        <p>To learn which box to use or to connect you can just experiment a bit or look here for a more in depth look. When adding a new automation there are already some presest fro which you can start.</p>
+        <>
+          <p>To learn which box to use or to connect you can just experiment a bit or look here for a more in depth look. When adding a new automation there are already some presest fro which you can start.</p>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Link to="/automation/add"><Button style={{ display: 'inline-block', margin: '0 auto' }}>Start creating</Button></Link>
+          </div>
+        </>
+
       ),
       action: () => {
         handleNextExample(11);

@@ -4,7 +4,6 @@ import axios from 'axios'
 import styled from 'styled-components';
 import { withAuth } from './Authentication';
 import LoadingSpinner from "../components/LoadingSpinner";
-import '../style/body.css'
 import ComponentControl from './ComponentControl';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import dht from '../images/dht.png'
@@ -99,7 +98,7 @@ function WeatherApi({user}) {
           <MDBContainer className="h-100">
             <MDBRow className="justify-content-center align-items-center h-100">
               <MDBCol md="8" lg="6" xl="12">
-                <MDBCard style={{ color: "#4B515D", borderRadius: "35px" }}>
+                <MDBCard style={{ color: "#4B515D", borderRadius: "35px", marginTop: "30px" }}>
                   <MDBCardBody className="p-4">
                     <div className="d-flex">
                       <MDBTypography tag="h6" className="flex-grow-1">
@@ -146,7 +145,7 @@ function WeatherApi({user}) {
                       </div>
                     </div>
                       <form action="http://localhost:3000/forecast">
-                        <button type="submit" className="btn btn-outline-info">
+                        <button type="submit" className="btn btn-outline-primary">
                           Forecast
                         </button>
                       </form>

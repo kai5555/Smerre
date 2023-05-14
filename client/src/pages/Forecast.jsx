@@ -55,7 +55,7 @@ function Forecast({user}) {
                 <AccordionItem key={idx}>
                 <AccordionItemHeading>
                   <AccordionItemButton>
-                    <div className="daily-item">
+                    <div className="daily-item rounded shadow z-2 mb-3">
                       <img src={`icons/${item.weather[0].icon}.png`} className="icon-small" alt="weather" />
                       <label className="day">{forecastDays[idx]}</label>
                       <label className="descriptionForecast">{item.weather[0].description}</label>
@@ -64,7 +64,7 @@ function Forecast({user}) {
                   </AccordionItemButton>
                 </AccordionItemHeading>
                 <AccordionItemPanel>
-                  <div className="daily-details-grid">
+                  <div className="daily-details-grid rounded shadow z-1 bg-white mb-3">
                     <div className="daily-details-grid-item">
                       <label>Pressure:</label>
                       <label>{item.main.pressure}</label>

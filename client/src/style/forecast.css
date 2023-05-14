@@ -27,7 +27,6 @@
     font-size: 14px;
     padding: 5px 20px;
     background-color: rgb(255, 255, 255);
-    box-shadow: 0px 10px 20px -10px grey;
   }
   
 .icon-small {
@@ -65,6 +64,7 @@
     grid-template-columns: auto auto;
     padding: 5px 15px;
     row-gap: 0;
+    transform: translateY(-15px);
   }
   
 .daily-details-grid-item {

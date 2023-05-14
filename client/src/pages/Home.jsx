@@ -94,7 +94,7 @@ function WeatherApi({user}) {
   return (
     <Home>   
       {forecastData.list !== undefined &&
-        <section className="vh-20">
+        <section className="vh-20 mt-4">
           <MDBContainer className="h-100">
             <MDBRow className="justify-content-center align-items-center h-100">
               <MDBCol md="8" lg="6" xl="12">
@@ -166,11 +166,11 @@ function WeatherApi({user}) {
               <div>
                 <div className="card mb-5 shadow-sm" key={entity_id}>
                   <div className="row g-0">
-                    <div className="col-md-2" align="center">
-                      <img src={getImage(image)} width={'100px'} height={'100px'} className="img-fluid rounded-start"></img>
+                    <div className="col-7 col-sm-6 col-md-2 mx-auto" align="center">
+                      <img src={getImage(image)} className="img-fluid rounded-start"></img>
                     </div>
-                      <div className="col-md-9">
-                        <div className="card-body">
+                      <div className="col-md-10">
+                        <div className="card-body text-center text-md-start">
                           <h5 className="card-title">{name}</h5>
                             <p className="card-text"></p>
                             <p className="card-text">

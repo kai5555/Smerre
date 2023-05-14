@@ -8,6 +8,7 @@ import '../style/body.css'
 import ComponentControl from './ComponentControl';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import dht from '../images/dht.png'
+import ldr from '../images/ldr.png'
 import {
   MDBCard,
   MDBCardBody,
@@ -55,7 +56,15 @@ function WeatherApi({user}) {
     setDate(new Date());
   }
 
- 
+  const getImage = (image) => {
+    if (image === "dht") {
+        return dht;
+    } else if (image === "ldr") {
+        return ldr;
+    } else {
+        return null;
+    }
+}
   const setup = async () => {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
     const forecast = `https://api.openweathermap.org/data/2.5/forecast?q=${user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
@@ -72,9 +81,8 @@ function WeatherApi({user}) {
       console.log('Something went wrong while fetching actors!');
     }
     try{
-      const res = await api.getGeneralSensors();
+      const res = await api.getGeneralSensors(); 
       setSensors(res.data.sensors);
-      console.log('test:', res.data.sensors);
       setLoading(false);
     } catch (err) {
       console.log('Something went wrong while fetching sensors!');
@@ -97,7 +105,10 @@ function WeatherApi({user}) {
                       <MDBTypography tag="h6" className="flex-grow-1">
                         {data.name}
                       </MDBTypography>
-                      <MDBTypography tag="h6">{date.getHours()}:{date.getMinutes()}</MDBTypography>
+                      {date.getMinutes() < 10 ? 
+                      (<MDBTypography tag="h6">{date.getHours()}:0{date.getMinutes()}</MDBTypography>) :
+                      (<MDBTypography tag="h6">{date.getHours()}:{date.getMinutes()}</MDBTypography>)
+                      }
                     </div>
                     <div className="d-flex flex-column text-center mt-5 mb-4">
                       {data.main ?
@@ -119,11 +130,11 @@ function WeatherApi({user}) {
                     <div className="d-flex align-items-center">
                       <div className="flex-grow-1" style={{fontSize: '1rem'}}>
                         <div>
-                          <FontAwesomeIcon icon="fa-solid fa-wind" size="s" style={{ color: 'grey'}} />
+                          <FontAwesomeIcon icon="fa-solid fa-wind" size="sm" style={{ color: 'grey'}} />
                           <span className="ms-1">{data.wind.speed} m/s </span>
                         </div>
                         <div>
-                          <FontAwesomeIcon icon="fa-solid fa-tint" size="s" style={{ color: 'grey'}} />{" "}
+                          <FontAwesomeIcon icon="fa-solid fa-tint" size="sm" style={{ color: 'grey'}} />{" "}
                           <span className="ms-1"> {data.main.humidity}% </span>
                         </div>
                       </div>
@@ -135,7 +146,7 @@ function WeatherApi({user}) {
                       </div>
                     </div>
                       <form action="http://localhost:3000/forecast">
-                        <button type="submit" class="btn btn-outline-info">
+                        <button type="submit" className="btn btn-outline-info">
                           Forecast
                         </button>
                       </form>
@@ -152,12 +163,12 @@ function WeatherApi({user}) {
       <SensorContainer>
           <div className="container my-3">
             <div className="row"><h1 className="h2 mb-4">Sensors</h1></div>
-            {sensors.map(({ name }) => (
+            {sensors.map(({ name, entity_id, value, symbol, image }) => (
               <div>
-                <div className="card mb-5 shadow-sm">
+                <div className="card mb-5 shadow-sm" key={entity_id}>
                   <div className="row g-0">
                     <div className="col-md-2" align="center">
-                      <img src={dht} width={'100px'} height={'100px'} className="img-fluid rounded-start"></img>
+                      <img src={getImage(image)} width={'100px'} height={'100px'} className="img-fluid rounded-start"></img>
                     </div>
                       <div className="col-md-9">
                         <div className="card-body">
@@ -165,7 +176,7 @@ function WeatherApi({user}) {
                             <p className="card-text"></p>
                             <p className="card-text">
                               <small className="text-muted">
-                                SENSORWAARDEN
+                                Value: {value}{symbol}
                               </small>
                             </p>
                         </div>

@@ -1,4 +1,5 @@
 const Component = require('../modals/ComponentModal')
+const Data = require('../modals/DataModal')
 
 exports.getAllActors = async (req, res) => {
     try {
@@ -34,7 +35,7 @@ exports.getGeneralActors = async (req,res) => {
 }
 
 exports.getGeneralSensors = async (req, res) => {
-    const sensors = await Component.find({type: 'sensor', block: 0});
+    const sensors = await Component.find({type: 'sensor', block: 0}).lean();
     console.log(sensors);
     if(sensors.length <= 0){
         return res.status(400).json({
@@ -42,8 +43,27 @@ exports.getGeneralSensors = async (req, res) => {
             error: 'No general sensors found'
         })
     }
+    const sensorIds = sensors.map(sensor => sensor.entity_id); 
+    const data = await Data.findOne({ sensor: { $in: sensorIds[0] }  });
+    const data2 = await Data.findOne({ sensor: { $in: sensorIds[1] }  });
+    const data3 = await Data.findOne({ sensor: { $in: sensorIds[2] }  }).lean();
+    sensors[0]['value'] = `${data.value}`;
+    sensors[1]['value'] = `${data2.value}`;
+    sensors[2]['value'] = `${data3.value}`;
+    sensors[0]['symbol'] = '%';
+    sensors[1]['symbol'] = '°C';
+    sensors[0]['image'] = 'dht'
+    sensors[1]['image'] = 'dht'
+    sensors[2]['image'] = 'ldr'
+    if (data.length <= 0) {
+        // return res.status(400).json({
+        //     success: false,
+        //     error: 'No data found for this plant',
+        // })
+    }
     return res.json({
         success: true,
-        sensors: sensors
+        sensors: sensors,
+        data: data3
     })
 }

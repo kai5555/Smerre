@@ -23,6 +23,8 @@ export const getUser = payload => api.post('/getUser', payload);
 // Component routes
 export const getAllActors = () => api.get(`/getAllActors`);
 export const getAllSensors = () => api.get(`/getAllSensors`);
+export const getGeneralActors = () => api.get(`/getGeneralActors`);
+export const getGeneralSensors = () => api.get(`/getGeneralSensors`);
 
 // Automation routes
 export const getAllAutomations = () => api.get(`/getAllAutomations`);

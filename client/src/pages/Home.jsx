@@ -1,20 +1,17 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../api';
-import { redirect, useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import styled from 'styled-components';
 import { withAuth } from './Authentication';
 import LoadingSpinner from "../components/LoadingSpinner";
 import '../style/body.css'
-import LandingPage from "./LandingPage"
+import ComponentControl from './ComponentControl';
 
 const Home = styled.div`
   display:flex;
   height:100vh;
 `;
 
-const Plants = styled.div`
-`;
 
 const Weather = styled.div`
 `;
@@ -53,21 +50,20 @@ const StyledButton = styled.button`
   width:100px;
 `;
 
+const ActorContainer = styled.div`
+`;
+
+const SensorContainer = styled.div`
+
+`;
+
+
 function WeatherApi({user}) {
-  const navigate = useNavigate();
-  const [plants, setPlants] = useState([]);
-  const [automations, setAutomations] = useState([]);
   const[loading, setLoading] = useState(true);
   const [data,setData] = useState({})
+  const [actors, setActors] = useState([]);
+  const [sensors, setSensors] = useState([]);
   const [forecastData,setforecastData] = useState({})
-
-  const handlePlantClick = useCallback((name) => {
-    window.location.href = `/plant/${name}`;
-  }, []);
-
-  const handleAutomationClick = useCallback((name) => {
-    window.location.href = `/automation/${name}/edit`;
-  }, []);
 
   useEffect( () => {
     setup();
@@ -87,18 +83,20 @@ function WeatherApi({user}) {
     axios.get(forecast).then((response) => {
       setforecastData(response.data)
     })
-    try {
-        const res = await api.getAllPlants();
-        setPlants(res.data.data);
+    try{
+      const res = await api.getGeneralActors();
+      console.log('test:', res.data.actors);
+      setActors(res.data.actors);
     } catch (err) {
-        console.log('Something went wrong while fetching plants!');
+      console.log('Something went wrong while fetching actors!');
     }
-    try {
-      const res = await api.getAllAutomations();
-      setAutomations(res.data.data);
+    try{
+      const res = await api.getGeneralSensors();
+      console.log('test:', res.data.sensors);
+      setSensors(res.data.sensors);
       setLoading(false);
     } catch (err) {
-      console.log("Something went wrong while fetching automations!");
+      console.log('Something went wrong while fetching sensors!');
     }
   }
 
@@ -106,60 +104,10 @@ function WeatherApi({user}) {
     return (<LoadingSpinner/>)
   }
   return (
-    <Home>
-      <Automations>
-        <div className="container my-3 ">
-          <div className="row mb-1">
-            <div className="col-6"><h1 className="h2 mb-4">Automations</h1></div>
-            </div>
-            {automations.length === 0 && <p>No automations found.</p>}
-              <div className="row">
-                {automations.map(({ name, alias, enabled }) => (
-                  <div className="col-md-12 col-lg-12" key={name}>
-                    <div className="card shadow-sm mb-5 " style={{minHeight: "150px"}}>
-                      <div className="card-body pt-0">
-
-                        <div className="row">
-                          <div className="col-6 pt-3 pe-0">
-                            <h5 className="card-title">{name}</h5>
-                            <p className="card-text">{alias}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="card-footer d-flex justify-content-between align-items-center">
-                        <button className="btn btn-outline-secondary" onClick={() => handleAutomationClick(name)}>
-                          Details
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-              ))}
-            </div>
-          </div>
-      </Automations>
-      <Plants>
-        <div className="container my-3">
-            <div className="row"><h1 className="h2 mb-4">Plants</h1></div>
-            {plants.length === 0 && <p>No plants found.</p>}
-            <div className="row">
-                {plants.map(({ name, description }) => (
-                    <div className="col-md-6 col-lg-4" key={name}>
-                        <div className="card shadow-sm mb-4" style={{minHeight: "150px"}}>
-                            <div className="card-body">
-                                <h5 className="card-title">{name}</h5>
-                                <p className="card-text">{description}</p>
-                            </div>
-                            <div className="card-footer d-flex justify-content-between align-items-center">
-                                <button className="btn btn-outline-secondary" onClick={() => handlePlantClick(name)}>
-                                    Details
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-      </Plants>
+    <Home>   
+      <ActorContainer>
+        <ComponentControl actors={actors}></ComponentControl>
+      </ActorContainer>
       {forecastData.list !== undefined &&
       <Weather>
         <Location>

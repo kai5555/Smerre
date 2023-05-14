@@ -2,7 +2,7 @@ import { useDragLayer } from 'react-dnd'
 import BoxDragPreview from './BoxDragPreview'
 import MenuBoxDragPreview from './MenuBoxDragPreview'
 import { ItemTypes } from '../scripts'
-import { snapToGrid } from '../scripts'
+
 
 const layerStyles = {
   position: 'fixed',
@@ -21,12 +21,7 @@ function getItemStyles(initialOffset, currentOffset) {
   }
   let { x, y } = currentOffset
 
-  // x -= initialOffset.x
-  // y -= initialOffset.y
-  // ;[x, y] = snapToGrid(x, y)
-  // x += initialOffset.x
-  // y += initialOffset.y
-  
+
   const transform = `translate(${x}px, ${y}px)`
   return {
     transform,
@@ -34,7 +29,7 @@ function getItemStyles(initialOffset, currentOffset) {
   }
 }
 
-const CustomDragLayer = (props) => {
+const CustomDragLayer = () => {
   const { itemType, isDragging, item, initialOffset, currentOffset } =
     useDragLayer((monitor) => ({
       item: monitor.getItem(),

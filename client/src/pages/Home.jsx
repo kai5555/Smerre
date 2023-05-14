@@ -97,7 +97,7 @@ function WeatherApi({user}) {
         <section className="vh-20 mt-4">
           <MDBContainer className="h-100">
             <MDBRow className="justify-content-center align-items-center h-100">
-              <MDBCol md="8" lg="6" xl="12">
+              <MDBCol>
                 <MDBCard style={{ color: "#4B515D", borderRadius: "35px", marginTop: "30px" }}>
                   <MDBCardBody className="p-4">
                     <div className="d-flex">

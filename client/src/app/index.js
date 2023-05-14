@@ -2,8 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import '../scripts/icons'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import COLORS from '../scripts/colors'
-import styled from 'styled-components';
+
 
 import { NavBar } from '../components'
 import { PlantList, 

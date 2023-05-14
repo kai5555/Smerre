@@ -1,6 +1,6 @@
-import React, { Component, Fragment, useEffect, useLayoutEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import api from '../api'
-import { Link, useParams } from 'react-router-dom'
+import {  useParams } from 'react-router-dom'
 
 function EmailVerify() {
     const [validUrl, setValidUrl] = useState(false);

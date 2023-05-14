@@ -4,7 +4,6 @@ import { useDrop } from 'react-dnd';
 import DraggableBox from './DraggableBox';
 import MenuBox from './MenuBox';
 import { COLORS, ItemTypes } from '../scripts';
-//import { snapToGrid as doSnapToGrid } from '../scripts';
 import modalMap from './BoxesModals'
 import GridLines from 'react-gridlines';
 import Line from './Line.jsx'

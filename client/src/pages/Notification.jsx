@@ -1,3 +1,5 @@
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 const scheduleNotification = async () => {
     if (Capacitor.isPluginAvailable('LocalNotifications')) {
       await LocalNotifications.schedule({

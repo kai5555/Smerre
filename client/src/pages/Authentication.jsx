@@ -1,5 +1,5 @@
 import React from 'react';
-import api, {toggleLed} from "../api";
+import api from "../api";
 import  LoadingSpinner  from "../components/LoadingSpinner";
 import { Navigate  } from 'react-router-dom';
 

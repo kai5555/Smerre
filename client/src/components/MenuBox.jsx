@@ -1,7 +1,6 @@
 import { memo, useEffect, useState } from 'react'
 import { useDrag } from 'react-dnd'
 import { getEmptyImage } from 'react-dnd-html5-backend'
-import componentMap from './Boxes'
 import { ItemTypes } from '../scripts'
 import COLORS from '../scripts/colors'
 import styled, { keyframes } from 'styled-components';

@@ -1,8 +1,5 @@
-import React, {useCallback, useState, useLayoutEffect, useEffect} from 'react';
-import Container from '../components/Container.jsx';
-import CustomDragLayer from '../components/CustomDragLayer.jsx';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import React, { useState, useEffect} from 'react';
+
 import styled from 'styled-components'
 import api from '../api';
 import ValidationError from './ValidationError'
@@ -11,8 +8,6 @@ import { withAuth } from './Authentication';
 import {InputGroup} from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import COLORS from "../scripts/colors";
-import leaves1 from "../images/leaves1.jpg";
-import logo from "../images/smerre_logo.png";
 import plant from "../images/plant.jpg";
 import plant_cut from "../images/plant_cut.jpg";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -153,7 +148,7 @@ const AddPlant = () => {
                                 </Label>
                                 <InputGroup>
                                     <InputIcon><FontAwesomeIcon icon="fa-solid fa-signature" size="xs" style={{ color: 'grey'}} /></InputIcon>
-                                    <InputText type="text" name="name" placeholder="tomato"  required />
+                                    <InputText type="text" name="name" placeholder="monstera deliciosa"  required />
                                 </InputGroup>
                             </div>
                             <div className="mb-3">

@@ -55,12 +55,7 @@ exports.getGeneralSensors = async (req, res) => {
     sensors[0]['image'] = 'dht';
     sensors[1]['image'] = 'dht';
     sensors[2]['image'] = 'ldr';
-    if (data.length <= 0) {
-        // return res.status(400).json({
-        //     success: false,
-        //     error: 'No data found for this plant',
-        // })
-    }
+
     return res.json({
         success: true,
         sensors: sensors,

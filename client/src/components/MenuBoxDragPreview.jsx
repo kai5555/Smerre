@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import styled, { keyframes } from 'styled-components';
 import COLORS from '../scripts/colors'
 

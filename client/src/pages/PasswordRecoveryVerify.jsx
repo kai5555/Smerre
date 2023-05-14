@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useEffect, useLayoutEffect, useState } from 'react'
+import React, {  Fragment, useEffect, useState } from 'react'
 import api from '../api'
 import ValidationError from './ValidationError'
 import { useNavigate, useParams} from 'react-router-dom';
@@ -77,7 +77,7 @@ function PasswordRecovery() {
             const data = await res.data;
 
             // If something went wrong
-            if(data.message != "Success"){
+            if(data.message !== "Success"){
                 setErrorMessage(data.message);
                 setErrorKey((prevKey) => prevKey + 1);
                 return;

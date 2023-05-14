@@ -35,7 +35,7 @@ function Navbar({ user }) {
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarNav"
                     aria-controls="navbarNav"
-                    aria-expanded={!collapsed ? true : false}
+                    aria-expanded={!collapsed}
                     aria-label="Toggle navigation"
                     onClick={toggleNavbar}
                 >

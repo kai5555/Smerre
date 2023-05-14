@@ -1,14 +1,9 @@
 import React, { useLayoutEffect, useState } from 'react'
 import api from '../api'
-import ValidationError from './ValidationError'
 import { InputGroup } from 'react-bootstrap';
 import { useNavigate} from 'react-router-dom';
-
-import logo from '../images/smerre_logo.png'
 import leaves1 from '../images/leaves1.jpg'
-import leaves2 from '../images/leaves2.jpg'
 import COLORS from '../scripts/colors'
-
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -96,7 +91,7 @@ function Register () {
             const data = await res.data;
             
             // If something went wrong
-            if(data.message != "Success"){
+            if(data.message !== "Success"){
                 setErrorMessage(data.message);
                 setErrorKey((prevKey) => prevKey + 1);
                 return;

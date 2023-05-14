@@ -3,7 +3,6 @@ import api from '../api';
 import ReactApexChart from 'react-apexcharts';
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
-import { useNavigate} from 'react-router-dom';
 import { COLORS } from '../scripts';
 import { withAuth } from './Authentication';
 import ComponentControl from './ComponentControl';
@@ -16,7 +15,7 @@ import {
   MDBRow,
   MDBTypography,
 } from "mdb-react-ui-kit";
-import Slider from '@mui/material/Slider';
+import Slider from "@mui/material/Slider/Slider"
 
 const SnapshotContainer = styled.div`
   display: inline-block;
@@ -72,9 +71,7 @@ const options = [
 ];
 
 const Plant = () => {
-  const navigate = useNavigate();
   const { name } = useParams();
-  const [errorMessage, setErrorMessage] = useState("");
   const [data, setData] = useState([]);
   const [sensors, setSensors] = useState([]);
   const [actors, setActors] = useState([]);
@@ -101,10 +98,10 @@ const Plant = () => {
     const prop = data[key];
 
     const oneWeekAgo = new Date();
-    if(key == "temperature"){
+    if(key === "temperature"){
       oneWeekAgo.setDate(oneWeekAgo.getDate() - options[tempTime - 1].days);
     }
-    else if(key == "humidity"){
+    else if(key === "humidity"){
       oneWeekAgo.setDate(oneWeekAgo.getDate() - options[humTime - 1].days);
     }
 

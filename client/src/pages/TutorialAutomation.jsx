@@ -1,11 +1,9 @@
-import { useCallback, useState, useLayoutEffect } from 'react';
+import { useCallback, useState } from 'react';
 import Container from '../components/Container.jsx';
 import CustomDragLayer from '../components/CustomDragLayer.jsx';
 import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend'
 import styled from 'styled-components'
-import api from '../api';
 import ValidationError from './ValidationError'
 import { useNavigate, Link} from 'react-router-dom';
 import { withAuth } from './Authentication';
@@ -76,20 +74,9 @@ const TutorialAutomation = () => {
       content: () => (
         <p>This is the <b>Automation Creation tool</b>, here all your automation magic happens. However there are a few restriction on how to do this. In this tour we will explain everything you need to know!</p>
       ),
-      action: (node) => {
+      action: () => {
         handleNextExample(1);
-        // const nextBtn = document.querySelector('[data-tour-elem="right-arrow"]');
-        // if (nextBtn) { 
-        //   nextBtn.style.display = "none"; // hide nextButton
-        //   node.onclick = () => {  // handle clicking element in highlighted area
-        //     nextBtn.style.display = "block"; // show nextButton
-        //     setTimeout(() => {
-        //       if (nextBtn) {
-        //           nextBtn.click(); // go to next step
-        //       }
-        //     }, 500); // maybe need a few time for other rendering
-        //   };
-        // }
+
       },
     },
     {

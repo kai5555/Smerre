@@ -1,18 +1,8 @@
-import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
+import React from 'react';
 import { PathLine } from 'react-svg-pathline';
 import COLORS from '../scripts/colors'
 
-import styled, { css, keyframes } from "styled-components";
-
-const popIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {  
-    opacity: 1;
-  }
-`;
-
+import  {  keyframes } from "styled-components";
 function getStartColor(wrong) {
   if (wrong === "content") {
     return COLORS.warningColor;
@@ -41,21 +31,21 @@ function getCenterPoint(box){
   const centerX = box.box.left + (boxRect.width / 2);
   const centerY = box.box.top + (boxRect.height / 2);
   return { x: centerX, y: centerY };
-}; 
+}
 
 function getWidth(box){
   const boxElement = document.getElementById(box.key);
   if(!boxElement) return 0
   
   return boxElement.offsetWidth;
-}; 
+}
 
 function getHeight(box){
   const boxElement = document.getElementById(box.key);
   if(!boxElement) return 0
   
   return boxElement.offsetHeight;
-}; 
+}
 
 function Line({ boxes, onClick}) {
   // Setup points
@@ -74,8 +64,8 @@ function Line({ boxes, onClick}) {
   const endWidth  = getWidth(endBox);
   const endHeight = getHeight(endBox);
   const yDiff = Math.abs(startPoint.y - above * startHeight/2 - (endPoint.y + above * endHeight/2));
-  const xDiff = Math.abs(startPoint.x - left * startWidth/2 - (endPoint.x + left * endWidth/2));
-  var newArrowPosition = {x: 0, y:0};
+  Math.abs(startPoint.x - left * startWidth/2 - (endPoint.x + left * endWidth/2));
+  let newArrowPosition = {x: 0, y:0};
 
   if(yDiff < 30){
     points.splice(1, 0, {x:startPoint.x, y:endPoint.y});  

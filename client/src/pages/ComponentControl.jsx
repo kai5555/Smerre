@@ -108,16 +108,16 @@ class ComponentControl extends React.Component {
 
                 if(image != null) {
                     const plant = this.state.plants.find((c) => c.block === component.block);
-                    const blockName = plant ? plant.name : "serre";
+                    const blockName = (component.block === 0) ? "serre" : plant ? plant.name : "no plant";
 
                     return (
                         <div className="card mb-5 shadow-sm" key={key}>
                             <div className="row g-0">
-                                <div className="col-md-2">
+                                <div className="col-7 col-sm-6 col-md-2 mx-auto">
                                     <img src={image} className="img-fluid rounded-start"></img>
                                 </div>
-                                <div className="col-md-9">
-                                    <div className="card-body">
+                                <div className=" col-md-9">
+                                    <div className="card-body text-center text-md-start">
                                         <h5 className="card-title">{name}</h5>
                                         <p className="card-text"></p>
                                         <p className="card-text">

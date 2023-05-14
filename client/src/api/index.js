@@ -57,6 +57,8 @@ const apis = {
     
     getAllActors,
     getAllSensors,
+    getGeneralSensors,
+    getGeneralActors,
 
     getAllAutomations,
     getAutomationByName,

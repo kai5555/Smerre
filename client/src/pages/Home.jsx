@@ -6,73 +6,55 @@ import { withAuth } from './Authentication';
 import LoadingSpinner from "../components/LoadingSpinner";
 import '../style/body.css'
 import ComponentControl from './ComponentControl';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import dht from '../images/dht.png'
+import {
+  MDBCard,
+  MDBCardBody,
+  MDBCol,
+  MDBContainer,
+  MDBRow,
+  MDBTypography,
+} from "mdb-react-ui-kit";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const Home = styled.div`
-  display:flex;
-  height:100vh;
-`;
-
-
-const Weather = styled.div`
-`;
-
-const ContainerWeather = styled.div`
-  position:relative;
-  display: flex;
-  gap: 10px;
-  right:10%;
-`;
-
-const Automations = styled.div`
-
-`;
-
-const Today = styled.div`
-
-`;
-const Tomorrow = styled.div`
-`;
-
-const Location = styled.div`
-  position:relative;
-  right:8%;
-  font-size: 30px;
-  font-weight: bold;
-`;
-
-const ForecastButton = styled.div`
-  position:relative;
-  right:-8%;
-`;
-
-const StyledButton = styled.button`
-  border-radius:15px;
-  width:100px;
 `;
 
 const ActorContainer = styled.div`
 `;
 
 const SensorContainer = styled.div`
-
+  position:relative;
+  top:-30px;
 `;
 
 
 function WeatherApi({user}) {
-  const[loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [data,setData] = useState({})
+  const [date, setDate] = useState(new Date());
   const [actors, setActors] = useState([]);
   const [sensors, setSensors] = useState([]);
   const [forecastData,setforecastData] = useState({})
 
   useEffect( () => {
     setup();
+    const timerId = setInterval(refreshClock, 60000);
+    return function cleanup() {
+      clearInterval(timerId);
+    };
   },[])
 
   useEffect(() => {
     if(!user) window.location = "/landing";
 
   }, [user]);
+
+  function refreshClock() {
+    setDate(new Date());
+  }
+
  
   const setup = async () => {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${user.location}&units=metric&appid=7c29b2d75ea3419fe77514b3d6bdd43b`
@@ -85,15 +67,14 @@ function WeatherApi({user}) {
     })
     try{
       const res = await api.getGeneralActors();
-      console.log('test:', res.data.actors);
       setActors(res.data.actors);
     } catch (err) {
       console.log('Something went wrong while fetching actors!');
     }
     try{
       const res = await api.getGeneralSensors();
-      console.log('test:', res.data.sensors);
       setSensors(res.data.sensors);
+      console.log('test:', res.data.sensors);
       setLoading(false);
     } catch (err) {
       console.log('Something went wrong while fetching sensors!');
@@ -105,47 +86,96 @@ function WeatherApi({user}) {
   }
   return (
     <Home>   
+      {forecastData.list !== undefined &&
+        <section className="vh-20">
+          <MDBContainer className="h-100">
+            <MDBRow className="justify-content-center align-items-center h-100">
+              <MDBCol md="8" lg="6" xl="12">
+                <MDBCard style={{ color: "#4B515D", borderRadius: "35px" }}>
+                  <MDBCardBody className="p-4">
+                    <div className="d-flex">
+                      <MDBTypography tag="h6" className="flex-grow-1">
+                        {data.name}
+                      </MDBTypography>
+                      <MDBTypography tag="h6">{date.getHours()}:{date.getMinutes()}</MDBTypography>
+                    </div>
+                    <div className="d-flex flex-column text-center mt-5 mb-4">
+                      {data.main ?
+                      <MDBTypography
+                        tag="h6"
+                        className="display-4 mb-0 font-weight-bold"
+                        style={{ color: "#1C2331" }}
+                      >
+                        {" "}
+                        {data.main.temp.toFixed()}°C {" "}
+                      </MDBTypography>
+                      : null }
+                      {data.weather ?
+                      <span className="small" style={{ color: "#868B94" }}>
+                        {data.weather[0].main}
+                      </span> :null} 
+                    </div>
+
+                    <div className="d-flex align-items-center">
+                      <div className="flex-grow-1" style={{fontSize: '1rem'}}>
+                        <div>
+                          <FontAwesomeIcon icon="fa-solid fa-wind" size="s" style={{ color: 'grey'}} />
+                          <span className="ms-1">{data.wind.speed} m/s </span>
+                        </div>
+                        <div>
+                          <FontAwesomeIcon icon="fa-solid fa-tint" size="s" style={{ color: 'grey'}} />{" "}
+                          <span className="ms-1"> {data.main.humidity}% </span>
+                        </div>
+                      </div>
+                      <div>
+                        <img
+                          src={`icons/${data.weather[0].icon}.png`}
+                          width="100px"
+                        />
+                      </div>
+                    </div>
+                      <form action="http://localhost:3000/forecast">
+                        <button type="submit" class="btn btn-outline-info">
+                          Forecast
+                        </button>
+                      </form>
+                  </MDBCardBody>
+                </MDBCard>
+              </MDBCol>
+            </MDBRow>
+          </MDBContainer>
+        </section>
+      }
       <ActorContainer>
         <ComponentControl actors={actors}></ComponentControl>
       </ActorContainer>
-      {forecastData.list !== undefined &&
-      <Weather>
-        <Location>
-          <p>{data.name}</p>
-        </Location>
-        <ContainerWeather>
-          <Today>
-            <label>Today:</label>
-            <div className='temp'>
-              {data.main ? <h1>{data.main.temp.toFixed()}°C</h1> : null}
-            </div>
-            <div className='description'>
-              {data.weather ? <p>{data.weather[0].main}</p> : null}
-            </div>
-          </Today>
-          <Tomorrow>
-            {forecastData.list !== undefined &&
-              <div className="tomorrow">
-                  <label>Tomorrow:</label>
-                <div className="temptmrw">
-                  <h1>{forecastData.list[0].main.temp.toFixed()}°C</h1>
-                </div>
-                <div className="desctmrw">
-                  <p>{forecastData.list[0].weather[0].main}</p>
+      <SensorContainer>
+          <div className="container my-3">
+            <div className="row"><h1 className="h2 mb-4">Sensors</h1></div>
+            {sensors.map(({ name }) => (
+              <div>
+                <div className="card mb-5 shadow-sm">
+                  <div className="row g-0">
+                    <div className="col-md-2" align="center">
+                      <img src={dht} width={'100px'} height={'100px'} className="img-fluid rounded-start"></img>
+                    </div>
+                      <div className="col-md-9">
+                        <div className="card-body">
+                          <h5 className="card-title">{name}</h5>
+                            <p className="card-text"></p>
+                            <p className="card-text">
+                              <small className="text-muted">
+                                SENSORWAARDEN
+                              </small>
+                            </p>
+                        </div>
+                      </div>
+                  </div>
                 </div>
               </div>
-            }
-          </Tomorrow>
-        </ContainerWeather>
-          <ForecastButton>
-            <form action="http://localhost:3000/forecast">
-              <StyledButton type='submit'>
-                Forecast
-              </StyledButton>
-            </form>
-          </ForecastButton>
-      </Weather>
-      }
+            ))}
+          </div>
+      </SensorContainer>
     </Home>
   );
 

@@ -15,12 +15,13 @@ import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import { faForward } from '@fortawesome/free-solid-svg-icons';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faWind,faSun,faTint } from '@fortawesome/free-solid-svg-icons';
 
 import { faUser, faEnvelope, faLock, faEye, faEyeSlash, faSignature, faFileLines, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
-    faNetworkWired,
-    faFileLines,
+  faNetworkWired,
+  faFileLines,
   faCircleInfo,
   faTrash,
   faCircleQuestion,
@@ -36,6 +37,9 @@ library.add(
   faPlay,
   faForward,
   faLocationDot,
+  faWind,
+  faSun,
+  faTint,
 
   faUser,
   faEnvelope,

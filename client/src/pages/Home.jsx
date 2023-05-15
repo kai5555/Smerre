@@ -144,7 +144,7 @@ function WeatherApi({user}) {
                         />
                       </div>
                     </div>
-                      <form action="http://localhost:3000/forecast">
+                      <form action={`http://${process.env.REACT_APP_MY_IP}:3000/forecast`}>
                         <button type="submit" className="btn btn-outline-primary">
                           Forecast
                         </button>

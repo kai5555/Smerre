@@ -51,7 +51,7 @@ function Forecast({user}) {
                 }}>
                     <AccordionSummary>
                       <Typography>
-                        <div className="daily-item rounded shadow z-1 bg-white mb-3" style={{width:'90vw'}}>
+                        <div className="daily-item rounded shadow z-1 bg-white mb-3 ml-2 mr-2" style={{width:'90vw'}}>
                           <img src={`icons/${item.weather[0].icon}.png`} className="icon-small" alt="weather" />
                           <label className="day">{forecastDays[idx]}</label>
                           <label className="descriptionForecast">{item.weather[0].description}</label>
@@ -61,7 +61,7 @@ function Forecast({user}) {
                     </AccordionSummary>
                     <AccordionDetails>
                       <Typography>
-                        <div className="daily-details-grid rounded shadow z-1 bg-white mb-3" style={{width:'90vw'}}>
+                        <div className="daily-details-grid rounded shadow z-1 bg-white" style={{width:'90vw'}}>
                           <div className="daily-details-grid-item">
                             <label>Pressure:</label>
                             <label>{item.main.pressure}</label>

@@ -185,7 +185,7 @@ const AddPlant = () => {
                                 </InputGroup>
                             </div>
                             <div className="d-flex flex-column">
-                                <Button type="submit" className="btn btn-primary">Register</Button>
+                                <Button type="submit" className="btn btn-primary">Add plant</Button>
                             </div>
                         </form>
                     </div>

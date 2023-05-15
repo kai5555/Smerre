@@ -64,7 +64,7 @@
     grid-template-columns: auto auto;
     padding: 5px 15px;
     row-gap: 0;
-    transform: translateY(-15px);
+    transform: translateY(-30px);
   }
   
 .daily-details-grid-item {

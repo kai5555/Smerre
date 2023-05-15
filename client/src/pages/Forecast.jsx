@@ -1,16 +1,9 @@
 import {  useEffect, useState } from 'react';
-import { useNavigate} from 'react-router-dom';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemHeading,
-  AccordionItemButton,
-  AccordionItemPanel,
-} from "react-accessible-accordion";
 import axios from 'axios'
 import { withAuth } from './Authentication';
 import LoadingSpinner from "../components/LoadingSpinner";
 import '../style/forecast.css'
+import {Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material"
 
 function Forecast({user}) {
     const [data,setData] = useState({})
@@ -47,50 +40,58 @@ function Forecast({user}) {
             <label className="title">Daily Forecast for next 7 days</label>
             }
             {forecastData.list !== undefined &&
-            <Accordion allowZeroExpanded>
+              <div className="accordions">
               {forecastData.list.slice(0, 7).map((item, idx) => (
-                <AccordionItem key={idx}>
-                <AccordionItemHeading>
-                  <AccordionItemButton>
-                    <div className="daily-item rounded shadow z-2 mb-3">
-                      <img src={`icons/${item.weather[0].icon}.png`} className="icon-small" alt="weather" />
-                      <label className="day">{forecastDays[idx]}</label>
-                      <label className="descriptionForecast">{item.weather[0].description}</label>
-                      <label className="min-max">{Math.round(item.main.temp_max)}°C /{Math.round(item.main.temp_min)}°C</label>
-                    </div>
-                  </AccordionItemButton>
-                </AccordionItemHeading>
-                <AccordionItemPanel>
-                  <div className="daily-details-grid rounded shadow z-1 bg-white mb-3">
-                    <div className="daily-details-grid-item">
-                      <label>Pressure:</label>
-                      <label>{item.main.pressure}</label>
-                    </div>
-                    <div className="daily-details-grid-item">
-                      <label>Humidity:</label>
-                      <label>{item.main.humidity}</label>
-                    </div>
-                    <div className="daily-details-grid-item">
-                      <label>Clouds:</label>
-                      <label>{item.clouds.all}%</label>
-                    </div>
-                    <div className="daily-details-grid-item">
-                      <label>Wind speed:</label>
-                      <label>{item.wind.speed} m/s</label>
-                    </div>
-                    <div className="daily-details-grid-item">
-                      <label>Sea level:</label>
-                      <label>{item.main.sea_level}m</label>
-                    </div>
-                    <div className="daily-details-grid-item">
-                      <label>Feels like:</label>
-                      <label>{item.main.feels_like}°C</label>
-                    </div>
-                  </div>
-                </AccordionItemPanel>
-              </AccordionItem>
+                <Accordion disableGutters
+                elevation={0}
+                sx={{
+                    '&:before': {
+                        display: 'none',
+                    }
+                }}>
+                    <AccordionSummary>
+                      <Typography>
+                        <div className="daily-item rounded shadow z-1 bg-white mb-3" style={{width:'90vw'}}>
+                          <img src={`icons/${item.weather[0].icon}.png`} className="icon-small" alt="weather" />
+                          <label className="day">{forecastDays[idx]}</label>
+                          <label className="descriptionForecast">{item.weather[0].description}</label>
+                          <label className="min-max">{Math.round(item.main.temp_max)}°C /{Math.round(item.main.temp_min)}°C</label>
+                        </div>
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography>
+                        <div className="daily-details-grid rounded shadow z-1 bg-white mb-3" style={{width:'90vw'}}>
+                          <div className="daily-details-grid-item">
+                            <label>Pressure:</label>
+                            <label>{item.main.pressure}</label>
+                          </div>
+                          <div className="daily-details-grid-item">
+                            <label>Humidity:</label>
+                            <label>{item.main.humidity}</label>
+                          </div>
+                          <div className="daily-details-grid-item">
+                            <label>Clouds:</label>
+                            <label>{item.clouds.all}%</label>
+                          </div>
+                          <div className="daily-details-grid-item">
+                            <label>Wind speed:</label>
+                            <label>{item.wind.speed} m/s</label>
+                          </div>
+                          <div className="daily-details-grid-item">
+                            <label>Sea level:</label>
+                            <label>{item.main.sea_level}m</label>
+                          </div>
+                          <div className="daily-details-grid-item">
+                            <label>Feels like:</label>
+                            <label>{item.main.feels_like}°C</label>
+                          </div>
+                        </div>
+                      </Typography>
+                    </AccordionDetails>
+                </Accordion>
               ))}
-            </Accordion>
+              </div>
             }
           </div>
         </div>

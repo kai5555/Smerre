@@ -548,8 +548,10 @@ const Container = (props) => {
     automation['action'] = action;
 
     // Finally sent the created automation and current structure to the parent component
-    console.log(automation);
-    onSubmitCall(automation, lines, boxes);
+    console.log(automation);  
+    console.log(boxes);
+    console.log(lines);
+    //onSubmitCall(automation, lines, boxes);
 
     function traverseGraph(key, obj, step){
       let box = boxes[key];

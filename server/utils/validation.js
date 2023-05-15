@@ -5,6 +5,7 @@ const registerSchema = Joi.object({
     firstName: Joi.string().min(4).max(30).alphanum().required(),
     lastName: Joi.string().min(4).max(30).regex(/^[a-zA-Z\s]*$/).required(),
     password: Joi.string().required().min(4).max(30),
+    location: Joi.string().required(),
     email: Joi.string().email(),
     confirmPassword: Joi.any().equal(Joi.ref('password')).required().label('Confirm password').options({ messages: { 'any.only': '{{#label}} does not match'} })
 })

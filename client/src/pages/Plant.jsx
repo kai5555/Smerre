@@ -82,8 +82,8 @@ const Plant = () => {
 
   const setup = async () => {
     const resData = await api.getDataOfPlant({name: name});
-    console.log(resData);
     setData(resData.data.data);
+    console.log(resData.data.data)
     setSensors(resData.data.sensors);
     setActors(resData.data.actors);
     setSnapshots(resData.data.snapshots);
@@ -142,6 +142,7 @@ const Plant = () => {
     // Update the state with the new data
     graphData[key] = dataPoints;
 });
+
 
 const tempGraph = {
   series: [
@@ -281,6 +282,11 @@ const humGraph = {
     }
   };
 
+  let snapTimeLabel = new Date(snapshots[selectedSnapshot]?.timestamp).toLocaleString('be');
+  const changeSnapshot = (index) => {
+    setSelectedSnapshot(index);
+  }
+
   const max = options.length ;
   const tempTimeLabel = options[tempTime - 1]?.label;
   const handleChangeTempTime = (e) => {
@@ -297,6 +303,7 @@ const humGraph = {
     <>
      <section className="vh-20">
           <MDBContainer className="h-100">
+            <div className="row"><h1 className="h2 mt-4">Values</h1></div>
             <MDBRow className="justify-content-center align-items-center h-100">
               <MDBCol md="8" lg="6" xl="12">
                 <MDBCard style={{ color: "#4B515D", borderRadius: "10px", marginTop: "30px" }}>
@@ -366,25 +373,43 @@ const humGraph = {
           </MDBContainer>
         </section>
       <div>{actorsList()}</div>
-      <SnapshotContainer>
-        <div>
-          {snapshots.map((snapshot, index) => (
-            <SnapshotHolder  className={`dot ${index === selectedSnapshot ? "active" : ""}`}>
-              <SnapshotDate>{new Date(snapshot.timestamp).toLocaleString('be')}</SnapshotDate>
-              <Snapshot key={index} src={`data:image/jpeg;base64,${snapshot.image}`} />
-            </SnapshotHolder>
-          ))}
-        </div>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: "50px" }}>
-          {snapshots.map((snapshot, index) => (
-            <Dot
-              key={index}
-              className={`dot ${index === selectedSnapshot ? "active" : ""}`}
-              onClick={() => setSelectedSnapshot(index)}  
-            />
-          )).slice(Math.max(selectedSnapshot - 5, 0), Math.min(selectedSnapshot + 5, snapshots.length))}
-        </div>
-      </SnapshotContainer>
+      <MDBContainer className="h-100">
+            <div className="row"><h1 className="h2 mt-4">Snapshots</h1></div>
+            <MDBRow className="justify-content-center align-items-center h-100 ">
+              <MDBCol md="8" lg="6" xl="12">
+                <MDBCard style={{ color: "#4B515D", borderRadius: "10px", marginTop: "30px" }}>
+                  <MDBCardBody className="p-4">
+                    <div className="d-flex">
+                      <MDBTypography tag="h6" className="flex-grow-1">
+                        Snapshot
+                      </MDBTypography>
+                      <MDBTypography tag="h6">
+                        {snapTimeLabel}
+                      </MDBTypography>
+                    </div>
+                    <div className="d-flex flex-column text-center">
+                      <div>
+                        {snapshots.map((snapshot, index) => (
+                          <SnapshotHolder  className={`dot ${index === selectedSnapshot ? "active" : ""}`}>
+                            <Snapshot key={index} src={`data:image/jpeg;base64,${snapshot.image}`} />
+                          </SnapshotHolder>
+                        ))}
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "center", marginBottom: "50px" }}>
+                        {snapshots.map((snapshot, index) => (
+                          <Dot
+                            key={index}
+                            className={`dot ${index === selectedSnapshot ? "active" : ""}`}
+                            onClick={() => {changeSnapshot(index);}}  
+                          />
+                        )).slice(Math.max(selectedSnapshot - 5, 0), Math.min(selectedSnapshot + 5, snapshots.length))}
+                      </div>
+                    </div>
+                  </MDBCardBody>
+                </MDBCard>
+              </MDBCol>
+            </MDBRow>
+          </MDBContainer>
     </>
   );
 };

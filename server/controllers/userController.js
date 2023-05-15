@@ -107,6 +107,7 @@ exports.register = async (req, res) => {
       username: data.username,
       firstName: data.firstName,
       lastName: data.lastName,
+      location: data.location,
       password: data.password,
       email: data.email,
     });
